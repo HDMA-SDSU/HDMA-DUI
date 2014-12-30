@@ -1,0 +1,13 @@
+html, body {width:100%; height:100%; margin:0px; padding:0px; overflow:hidden; }
+
+
+
+
+/**
+ * 	google map
+ */
+#mapContent {width:100%; height:500px; position:relative; }
+#mapHeader {width:40%; position:absolute; top:0px; left:0px; margin:10px; padding:10px; background:rgba(0,0,0,0.6); color:#ffffff !important; border-radius:5px; z-index:1000; }
+#mapHeader h4 {color:#ffffff;}
+#mapHeader input {font-size:14px; width:70%;  }
+#gmap {width:100%; height:100%;}
