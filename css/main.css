@@ -6,8 +6,24 @@ html, body {width:100%; height:100%; margin:0px; padding:0px; overflow:hidden; }
 /**
  * 	google map
  */
-#mapContent {width:100%; height:500px; position:relative; }
+#mapContent {width:100%; height:100%; position:relative; }
 #mapHeader {width:40%; position:absolute; top:0px; left:0px; margin:10px; padding:10px; background:rgba(0,0,0,0.6); color:#ffffff !important; border-radius:5px; z-index:1000; }
 #mapHeader h4 {color:#ffffff;}
 #mapHeader input {font-size:14px; width:70%;  }
 #gmap {width:100%; height:100%;}
+
+
+/**
+ * 	content html
+ */
+.contentHtml {width:350px; height:auto; position:relative; }
+.contentHtml > ul {list-style:none; width:100%; padding:0px; margin:0px; display:block; margin-top:20px;  }
+.contentHtml > ul > li {float:left;  position:relative; display:block;}
+.contentHtml .contactContent {width: 70%; }
+.contentHtml .type {font-weight:bold; }
+.contentHtml .title {margin-bottom:5px;  font-size:18px;  }
+.contentHtml span {display:block;line-height:22px; }
+.contentHtml .feeContent {width:30%; }
+.contentHtml .fee table tr:first-child {font-weight:bold; }
+.contentHtml .fee tr.highlight {color:#ff0000; font-weight:bold; }
+.contentHtml .fee span b {font-size:14px; color:#ff0000;}
