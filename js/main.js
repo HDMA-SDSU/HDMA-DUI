@@ -3,7 +3,8 @@ var app={
 	gmap:null,
 	tableID:{
 		provider:'1qBvlmKMt_9vx6A0nts95ZLbTQE6gtIO9NYyc6jKl',
-		fee:'1BJaFjSBV247xqMbWpGQyAsE4qC6Px8HAH7JPXb2c'
+		fee:'1BJaFjSBV247xqMbWpGQyAsE4qC6Px8HAH7JPXb2c',
+		update:'1s4VLjbbYjCzu0Ys26HV3v_sHxdpW43aKZpnraxNG'
 	},
 	popup:new google.maps.InfoWindow(),
 	markers:[],
@@ -23,7 +24,7 @@ $(function(){
 	init.map("gmap")
 	
 	//load all dui data
-	run.query('select * from ' + app.tableID.provider, function(json){
+	run.query('select * from ' + app.tableID.update, function(json){
 		run.showResult(json);
 	});
 })
@@ -33,32 +34,33 @@ $(function(){
 //init
 var init={
 	ui: function(){
-		
+		var $header=$("#header");
 		
 		//input 
-		$("#mapHeader input[type='text']").keyup(function(e){
+		$header.find("input[type='text']").keyup(function(e){
 			if(e.keyCode==13){
-				//geocoding 
-				var value=$(this).val()
-				
-				if(value&&value!=''){
-					run.geocoding(value, function(results, status){
-						if(results&&results.length>0){
-							//get first result
-							var latlng=results[0].geometry.location;
-							
-							run.spatialQuery(latlng.lat(), latlng.lng())
-						}
-						
-					})
-				}else{
-					//load all dui data
-					run.query('select * from ' + app.tableID.provider, function(json){
-						run.showResult(json);
-					});
-				}
+				run.search();
 			}
 		})
+		
+		
+		//search dropdown menu
+		$header.find(".dropdown-menu > li > a").click(function(){
+			var $this=$(this),
+				value=$this.attr("data-value"),
+				placeHolder=$this.attr('data-placeHolder'),
+				text=$this.text();
+			
+			$header.find("input[type='text']").attr({"data-value": value, 'placeHolder': placeHolder});
+			$header.find("#btn-search").text(text);
+			
+			run.search();
+		});
+		
+		//search button
+		$header.find("#btn-search").click(function(){
+			run.search();
+		});
 		
 	},
 	
@@ -79,6 +81,49 @@ var init={
 
 //run
 var run={
+	//search
+	search: function(){
+		//geocoding
+		var $this=$("#header input[type='text']"), 
+			value=$this.val(),
+			type=$this.attr('data-value');
+				
+		if(type&&type!=""){
+			switch(type){
+				case "address":
+					if(value&&value!=''){
+						run.geocoding(value, function(results, status){
+							if(results&&results.length>0){
+								//get first result
+								var latlng=results[0].geometry.location;
+								run.spatialQuery(latlng.lat(), latlng.lng())
+							}
+						})
+					}else{
+						//load all dui data
+						run.query('select * from ' + app.tableID.update, function(json){
+							run.showResult(json);
+						});
+					}
+				break;
+				case "name":
+					if(value&&value!=""){
+						run.query('select * from ' + app.tableID.update + " where program_name LIKE '%"+value+"%'", function(json){
+							if(json&&json.columns&&json.columns.length>0&&json.rows&&json.rows.length>0){
+								run.showResult(json)
+							}
+						})
+					}
+				break;
+			}
+					
+		}	
+		
+		
+	},
+	
+	
+	
 	//load dui data
 	query: function(sql, callback){
 		var url='https://www.googleapis.com/fusiontables/v2/query?',
@@ -111,14 +156,11 @@ var run={
 		
 		//options
 		if(!options){options={}}
-		options.radius=options.radius || 50000;
+		options.radius=options.radius || 50000; //unit: meter
 		
 		//query
-		var sql="select * from " + app.tableID.provider +" where ST_INTERSECTS(lat, CIRCLE(LATLNG("+lat+","+lng+"),"+options.radius+"))";
+		var sql="select * from " + app.tableID.update +" where ST_INTERSECTS(lat, CIRCLE(LATLNG("+lat+","+lng+"),"+options.radius+"))";
 		run.query(sql, function(json){
-			//clear all existing markers
-			run.clearMarkers({emptyMarkers:true});
-			
 			run.showResult(json);
 		})
 			
@@ -138,6 +180,9 @@ var run={
 			
 			if(options.emptyMarkers){app.markers=[]}
 		}
+		
+		//clear listContent
+		$("#listContent > ul").html("")
 	},
 	
 	
@@ -153,15 +198,23 @@ var run={
 				mapEvent=google.maps.event,
 				marker=null,
 				obj=null,
+				$list=$("#listContent > ul"),
 				latlngBounds=new google.maps.LatLngBounds();
-				
+			
+			
+			//clear all existing markers
+			run.clearMarkers({emptyMarkers:true});
+			
 			//markers
 			//json.markers=[]
-			
 			$.each(rows, function(i,values){
 				obj=run.makeObj(columns, values)
 				
 				obj.serviceTypes=run.getServiceTypes(obj.all_programDescription)
+				obj.fees=run.getFee(obj.all_Fee);
+				
+				//delete all fee
+				delete obj.all_Fee
 				
 				marker=new google.maps.Marker({
 					position: {lat: obj.lat, lng: obj.lng},
@@ -169,33 +222,18 @@ var run={
 					title:obj.program_name
 				})
 				marker.dui={
-					values:obj
+					values:obj,
+					contentHtml:run.makeContentHtml(obj)
 				}
+				
 				
 				mapEvent.addListener(marker, 'click', function(e){
 					var values=this.dui.values,
 						serviceTypes=values.serviceTypes,
 						contentHtml=this.dui.contentHtml;
 					
-					if(!contentHtml || contentHtml==''){
-						contentHtml=run.makeContentHtml(values)
-						if(contentHtml!=''){this.dui.contentHtml=contentHtml}
-					}
-					
 					app.popup.setContent(contentHtml)
 					app.popup.open(app.gmap, this);
-					
-					//get fee
-					var fee=this.dui.fee;
-					var that=this;
-					if(!fee){
-						run.getFee(values.lic_lic_cert_nbr, function(result){
-							that.dui.fee=result;
-							run.showFee(result, serviceTypes);
-						})
-					}else{
-						run.showFee(fee, serviceTypes);
-					}
 				})
 				
 				//latlngbounds
@@ -205,11 +243,21 @@ var run={
 				
 				
 				//show list
+				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"</li>");
 				
 			})
 			
 			//automatically zoom to markers bound
 			if(options.fitBounds){app.gmap.fitBounds(latlngBounds)}
+			
+			//add a click event on each li in the contentList
+			$list.find("> li").click(function(){
+				var $this=$(this),
+					id=$this.attr('data-id'),
+					marker=app.markers[id];
+					
+				google.maps.event.trigger(marker,'click')
+			})
 		}	
 			
 	},
@@ -260,7 +308,7 @@ var run={
 	//generate html for popup window and list
 	makeContentHtml: function(obj){
 		var html="";
-		
+
 		if(obj){
 			//console.log(obj)
 			html="<div class='contentHtml'>"+
@@ -271,17 +319,15 @@ var run={
 					  ((obj.contact_phone!="")?("<span class='contact_phone'>Phone: <a href='tel:"+obj.contact_phone+"'>"+obj.contact_phone+"</a></span>"):"")+
 					  ((obj.contact_fax!="")?("<span class='contact_fax'>Fax: <a href='tel:"+obj.contact_fax+"'>"+obj.contact_fax+"</a></span>"):"")+
 					  ((obj.contact_tfree!="")?("<span class='contact_tfree'>Toll Free: <a href='tel:"+obj.contact_tfree+"'>"+obj.contact_tfree+"</a></span>"):"")+
-					  "<p class='fee'><img src='images/loading.gif' /></p>"
-					  /**
-					  "<ul><li class='contactContent'>"+
-					  	((obj.contact_phone!="")?("<span class='contact_phone'>Phone: "+obj.contact_phone+"</span>"):"")+
-					  	((obj.contact_fax!="")?("<span class='contact_fax'>Fax: "+obj.contact_fax+"</span>"):"")+
-					  	((obj.contact_tfree!="")?("<span class='contact_tfree'>Toll Free: "+obj.contact_tfree+"</span>"):"")+
-					  "</li><li class='feeContent'>"+
-					  	"<p class='fee'><img src='images/loading.gif' /></p>"+
-					  "</li></ul>"+
-					  */
-					  
+					  "<p class='fee'>"+
+					    (function(){
+					    	var result='';
+					    	$.each(obj.serviceTypes, function(i,k){
+					    		result+="<span>"+k+": <b>$ "+run.addComma(obj.fees[k])+"</b></span>";
+					    	})
+					    	return result;
+					    })()+
+					  "</p>"+
 				  "</div>";
 			
 		}
@@ -311,33 +357,19 @@ var run={
 	
 	
 	//get fee
-	getFee: function(lic_nbr, callback){
-		if(!lic_nbr){console.log("[ERROR] run.getFee: no license nbr or service type"); return;}
+	getFee: function(str_fee){
+		if(!str_fee || str_fee==''){console.log('[ERROR] NO FEE: please check'); return;}
 		
-		var sql='select * from ' + app.tableID.fee + ' where lic_cert_nbr=' + lic_nbr;
-				
-		//load all dui data
-		run.query(sql, function(json){
-			var result=null;
+		var fees=str_fee.split(" / "),
+			result={},
+			temp;
+		$.each(fees, function(i,f){
+			temp=f.split(": ");
 			
-			if(json&&json.columns&&json.columns.length>0&&json.rows&&json.rows.length>0){
-				result={}
-				var columns=json.columns;
-				
-				$.each(json.rows, function(i,r){
-					//result.push(run.makeObj(columns, r))
-					result[r[6]]=r[9] //please note the index need to match the sequence of google sheets
-				})
-			}
-			
-			
-			
-			if(callback){
-				callback(result)
-			}
-			
-		});
+			result[temp[0]]=parseFloat(temp[1])
+		})
 		
+		return result;
 	},
 	
 	

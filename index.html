@@ -10,28 +10,59 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="description" content="" />
 		<meta name="keywords" content="" />
-		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
 		<link rel="stylesheet" href="css/main.css" />
 		<!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
 		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
 		<script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyAqd6BFSfKhHPiGaNUXnSt6jAzQ9q_3DyU'></script>
 		<script src="js/main.js"></script>
 		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
 	</head>
-	<body class="homepage">
-		
-		<!-- map content -->
-		<div id='mapContent'>
+	<body>
+		<!-- content-->
+		<div id='mainContent'>
 			<!--header-->
-			<div id='mapHeader'>
+			<div id='header'>
 				<h4>DUI Map</h4>
-				<input type='text' placeholder="Submit a location to start searching" />
+				<div class="input-group">
+		          <input type="text" class="form-control" placeholder="Input a location" data-value='address'>
+		          <div class="input-group-btn">
+		          	<button type="button" class="btn btn-primary" tabindex="-1" id='btn-search' >Search Address</button>
+		            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+		              <span class="caret"></span>
+		              <span class="sr-only">Toggle Dropdown</span>
+		            </button>
+		            <ul class="dropdown-menu dropdown-menu-left" role="menu">
+		              <!--<li><a href='#'>Advanced Search</a></li>
+		              <li class="divider"></li>-->
+		              <li><a href="#" data-value='address' data-placeHolder='Input a location' >Search Address</a></li>
+		              <li><a href="#" data-value='name' data-placeHolder='Input a DUI name' >Search DUI name</a></li>
+		            </ul>
+		            
+		          </div>
+		        </div>
+		        <div id='logo'>
+		        	<a href='http://humandynamics.sdsu.edu/' target='_blank'><img class='logo' src='images/HDMA_Logo_Small_ICON.png' /></a>
+		        	<a href='http://www.sdsu.edu/' target='_blank'><img class='logo' src='images/SDSU_3Color-small.gif' /></a>
+		        </div>
 			</div>
 			
-			<!--map-->
+			<!-- map content -->
 			<div id='gmap'></div>
 			
+			<!--list-->
+			<div id='listContent'>
+				<ul></ul>
+			</div>
 		</div>
+		
+		
+		
+		
+		
+		
+		
 		
 		
 			
