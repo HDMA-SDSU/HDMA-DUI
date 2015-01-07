@@ -257,7 +257,9 @@ var run={
 				var $this=$(this),
 					id=$this.attr('data-id'),
 					marker=app.markers[id];
-					
+				
+				app.gmap.setZoom(12);
+				app.gmap.panTo(marker.position);
 				google.maps.event.trigger(marker,'click')
 			})
 		}else{

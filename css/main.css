@@ -37,7 +37,7 @@ ul {list-style:none; padding:0px; margin:0px; }
 #listContent .contentHtml span {font-size:14px; color:#555555;  }
 #listContent .contentHtml .fee {margin-top:15px; color:#000000; }
 #listContent .contentHtml h3 {font-size:18px; }
-
+#listContent .contentHtml .type {font-size:14px; }
 
 
 /**
