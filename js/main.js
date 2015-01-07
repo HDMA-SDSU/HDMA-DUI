@@ -17,15 +17,18 @@ var app={
 
 
 $(function(){
-	//init ui
-	init.ui()
 	
-	//init map
-	init.map("gmap")
-	
-	//load all dui data
-	run.query('select * from ' + app.tableID.update, function(json){
-		run.showResult(json);
+	$.getScript("js/markerwithlabel.js", function(){
+		//init ui
+		init.ui()
+		
+		//init map
+		init.map("gmap")
+		
+		//load all dui data
+		run.query('select * from ' + app.tableID.update, function(json){
+			run.showResult(json);
+		});
 	});
 })
 
@@ -62,20 +65,22 @@ var init={
 			run.search();
 		});
 		
+		
 	},
 	
 	
 	map: function(domID){
-		app.gmap=new google.maps.Map(document.getElementById(domID), {
-			center:{lat: 34.397, lng: -121.344},
-			zoom:8,
-			streetViewControl:true,
-			panControl:false,
-			zoomControlOptions:{style:google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.RIGHT_BOTTOM}
-		});
+		
+			app.gmap=new google.maps.Map(document.getElementById(domID), {
+				center:{lat: 34.397, lng: -121.344},
+				zoom:8,
+				streetViewControl:true,
+				panControl:false,
+				zoomControlOptions:{style:google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.RIGHT_BOTTOM}
+			});
+		
 		
 	}
-	
 }
 
 
@@ -218,17 +223,28 @@ var run={
 				//delete all fee
 				delete obj.all_Fee
 				
-				marker=new google.maps.Marker({
+				//marker=new google.maps.Marker({
+				marker=new MarkerWithLabel({
 					position: {lat: obj.lat, lng: obj.lng},
 					map:app.gmap,
-					title:obj.program_name
+					title:obj.program_name,
+					draggable:false,
+					icon:{
+						url:"images/symbol_blank.png",
+						scaledSize:new google.maps.Size(30,30),
+					},
+					labelContent:i+1,
+					labelAnchor: new google.maps.Point(10,25),
+					labelClass: "mapIconLabel",
+					labelInBackground:false
 				})
 				marker.dui={
 					values:obj,
 					contentHtml:run.makeContentHtml(obj)
 				}
 				
-				
+		
+				//click event
 				mapEvent.addListener(marker, 'click', function(e){
 					var values=this.dui.values,
 						serviceTypes=values.serviceTypes,
@@ -245,7 +261,7 @@ var run={
 				
 				
 				//show list
-				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"</li>");
+				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"<span class='badge num'>"+(i+1)+"</span></li>");
 				
 			})
 			
