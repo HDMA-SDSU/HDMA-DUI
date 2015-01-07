@@ -109,9 +109,7 @@ var run={
 				case "name":
 					if(value&&value!=""){
 						run.query('select * from ' + app.tableID.update + " where program_name LIKE '%"+value+"%'", function(json){
-							if(json&&json.columns&&json.columns.length>0&&json.rows&&json.rows.length>0){
-								run.showResult(json)
-							}
+							run.showResult(json)
 						})
 					}
 				break;
@@ -205,6 +203,10 @@ var run={
 			//clear all existing markers
 			run.clearMarkers({emptyMarkers:true});
 			
+			//show Badge
+			$("#header .badge").html(rows.length).show();
+			$("#header .alert").hide();
+			
 			//markers
 			//json.markers=[]
 			$.each(rows, function(i,values){
@@ -258,7 +260,13 @@ var run={
 					
 				google.maps.event.trigger(marker,'click')
 			})
-		}	
+		}else{
+			//if no result
+			//hide Badge
+			$("#header .badge").html("").hide();
+			$("#header .alert").show();
+			
+		}
 			
 	},
 	

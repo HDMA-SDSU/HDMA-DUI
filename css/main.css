@@ -24,7 +24,8 @@ ul {list-style:none; padding:0px; margin:0px; }
 #header .input-group {width:60.5%; margin-left:20px; }
 #header #logo {float:right; }
 #header img.logo {height:32px; margin-left:5px;}
-
+#header .badge {position:absolute; top:8px; right:175px; background-color:#3276B1; display:none; }
+#header .alert {position:absolute; top:33px; left:0px; z-index:100; width:86%; display:none; }
 /**
  * 	list
  */
@@ -33,7 +34,8 @@ ul {list-style:none; padding:0px; margin:0px; }
 #listContent > ul > li {padding:10px; border-bottom:1px solid #f1f1f1; margin:10px; background-color:#ffffff;  color:#000000; border-radius:5px; }
 #listContent > ul > li:hover {background-color:#f1f1f1;}
 #listContent .contentHtml {width:auto; font-size:16px; }
-#listContent .contentHtml span {font-size:16px;}
+#listContent .contentHtml span {font-size:14px; color:#555555;  }
+#listContent .contentHtml .fee {margin-top:15px; color:#000000; }
 #listContent .contentHtml h3 {font-size:18px; }
 
 
@@ -49,6 +51,7 @@ ul {list-style:none; padding:0px; margin:0px; }
 .contentHtml .title {margin-bottom:5px;  font-size:18px;  }
 .contentHtml span {display:block;line-height:22px; }
 .contentHtml .feeContent {width:30%; }
+.contentHtml .fee {margin-top:15px; }
 .contentHtml .fee table tr:first-child {font-weight:bold; }
 .contentHtml .fee tr.highlight {color:#ff0000; font-weight:bold; }
 .contentHtml .fee span b {font-size:14px; color:#ff0000;}
