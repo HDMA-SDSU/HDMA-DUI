@@ -365,7 +365,7 @@ var run={
 			html="<div class='contentHtml'>"+
 					  "<p class='type'>DUI for "+ obj.serviceTypes.join(" / ") +"</p>"+
 					  "<h3 class='title'>"+obj.program_name +"</h3>"+
-					  ((app.geocodingMarker)?("<span class='distance'>Distance: "+run.getDistance(obj.lat, obj.lng)+"</span>"):"")+
+					  ((app.geocodingMarker)?("<span class='distance'>"+run.getDistance(obj.lat, obj.lng)+"</span>"):"")+
 					  ((obj.address_site!="")?("<span class='address_site'>"+obj.address_site+"</span>"):"")+
 					  ((obj.address_mail!="")?("<span class='address_mail'>Mail: "+obj.address_mail+"</span>"):"")+
 					  ((obj.contact_phone!="")?("<span class='contact_phone'>Phone: <a href='tel:"+obj.contact_phone+"'>"+obj.contact_phone+"</a></span>"):"")+
