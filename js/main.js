@@ -11,7 +11,8 @@ var app={
 	geocodingMarker:null,
 	geocoder:new google.maps.Geocoder(),
 	direction:new google.maps.DirectionsService(),
-	directionRenderer:null
+	directionRenderer:null,
+	timeout:null
 	
 }
 
@@ -30,6 +31,9 @@ $(function(){
 		//load all dui data
 		run.query('select * from ' + app.tableID.update, function(json){
 			run.showResult(json);
+			
+			//enable filter
+			$("#listFilter").removeAttr('disabled');
 		});
 	});
 })
@@ -56,6 +60,9 @@ var init={
 				placeHolder=$this.attr('data-placeHolder'),
 				text=$this.text();
 			
+			//if value=all, make a default view to search by addresses
+			if(value=='all'){value='address'; placeHolder='Input a location'; text='Search by Address';$header.find("input[type='text']").val("")}
+			
 			$header.find("input[type='text']").attr({"data-value": value, 'placeHolder': placeHolder});
 			$header.find("#btn-search").text(text);
 			
@@ -66,6 +73,41 @@ var init={
 		$header.find("#btn-search").click(function(){
 			run.search();
 		});
+		
+		
+		//filter
+		$("#listFilter").keyup(function(){
+            var rex = new RegExp($(this).val(), 'i'),
+            	$target=$('#listResult li'),
+            	$select;
+            $target.hide();
+            
+            $select=$target.filter(function () {
+                return rex.test($(this).text());
+            }).show();
+            
+            //update number in hte badge
+            $("#listContent > .badge").html($select.length);
+            
+            //update markers
+            if(app.timeout){clearTimeout(app.timeout); app.timeout=null;}
+            app.timeout=setTimeout(function(){
+            	run.clearMarkers({clearResult:'false'});
+            	var bounds=new google.maps.LatLngBounds()
+            	
+            	$select.each(function(){
+            		var $this=$(this),
+            			id=$this.attr('data-id'),
+            			marker=app.markers[id];
+            		
+            		marker.setMap(app.gmap);
+            		bounds.extend(marker.getPosition())
+            	})
+            	app.gmap.fitBounds(bounds);
+            }, 500)
+		})
+		
+		
 		
 		
 	},
@@ -99,9 +141,12 @@ var run={
 		if(app.geocodingMarker){app.geocodingMarker.setMap(null); app.geocodingMarker=null;}
 		if(app.directionRenderer){app.directionRenderer.setMap(null); }
 		
+		//clear filter
+		$("#listFilter").val("");
+		
 		//show loading
 		$("#header .loading").show();
-			
+		
 		if(type&&type!=""){
 			switch(type){
 				case "address":
@@ -126,6 +171,9 @@ var run={
 							run.showResult(json)
 						})
 					}
+				break;
+				case "serviceType":
+					
 				break;
 			}
 					
@@ -198,6 +246,7 @@ var run={
 		//options
 		if(!options){options={}}
 		options.emptyMarkers=options.emptyMarkers || false;
+		options.clearResult=options.clearResult || true;
 		
 		if(app.markers.length>0){
 			$.each(app.markers, function(i,m){
@@ -208,7 +257,8 @@ var run={
 		}
 		
 		//clear listContent
-		$("#listContent > ul").html("")
+		if(options.clearResult!='false'){$("#listResult > ul").html("")}
+		
 	},
 	
 	
@@ -224,7 +274,7 @@ var run={
 				mapEvent=google.maps.event,
 				marker=null,
 				obj=null,
-				$list=$("#listContent > ul"),
+				$list=$("#listResult > ul"),
 				latlngBounds=new google.maps.LatLngBounds();
 			
 			
@@ -234,7 +284,7 @@ var run={
 
 			//show Badge nad hide loading
 			var $header=$("#header")
-			$header.find(".badge").html(rows.length).show();
+			$("#listContent .badge").html(rows.length).show();
 			$header.find(".alert, .loading").hide();
 			
 			//markers
@@ -303,10 +353,12 @@ var run={
 				app.gmap.panTo(marker.position);
 				google.maps.event.trigger(marker,'click')
 			})
+			
+		
 		}else{
 			//if no result
 			//hide Badge
-			$("#header .badge").html("").hide();
+			$("#listContent .badge").html("").hide();
 			$("#header .alert").show();
 			
 		}

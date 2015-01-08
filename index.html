@@ -27,10 +27,10 @@
 				<div class="input-group">
 		          <input type="text" class="form-control" placeholder="Input a location" data-value='address'>
 		          <img class='loading' src='images/loading.gif' />
-		          <span class="badge"></span>
+		          
 		          <div class="alert alert-warning" role="alert">No Result. Please search again.</div>
 		          <div class="input-group-btn">
-		          	<button type="button" class="btn btn-primary" tabindex="-1" id='btn-search' >Search Address</button>
+		          	<button type="button" class="btn btn-primary" tabindex="-1" id='btn-search' >Search by Address</button>
 		            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 		              <span class="caret"></span>
 		              <span class="sr-only">Toggle Dropdown</span>
@@ -38,8 +38,10 @@
 		            <ul class="dropdown-menu dropdown-menu-left" role="menu">
 		              <!--<li><a href='#'>Advanced Search</a></li>
 		              <li class="divider"></li>-->
-		              <li><a href="#" data-value='address' data-placeHolder='Input a location' >Search Address</a></li>
-		              <li><a href="#" data-value='name' data-placeHolder='Input a DUI name' >Search DUI name</a></li>
+		              <li><a href="#" data-value='address' data-placeHolder='Input a location' >Search by Address</a></li>
+		              <!--<li><a href="#" data-value='serviceType' data-placeHolder='Select a service type' >Search by DUI Type</a></li>
+		              <li><a href="#" data-value='name' data-placeHolder='Input a DUI name' >Search by DUI name</a></li>-->
+		              <li><a href="#" data-value='all' data-placeHolder='Input a location' >Show All</a></li>
 		            </ul>
 		            
 		          </div>
@@ -55,8 +57,12 @@
 				<div id='gmap'></div>
 				
 				<!--list-->
-				<div id='listContent'>
-					<ul></ul>
+				<div id='listContent' class='form-group'>
+					<input class='form-control' id='listFilter' type='search' placeholder='Filter by name / service type / address...' disabled />
+					<span class="badge"></span>
+					<div id='listResult' >
+						<ul></ul>
+					</div>
 				</div>
 			</div>
 		
