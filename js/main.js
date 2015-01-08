@@ -8,8 +8,10 @@ var app={
 	},
 	popup:new google.maps.InfoWindow(),
 	markers:[],
-	geocoder:new google.maps.Geocoder()
-	
+	geocodingMarker:null,
+	geocoder:new google.maps.Geocoder(),
+	direction:new google.maps.DirectionsService(),
+	directionRenderer:null
 	
 }
 
@@ -92,7 +94,14 @@ var run={
 		var $this=$("#header input[type='text']"), 
 			value=$this.val(),
 			type=$this.attr('data-value');
-				
+		
+		//clear existing geocoding marker
+		if(app.geocodingMarker){app.geocodingMarker.setMap(null)}
+		if(app.directionRenderer){app.directionRenderer.setMap(null)}
+		
+		//show loading
+		$("#header .loading").show();
+			
 		if(type&&type!=""){
 			switch(type){
 				case "address":
@@ -161,8 +170,22 @@ var run={
 		if(!options){options={}}
 		options.radius=options.radius || 50000; //unit: meter
 		
+		//show geocoding marker
+		app.geocodingMarker=new google.maps.Marker({
+			position:{lat:lat, lng:lng},
+			map:app.gmap,
+			icon:{
+				url:"images/1420695267_Social_Media_Socialmedia_network_share_socialnetwork_network-14-128.png",
+				//size:new google.maps.Size(35,35),
+				scaledSize: new google.maps.Size(35,35)
+			},
+			title: "Your Location: "+ $("#header input[type='text']").val()
+		});
+		
+		
 		//query
-		var sql="select * from " + app.tableID.update +" where ST_INTERSECTS(lat, CIRCLE(LATLNG("+lat+","+lng+"),"+options.radius+"))";
+		//var sql="select * from " + app.tableID.update +" where ST_INTERSECTS(lat, CIRCLE(LATLNG("+lat+","+lng+"),"+options.radius+"))";
+		var sql="select * from " + app.tableID.update +" order by ST_DISTANCE(lat, LATLNG("+lat+","+lng+")) limit 10";
 		run.query(sql, function(json){
 			run.showResult(json);
 		})
@@ -208,9 +231,11 @@ var run={
 			//clear all existing markers
 			run.clearMarkers({emptyMarkers:true});
 			
-			//show Badge
-			$("#header .badge").html(rows.length).show();
-			$("#header .alert").hide();
+
+			//show Badge nad hide loading
+			var $header=$("#header")
+			$header.find(".badge").html(rows.length).show();
+			$header.find(".alert, .loading").hide();
 			
 			//markers
 			//json.markers=[]
@@ -340,6 +365,7 @@ var run={
 			html="<div class='contentHtml'>"+
 					  "<p class='type'>DUI for "+ obj.serviceTypes.join(" / ") +"</p>"+
 					  "<h3 class='title'>"+obj.program_name +"</h3>"+
+					  ((app.geocodingMarker)?("<span class='distance'>Distance: "+run.getDistance(obj.lat, obj.lng)+"</span>"):"")+
 					  ((obj.address_site!="")?("<span class='address_site'>"+obj.address_site+"</span>"):"")+
 					  ((obj.address_mail!="")?("<span class='address_mail'>Mail: "+obj.address_mail+"</span>"):"")+
 					  ((obj.contact_phone!="")?("<span class='contact_phone'>Phone: <a href='tel:"+obj.contact_phone+"'>"+obj.contact_phone+"</a></span>"):"")+
@@ -354,6 +380,7 @@ var run={
 					    	return result;
 					    })()+
 					  "</p>"+
+					  ((app.geocodingMarker)?("<div class='route'><a href='#' onclick='run.route("+obj.lat+", "+obj.lng+")'><img  src='images/1420698239_directions.png' title='get Direction' /></a></div>"):"")+
 				  "</div>";
 			
 		}
@@ -406,6 +433,83 @@ var run={
 			val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
 		}
 		return val;
+	},
+	
+	
+	
+	//get eucliedean distance
+	getDistance: function(lat1, lon1, options) {
+		//options
+		if(!options){options={}}
+		options.unit=options.unit || 'mi';
+		options.decimal=options.decimal || 1;
+		
+		var position=app.geocodingMarker.getPosition(),
+			lat2=position.lat(),
+			lon2=position.lng(),
+			radlat1 = Math.PI * lat1/180,
+			radlat2 = Math.PI * lat2/180,
+			radlon1 = Math.PI * lon1/180,
+			radlon2 = Math.PI * lon2/180,
+			theta = lon1-lon2,
+			radtheta = Math.PI * theta/180,
+			dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+			
+		dist = Math.acos(dist)
+		dist = dist * 180/Math.PI
+		dist = dist * 60 * 1.1515
+		if (options.unit=="km") { dist = dist * 1.609344 }
+		if (options.unit=="mi") { dist = dist * 0.8684 }
+		return dist.toFixed(options.decimal) + " " + options.unit
+	} ,
+	
+	
+	//route
+	route:function(lat,lng){
+		if(!lat||!lng){console.log("[ERROR] run.route: no input lat or lng"); return;}
+		if(!app.geocodingMarker){console.log("[ERROR] run.route: no app.geocodingMarker"); return; }
+		
+		//clear existing route
+		if(app.directionRenderer){app.directionRenderer.setMap(null)}
+		
+		
+		//start routing
+		app.direction.route({
+			origin: app.geocodingMarker.getPosition(),
+			destination: new google.maps.LatLng(lat,lng),
+			travelMode: google.maps.TravelMode.DRIVING,
+			unitSystem: google.maps.UnitSystem.IMPERIAL
+		}, function(result, status){
+			if(status=='OK'){
+				if(result.routes&&result.routes.length>0){
+					
+					app.directionRenderer=new google.maps.DirectionsRenderer({
+						directions: result,
+						map:app.gmap,
+						suppressMarkers:true
+					})
+					
+					
+					/**
+					var route=result.routes[0];
+					app.route=new google.maps.Polyline({
+						path:route.overview_path,
+						map:app.gmap,
+						strokeColor:"#CC1A48",
+						strokeOpacity:0.7, 
+						strokeWeight:5,
+						directionResult:route
+					})
+					
+					//app.gmap.fitBounds(route.bounds)
+					
+					google.maps.event.addListener(app.route, "click", function(){
+						console.log(this)
+					})
+					*/
+				}
+			}
+		});
 	}
 	
 }

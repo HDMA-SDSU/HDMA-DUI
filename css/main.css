@@ -26,6 +26,8 @@ ul {list-style:none; padding:0px; margin:0px; }
 #header img.logo {height:32px; margin-left:5px;}
 #header .badge {position:absolute; top:8px; right:175px; background-color:#3276B1; display:none; }
 #header .alert {position:absolute; top:33px; left:0px; z-index:100; width:86%; display:none; }
+#header .loading {position:absolute; top:6px; right:220px; width:20px; height:20px; display:none;  }
+
 /**
  * 	list
  */
@@ -39,6 +41,7 @@ ul {list-style:none; padding:0px; margin:0px; }
 #listContent .contentHtml h3 {font-size:18px; }
 #listContent .contentHtml .type {font-size:14px; }
 #listContent li .num {position:absolute; top:10px; right:10px; height:30px; padding:6px 7px; font-size:14px; color:#ffffff; background-color:#CC1A4A; background:url("../images/symbol_blank.png") no-repeat top left; background-size: 100% 100%; border-radius:0px; }
+#listContent .contentHtml .distance {right:45px; }
 
 /**
  * 	content html
@@ -55,8 +58,9 @@ ul {list-style:none; padding:0px; margin:0px; }
 .contentHtml .fee table tr:first-child {font-weight:bold; }
 .contentHtml .fee tr.highlight {color:#ff0000; font-weight:bold; }
 .contentHtml .fee span b {font-size:14px; color:#ff0000;}
-
-
+.contentHtml .distance {position:absolute; top:0px; right:0px; }
+.contentHtml .route {position:absolute; bottom:0px; right:0px; }
+.contentHtml .route img {width:50px; height:50px; }
 
 
 
