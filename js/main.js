@@ -96,8 +96,8 @@ var run={
 			type=$this.attr('data-value');
 		
 		//clear existing geocoding marker
-		if(app.geocodingMarker){app.geocodingMarker.setMap(null)}
-		if(app.directionRenderer){app.directionRenderer.setMap(null)}
+		if(app.geocodingMarker){app.geocodingMarker.setMap(null); app.geocodingMarker=null;}
+		if(app.directionRenderer){app.directionRenderer.setMap(null); }
 		
 		//show loading
 		$("#header .loading").show();
