@@ -67,7 +67,17 @@ ul {list-style:none; padding:0px; margin:0px; }
 /**
  * 	responsive UI
  */
-@media (min-width: 665px){	
+@media screen and (min-width: 665px){	
 	#gmap {width:65%; float:left; height:100%;}
 	#listContent {width:35%; float:left;  height:100%; }
 }
+
+
+/**
+ * 	iphone
+ */
+@media only screen and (min-device-width : 320px) and (max-device-width : 568px) {
+	#gmap {width:100%; height:45%;}
+	#listContent {width:100%; height:53%; }
+}
+
