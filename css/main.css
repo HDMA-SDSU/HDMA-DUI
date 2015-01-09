@@ -33,7 +33,7 @@ ul {list-style:none; padding:0px; margin:0px; }
 #listContent { width:100%; border-radius:0px; height:53%; overflow:hidden; position:relative;   }
 #listContent > input {width:95%; margin:0 auto; }
 #listContent > .badge {position:absolute; top:8px; right:5%; background-color:#3276B1; display:none; }
-#listContent #listResult {height:92%; overflow-y:auto; margin-top:2%;}
+#listContent #listResult {height:94%; overflow-y:auto; margin-top:2%;}
 #listContent #listResult > ul {width:98%; margin:0 auto; }
 #listContent #listResult > ul > li {padding:10px; border-bottom:1px solid #f1f1f1; margin:10px; background-color:#ffffff;  color:#000000; border-radius:5px; position:relative; }
 #listContent #listResult > ul > li:hover {background-color:#f1f1f1;}

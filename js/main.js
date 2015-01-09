@@ -29,13 +29,35 @@ $(function(){
 		init.map("gmap")
 		
 		//load all dui data
-		run.query('select * from ' + app.tableID.update, function(json){
-			run.showResult(json);
-			
-			//enable filter
-			$("#listFilter").removeAttr('disabled');
+		/**
+		run.detectLocation(function(position){
+			if(position){
+				var lat=position.coords.latitude,
+					lng=position.coords.longitude;
+				
+				//show lat lng
+				$("#header input[type='text']").val("Your Current Location: ("+lng+", "+lat+")")
+				
+				//spatial query
+				run.spatialQuery(lat, lng);
+			}else{
+				run.query('select * from ' + app.tableID.update, function(json){
+					run.showResult(json);
+					
+					
+				});
+			}
 		});
+		*/
+		
+		run.query('select * from ' + app.tableID.update, function(json){
+			run.showResult(json);		
+		});
+		
+		
+		
 	});
+	
 })
 
 
@@ -286,6 +308,9 @@ var run={
 			var $header=$("#header")
 			$("#listContent .badge").html(rows.length).show();
 			$header.find(".alert, .loading").hide();
+			
+			//enable filter
+			$("#listFilter").removeAttr('disabled');
 			
 			//markers
 			//json.markers=[]
@@ -562,6 +587,18 @@ var run={
 				}
 			}
 		});
+	},
+	
+	
+	//get user's ip location
+	detectLocation:function(callback){
+		if(navigator.geolocation) {
+        	navigator.geolocation.getCurrentPosition(function(position){
+        		if(callback){callback(position)}
+        	});
+       }else{
+       		if(callback){callback()}
+       }
 	}
 	
 }
