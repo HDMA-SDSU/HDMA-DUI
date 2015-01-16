@@ -8,6 +8,7 @@ var app={
 	},
 	popup:new google.maps.InfoWindow(),
 	markers:[],
+	markerCluster:null,
 	geocodingMarker:null,
 	geocoder:new google.maps.Geocoder(),
 	direction:new google.maps.DirectionsService(),
@@ -104,6 +105,7 @@ var init={
             	$select;
             $target.hide();
             
+            //filter list
             $select=$target.filter(function () {
                 return rex.test($(this).text());
             }).show();
@@ -122,7 +124,9 @@ var init={
             			id=$this.attr('data-id'),
             			marker=app.markers[id];
             		
-            		marker.setMap(app.gmap);
+            		//marker.setMap(app.gmap);
+            		app.markerCluster.addMarker(marker)
+            		
             		bounds.extend(marker.getPosition())
             	})
             	app.gmap.fitBounds(bounds);
@@ -136,16 +140,22 @@ var init={
 	
 	
 	map: function(domID){
+		//map
+		app.gmap=new google.maps.Map(document.getElementById(domID), {
+			center:{lat: 34.397, lng: -121.344},
+			zoom:8,
+			streetViewControl:true,
+			panControl:false,
+			zoomControlOptions:{style:google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.RIGHT_BOTTOM}
+		});
 		
-			app.gmap=new google.maps.Map(document.getElementById(domID), {
-				center:{lat: 34.397, lng: -121.344},
-				zoom:8,
-				streetViewControl:true,
-				panControl:false,
-				zoomControlOptions:{style:google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.RIGHT_BOTTOM}
-			});
-		
-		
+		//marker cluster
+		app.markerCluster=new MarkerClusterer(app.gmap,null, {
+			gridSize:30,
+			maxZoom:13,
+			imagePath:"images/m"
+		});
+	
 	}
 }
 
@@ -270,13 +280,20 @@ var run={
 		options.emptyMarkers=options.emptyMarkers || false;
 		options.clearResult=options.clearResult || true;
 		
+	
 		if(app.markers.length>0){
+			app.markerCluster.clearMarkers();
+			
+			/**
 			$.each(app.markers, function(i,m){
 				m.setMap(null)
 			}); 
-			
+			*/
 			if(options.emptyMarkers){app.markers=[]}
+			
 		}
+		
+		
 		
 		//clear listContent
 		if(options.clearResult!='false'){$("#listResult > ul").html("")}
@@ -326,7 +343,7 @@ var run={
 				//marker=new google.maps.Marker({
 				marker=new MarkerWithLabel({
 					position: {lat: obj.lat, lng: obj.lng},
-					map:app.gmap,
+					//map:app.gmap,
 					title:obj.program_name,
 					draggable:false,
 					icon:{
@@ -357,13 +374,16 @@ var run={
 				//latlngbounds
 				latlngBounds.extend(marker.getPosition())
 				
-				app.markers.push(marker)
-				
+				app.markerCluster.addMarker(marker)
 				
 				//show list
 				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"<span class='badge num'>"+(i+1)+"</span></li>");
 				
 			})
+			
+			//app.markers
+			app.markers=app.markerCluster.getMarkers();
+			
 			
 			//automatically zoom to markers bound
 			if(options.fitBounds){app.gmap.fitBounds(latlngBounds)}
