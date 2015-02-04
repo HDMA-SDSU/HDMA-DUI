@@ -461,13 +461,20 @@ var run={
 			//console.log(obj)
 			html="<div class='contentHtml'>"+
 					  "<p class='type'>DUI for "+ obj.serviceTypes.join(" / ") +"</p>"+
-					  "<h3 class='title'>"+obj.program_name +"</h3>"+
+					  "<h3 class='title'>"+
+					  	((obj.contact_website!="")?("<a href='"+obj.contact_website+"' target='_blank'>"+obj.program_name+"</a>"):obj.program_name) +
+					  	((obj.address_site!="")?("<span class='address_site'>"+obj.address_site+"</span>"):"")+
+					  	
+					  "</h3>"+
 					  ((app.geocodingMarker)?("<span class='distance'>"+run.getDistance(obj.lat, obj.lng)+"</span>"):"")+
-					  ((obj.address_site!="")?("<span class='address_site'>"+obj.address_site+"</span>"):"")+
-					  ((obj.address_mail!="")?("<span class='address_mail'>Mail: "+obj.address_mail+"</span>"):"")+
-					  ((obj.contact_phone!="")?("<span class='contact_phone'>Phone: <a href='tel:"+obj.contact_phone+"'>"+obj.contact_phone+"</a></span>"):"")+
-					  ((obj.contact_fax!="")?("<span class='contact_fax'>Fax: <a href='tel:"+obj.contact_fax+"'>"+obj.contact_fax+"</a></span>"):"")+
-					  ((obj.contact_tfree!="")?("<span class='contact_tfree'>Toll Free: <a href='tel:"+obj.contact_tfree+"'>"+obj.contact_tfree+"</a></span>"):"")+
+					  ((obj.contact_person!="")?("<span class='contact_person'><b>Contact:</b> "+obj.contact_person+"</span>"):"")+
+					  ((obj.address_mail!="")?("<span class='address_mail'><b>Mail:</b> "+obj.address_mail+"</span>"):"")+
+					  
+					  ((obj.contact_phone!="")?("<span class='contact_phone'><b>Phone:</b> <a href='tel:"+obj.contact_phone+"'>"+run.formatPhone(obj.contact_phone)+"</a></span>"):"")+
+					  ((obj.contact_fax!="")?("<span class='contact_fax'><b>Fax:</b> <a href='tel:"+obj.contact_fax+"'>"+run.formatPhone(obj.contact_fax)+"</a></span>"):"")+
+					  ((obj.contact_tfree!="")?("<span class='contact_tfree'><b>Toll Free:</b> <a href='"+obj.contact_tfree+"'>"+run.formatPhone(obj.contact_tfree)+"</a></span>"):"")+
+					  ((obj.contact_email!="")?("<span class='contact_email'><b>Email:</b> <a href='mailto:"+obj.contact_email+"'>"+obj.contact_email+"</a></span>"):"")+
+					  ((obj.contact_website!="")?("<span class='contact_website'><b>Website:</b> <a href='"+obj.contact_website+"' target='_blank''>"+obj.contact_website+"</a></span>"):"")+
 					  "<p class='fee'>"+
 					    (function(){
 					    	var result='';
@@ -532,6 +539,13 @@ var run={
 		return val;
 	},
 	
+	
+	formatPhone: function(num){
+		num=String(num)
+		num=num.slice(0, 5) + " " + num.slice(5,8)+"-"+num.slice(8);
+		
+		return num
+	},
 	
 	
 	//get eucliedean distance
