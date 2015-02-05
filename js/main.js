@@ -4,7 +4,7 @@ var app={
 	tableID:{
 		provider:'1qBvlmKMt_9vx6A0nts95ZLbTQE6gtIO9NYyc6jKl',
 		fee:'1BJaFjSBV247xqMbWpGQyAsE4qC6Px8HAH7JPXb2c',
-		update:'1s4VLjbbYjCzu0Ys26HV3v_sHxdpW43aKZpnraxNG'
+		update:'14RvFaXQoatlV2-EVutvmek5PSWtt-00rmMaHFhYp'//'1s4VLjbbYjCzu0Ys26HV3v_sHxdpW43aKZpnraxNG'
 	},
 	popup:new google.maps.InfoWindow(),
 	markers:[],
@@ -336,9 +336,11 @@ var run={
 				
 				obj.serviceTypes=run.getServiceTypes(obj.all_programDescription)
 				obj.fees=run.getFee(obj.all_Fee);
+				obj.adminFees=run.getFee(obj.all_adminFee);
 				
 				//delete all fee
 				delete obj.all_Fee
+				delete obj.all_adminFee
 				
 				//marker=new google.maps.Marker({
 				marker=new MarkerWithLabel({
@@ -379,6 +381,8 @@ var run={
 				//show list
 				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"<span class='badge num'>"+(i+1)+"</span></li>");
 				
+			
+				
 			})
 			
 			//app.markers
@@ -393,6 +397,10 @@ var run={
 				var $this=$(this),
 					id=$this.attr('data-id'),
 					marker=app.markers[id];
+				
+				//sometimes marker cannot be shown on the map because marker.map is null
+				//enforcely show marker ont
+				if(!marker.map){marker.setMap(app.gmap)}
 				
 				app.gmap.setZoom(12);
 				app.gmap.panTo(marker.position);
@@ -463,10 +471,11 @@ var run={
 					  "<p class='type'>DUI for "+ obj.serviceTypes.join(" / ") +"</p>"+
 					  "<h3 class='title'>"+
 					  	((obj.contact_website!="")?("<a href='"+obj.contact_website+"' target='_blank'>"+obj.program_name+"</a>"):obj.program_name) +
-					  	((obj.address_site!="")?("<span class='address_site'>"+obj.address_site+"</span>"):"")+
-					  	
+					  	//((app.geocodingMarker)?("<div class='route'><a href='#' onclick='run.route("+obj.lat+", "+obj.lng+")'><img  src='images/1420698239_directions.png' title='get Direction' /></a></div>"):"")+
+					  	((app.geocodingMarker)?("<button onclick='run.route("+obj.lat+", "+obj.lng+")'>Directions</button>"):"")+
 					  "</h3>"+
-					  ((app.geocodingMarker)?("<span class='distance'>"+run.getDistance(obj.lat, obj.lng)+"</span>"):"")+
+					  ((obj.address_site!="")?("<span class='address_site'><b>Address: </b>"+obj.address_site+"</span>"):"")+
+					  //((app.geocodingMarker)?("<span class='distance'>"+run.getDistance(obj.lat, obj.lng)+"</span>"):"")+
 					  ((obj.contact_person!="")?("<span class='contact_person'><b>Contact:</b> "+obj.contact_person+"</span>"):"")+
 					  ((obj.address_mail!="")?("<span class='address_mail'><b>Mail:</b> "+obj.address_mail+"</span>"):"")+
 					  
@@ -475,7 +484,9 @@ var run={
 					  ((obj.contact_tfree!="")?("<span class='contact_tfree'><b>Toll Free:</b> <a href='"+obj.contact_tfree+"'>"+run.formatPhone(obj.contact_tfree)+"</a></span>"):"")+
 					  ((obj.contact_email!="")?("<span class='contact_email'><b>Email:</b> <a href='mailto:"+obj.contact_email+"'>"+obj.contact_email+"</a></span>"):"")+
 					  ((obj.contact_website!="")?("<span class='contact_website'><b>Website:</b> <a href='"+obj.contact_website+"' target='_blank''>"+obj.contact_website+"</a></span>"):"")+
-					  "<p class='fee'>"+
+					  "<hr>"+
+					  "<p class='fee' style='margin-top:5px; '>"+
+					  	"<b class='subtitle'>Fee: </b><br>"+
 					    (function(){
 					    	var result='';
 					    	$.each(obj.serviceTypes, function(i,k){
@@ -484,12 +495,23 @@ var run={
 					    	return result;
 					    })()+
 					  "</p>"+
-					  ((app.geocodingMarker)?("<div class='route'><a href='#' onclick='run.route("+obj.lat+", "+obj.lng+")'><img  src='images/1420698239_directions.png' title='get Direction' /></a></div>"):"")+
+					  "<p class='fee'>"+
+					  	"<b class='subtitle'>Additional Program Fee: </b><br>"+
+					    (function(){
+					    	var result='', label={"ADSCRN":"Alcohol/Drug Screening", "BADCK":"Bad Check", "DUPDL":"Duplicate DL 101", "LATPYM":"Late Payment", "LOA":"Leave of Absence", "MISACT":"Missed Activity","REINST":"Reinstate","RESCH":"Reschedule", "XFERIN":"Transfer In", "XFEROU":"Transfer Out","OTHER":"Other"};
+					    	$.each(label, function(k,v){
+					    		if(obj.adminFees[k]){
+					    			result+="<span>"+v+": <b>$ "+run.addComma(obj.adminFees[k])+"</b></span>";
+					    		}
+					    	})
+					    	return result;
+					    })()+
+					  "</p>"+
+					  
 				  "</div>";
 			
 		}
 		
-
 		return html;
 	},
 	

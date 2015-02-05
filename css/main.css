@@ -39,7 +39,7 @@ ul {list-style:none; padding:0px; margin:0px; }
 #listContent #listResult > ul > li:hover {background-color:#f1f1f1;}
 #listContent .contentHtml {width:auto; font-size:16px; }
 #listContent .contentHtml span {  }
-#listContent .contentHtml .fee {margin-top:15px; color:#000000; }
+
 
 #listContent .contentHtml .type {font-size:14px; }
 #listContent li .num {position:absolute; top:10px; right:10px; height:30px; padding:6px 7px; font-size:14px; color:#ffffff; background-color:#CC1A4A; background:url("../images/symbol_blank.png") no-repeat top left; background-size: 100% 100%; border-radius:0px; }
@@ -56,14 +56,16 @@ ul {list-style:none; padding:0px; margin:0px; }
 .contentHtml .title {margin-bottom:15px;  font-size:18px;  }
 .contentHtml span {display:block; font-size:13px; color:#555555; line-height:20px; }
 .contentHtml .feeContent {width:30%; }
-.contentHtml .fee {margin-top:15px; }
-.contentHtml .fee table tr:first-child {font-weight:bold; }
-.contentHtml .fee tr.highlight {color:#ff0000; font-weight:bold; }
-.contentHtml .fee span b {font-size:14px; color:#ff0000;}
+.contentHtml .fee {margin-top:15px; display:table; width:100%;}
+
+.contentHtml .fee span {display:block; float:left; width:50%;  }
+.contentHtml .fee span b {font-size:13px; color:#555555;}
+.contentHtml .fee b.subtitle {color:#555555; font-size:13px; }
+.contentHtml button {display:block; font-size:12px; padding:4px; margin-top:10px; }
 .contentHtml .distance {position:absolute; bottom:52px; right:5px; }
 .contentHtml .route {position:absolute; bottom:0px; right:0px; }
 .contentHtml .route img {width:50px; height:50px; }
-
+.contentHtml hr {margin-bottom:0px; margin-top:10px; }
 
 
 /**
