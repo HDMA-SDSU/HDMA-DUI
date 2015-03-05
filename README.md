@@ -7,4 +7,4 @@ HDMA collaborates with Prof. Sheldon Wong (SDSU) and California Department of Hu
 
 The Web application is powered by jQuery, Bootstrap, leaflet API, and Google Fusion Table. 
 
-(http://vision.sdsu.edu/dui/images/hdma-dui.png)
+[screen shot](http://vision.sdsu.edu/dui/images/hdma-dui.png)
