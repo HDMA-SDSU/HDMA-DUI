@@ -344,7 +344,7 @@ var run={
 				
 				//marker=new google.maps.Marker({
 				marker=new MarkerWithLabel({
-					position: {lat: obj.lat, lng: obj.lng},
+					position: {lat: parseFloat(obj.lat), lng: parseFloat(obj.lng)},
 					//map:app.gmap,
 					title:obj.program_name,
 					draggable:false,
