@@ -56,6 +56,8 @@ $(function(){
 		});
 		
 		
+		//test
+		run.updateTable();
 		
 	});
 	
@@ -655,6 +657,52 @@ var run={
        }else{
        		if(callback){callback()}
        }
+	},
+	
+	
+	
+	//update table
+	updateTable: function(params, callback){
+		$.ajax({
+			type:"POST",
+			url:"ws/updateTable.py",
+			dataType:"json",
+			data:{
+				lic_nbr:"0100201100",
+				rows:[
+					"1",
+					"10061",
+					"Bi-Bett Education Program",
+					"100201100",
+					"1",
+					"Alameda",
+					"1",
+					"First Offender / First Offender",
+					"22429 Hesperian Boulevard, Hayward, CA 94541",
+					"",
+					"(510)7838708",
+					"(510)7838725",
+					"",
+					-121.1141834,
+					37.6586068,
+					"100201100",
+					"DUI",
+					"ACTIVE",
+					"First Offender: 345 / 6 Month: 552.88 / 9 Month: 695 / 3 Month - Ages 18-20 Years: 345 / 12 Hour - Ages 18-20 Years: 145.64 / Wet Reckless: 145.65",
+					"",
+					"Josephine Ojeda",
+					"bibetthwd@sbcglobal.net",
+					"OTHER: 5 / XFEROU: 30 / MISACT: 18.44 / LATPYM: 5 / REINST: 50"
+				].join("|")
+			},
+			success: function(json){
+				console.log(json)
+			}
+			
+		})
+		
+	
+		
 	}
 	
 }
