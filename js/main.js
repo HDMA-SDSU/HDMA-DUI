@@ -13,7 +13,35 @@ var app={
 	geocoder:new google.maps.Geocoder(),
 	direction:new google.maps.DirectionsService(),
 	directionRenderer:null,
-	timeout:null
+	timeout:null,
+	label:{
+		fields:{
+			"program_name":"Program Name",
+			"cnty_code":"County Code",
+			"cnty_desc":"County",
+			"address_site":"Address (Site)",
+			"address_mail":"Address (Mail)",
+			"contact_person":"Contact Person",
+			"contact_phone":"Phone",
+			"contact_fax":"Fax",
+			"contact_tfree":"Toll Free",
+			"contact_website":"Website",
+			"contact_email":"Email"
+		},
+		adminFees:{
+			"ADSCRN":"Alcohol/Drug Screening", 
+			"BADCK":"Bad Check", 
+			"DUPDL":"Duplicate DL 101", 
+			"LATPYM":"Late Payment", 
+			"LOA":"Leave of Absence", 
+			"MISACT":"Missed Activity",
+			"REINST":"Reinstate",
+			"RESCH":"Reschedule", 
+			"XFERIN":"Transfer In", 
+			"XFEROU":"Transfer Out",
+			"OTHER":"Other"
+		}
+	}
 	
 }
 
@@ -437,30 +465,54 @@ var run={
 			switch(type){
 				case "edit":
 					var $target=$('#popup_edit'),
-						$body=$target.find('.modal-body'),
-						label={
-							"program_name":"Program Name",
-							"cnty_code":"County Code",
-							"cnty_desc":"County",
-							"address_site":"Address (Site)",
-							"address_mail":"Address (Mail)",
-							"contact_person":"Contact Person",
-							"contact_phone":"Phone",
-							"contact_fax":"Fax",
-							"contact_tfree":"Toll Free",
-							"contact_website":"Website",
-							"contact_email":"Email"
-						};
+						$body=$target.find('.modal-body').html(""),
+						label=app.label.fields;
 						
-					console.log(value.dui)
+					
 					if(value&&value.dui){
+						var serviceTypes=value.dui.values.serviceTypes;
+						
 						$.each(value.dui.values, function(k,v){
 							if(typeof(v)!="object"){
 								if(label[k]){
 									$body.append("<div class='input-group'><span class='input-group-addon'>"+label[k]+"</span><input type='text' class='form-control' placeholder='' value='"+v+"' data-key='"+k+"'/></div>");
 								}
 							}else{
-								
+								var html="<div class='input-group'><span class='input-group-addon'>"+k+"</span><div class='form-control'>"+
+											(function(){
+												var r="", l=app.label.adminFees,
+													title, value;
+												
+												//adminFee
+												if(k=='adminFees'){
+													$.each(l, function(k1,vLabel){
+														if(v[k1]){
+															r+="<div class='input-group'><span class='input-group-addon subtitle'>"+vLabel+"</span><input type='text' class='form-control' placeholder='' value='"+v[k1]+"' data-key='"+k+"-"+k1+"'/></div>";
+														}
+													})
+												}
+												
+												//fee
+												if(k=='fees'){
+													/**
+													$.each(serviceTypes, function(k1,v1){
+														if(v[v1]){
+															r+="<div class='input-group'><span class='input-group-addon subtitle'>"+v1+"</span><input type='text' class='form-control' placeholder='' value='"+v[v1]+"' data-key='"+k+"-"+v1+"'/></div>";
+														}
+													})
+													*/
+													$.each(v, function(k1,v1){
+														r+="<div class='input-group'><span class='input-group-addon subtitle'>"+k1+"</span><input type='text' class='form-control' placeholder='' value='"+v1+"' data-key='"+k+"-"+k1+"'/></div>";
+													})
+												}
+												
+												//service types
+												
+												
+												return r
+											})()
+										 "</div></div>";
+								$body.append(html)
 							}
 						});
 					}
@@ -472,8 +524,7 @@ var run={
 				
 				break;
 				
-				
-				
+
 			}
 			
 			if($target){
@@ -563,7 +614,7 @@ var run={
 					  "<p class='fee'>"+
 					  	"<b class='subtitle'>Additional Program Fee: </b><br>"+
 					    (function(){
-					    	var result='', label={"ADSCRN":"Alcohol/Drug Screening", "BADCK":"Bad Check", "DUPDL":"Duplicate DL 101", "LATPYM":"Late Payment", "LOA":"Leave of Absence", "MISACT":"Missed Activity","REINST":"Reinstate","RESCH":"Reschedule", "XFERIN":"Transfer In", "XFEROU":"Transfer Out","OTHER":"Other"};
+					    	var result='', label=app.label.adminFees;
 					    	$.each(label, function(k,v){
 					    		if(obj.adminFees[k]){
 					    			result+="<span>"+v+": <b>$ "+run.addComma(obj.adminFees[k])+"</b></span>";
@@ -741,14 +792,30 @@ var run={
 			//get values from input form
 			$('#popup_edit input').each(function(){
 				var $this=$(this),
-					key=$this.attr('data-key');
+					keys=$this.attr('data-key').split('-');
 				
-				data[key]=$this.val();
+				if(keys.length>1){
+					data[keys[0]][keys[1]]=$this.val();
+				}else{
+					data[keys[0]]=$this.val();
+				}
 			})
 			
 			//create request values
-			var rows=[], lic_nbr=data.lic_lic_cert_nbr;
-			$.each(data, function(k,v){rows.push(v)})
+			console.log(data)
+			var rows=[], lic_nbr=data.lic_lic_cert_nbr, outputs;
+			$.each(data, function(k,v){
+				if(typeof(v)=="object"){
+					outputs=[];
+					$.each(v, function(k1,v1){
+						outputs.push(k1+": "+v1);
+					})
+					
+					rows.push(outputs.join(' / '))
+				}else{
+					rows.push(v)
+				}
+			})
 			
 			console.log(rows, lic_nbr)
 
