@@ -487,7 +487,7 @@ var run={
 												if(k=='adminFees'){
 													$.each(l, function(k1,vLabel){
 														if(v[k1]){
-															r+="<div class='input-group'><span class='input-group-addon subtitle'>"+vLabel+"</span><input type='text' class='form-control' placeholder='' value='"+v[k1]+"' data-key='"+k+"-"+k1+"'/></div>";
+															r+="<div class='input-group'><span class='input-group-addon subtitle'>"+vLabel+"</span><input type='text' class='form-control' placeholder='' value='"+v[k1]+"' data-key='"+k+"&"+k1+"'/></div>";
 														}
 													})
 												}
@@ -502,7 +502,7 @@ var run={
 													})
 													*/
 													$.each(v, function(k1,v1){
-														r+="<div class='input-group'><span class='input-group-addon subtitle'>"+k1+"</span><input type='text' class='form-control' placeholder='' value='"+v1+"' data-key='"+k+"-"+k1+"'/></div>";
+														r+="<div class='input-group'><span class='input-group-addon subtitle'>"+k1+"</span><input type='text' class='form-control' placeholder='' value='"+v1+"' data-key='"+k+"&"+k1+"'/></div>";
 													})
 												}
 												
@@ -792,7 +792,7 @@ var run={
 			//get values from input form
 			$('#popup_edit input').each(function(){
 				var $this=$(this),
-					keys=$this.attr('data-key').split('-');
+					keys=$this.attr('data-key').split('&');
 				
 				if(keys.length>1){
 					data[keys[0]][keys[1]]=$this.val();
@@ -801,8 +801,15 @@ var run={
 				}
 			})
 			
+			//copy fees and adminFess to all_Fee and all_adminFee
+			data["all_Fee"]=data["fees"]
+			data["all_adminFee"]=data["adminFees"]
+			
+			delete data["fees"]
+			delete data["adminFees"]
+		
+			
 			//create request values
-			console.log(data)
 			var rows=[], lic_nbr=data.lic_lic_cert_nbr, outputs;
 			$.each(data, function(k,v){
 				if(typeof(v)=="object"){
@@ -811,9 +818,9 @@ var run={
 						outputs.push(k1+": "+v1);
 					})
 					
-					rows.push(outputs.join(' / '))
+					rows.push(k+"==="+outputs.join(' / '))
 				}else{
-					rows.push(v)
+					rows.push(k+"==="+v)
 				}
 			})
 			
@@ -821,7 +828,7 @@ var run={
 
 		}
 		
-		return;
+		
 		
 		$.ajax({
 			type:"POST",
