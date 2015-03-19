@@ -54,11 +54,7 @@ $(function(){
 		run.query('select * from ' + app.tableID.update, function(json){
 			run.showResult(json);		
 		});
-		
-		
-		//test
-		run.updateTable();
-		
+				
 	});
 	
 })
@@ -381,10 +377,8 @@ var run={
 				app.markerCluster.addMarker(marker)
 				
 				//show list
-				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"<span class='badge num'>"+(i+1)+"</span></li>");
-				
+				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"<span class='badge num'>"+(i+1)+"</span><button class='edit'>edit</button></li>");	
 			
-				
 			})
 			
 			//app.markers
@@ -409,6 +403,20 @@ var run={
 				google.maps.event.trigger(marker,'click')
 			})
 			
+			//add a click event on edit button
+			$list.find('button.edit').click(function(){
+				var $this=$(this),
+					$li=$this.parent(),
+					id=$li.attr('data-id'),
+					marker=app.markers[id];
+				
+				if(marker&&marker.dui){
+					run.showPopup("edit", marker);
+					
+					$('#popup_edit button.updateData').attr('data-id', id);
+				}
+			})
+			
 		
 		}else{
 			//if no result
@@ -418,6 +426,61 @@ var run={
 			
 		}
 			
+	},
+	
+	
+	//show popup
+	showPopup: function(type, value){
+		if(type&&value){
+			var $target;
+			
+			switch(type){
+				case "edit":
+					var $target=$('#popup_edit'),
+						$body=$target.find('.modal-body'),
+						label={
+							"program_name":"Program Name",
+							"cnty_code":"County Code",
+							"cnty_desc":"County",
+							"address_site":"Address (Site)",
+							"address_mail":"Address (Mail)",
+							"contact_person":"Contact Person",
+							"contact_phone":"Phone",
+							"contact_fax":"Fax",
+							"contact_tfree":"Toll Free",
+							"contact_website":"Website",
+							"contact_email":"Email"
+						};
+						
+					console.log(value.dui)
+					if(value&&value.dui){
+						$.each(value.dui.values, function(k,v){
+							if(typeof(v)!="object"){
+								if(label[k]){
+									$body.append("<div class='input-group'><span class='input-group-addon'>"+label[k]+"</span><input type='text' class='form-control' placeholder='' value='"+v+"' data-key='"+k+"'/></div>");
+								}
+							}else{
+								
+							}
+						});
+					}
+					
+				break;
+				case "login":
+				
+				
+				
+				break;
+				
+				
+				
+			}
+			
+			if($target){
+				$target.modal("show");
+			}
+			
+		}
 	},
 	
 	
@@ -661,15 +724,47 @@ var run={
 	
 	
 	
-	//update table
-	updateTable: function(params, callback){
+	//update data
+	updateData: function(){
+		var $target=$('#popup_edit'),
+			id=$target.find('button.updateData').attr('data-id'),
+			marker=app.markers[id],
+			data;
+			
+		if(!marker){console.log('[ERROR] run.updateData: cannot find marker'); return; }
+		
+		if(marker&&marker.dui&&marker.dui.values){
+			data=$.extend({}, marker.dui.values);
+		}
+		
+		if(data){
+			//get values from input form
+			$('#popup_edit input').each(function(){
+				var $this=$(this),
+					key=$this.attr('data-key');
+				
+				data[key]=$this.val();
+			})
+			
+			//create request values
+			var rows=[], lic_nbr=data.lic_lic_cert_nbr;
+			$.each(data, function(k,v){rows.push(v)})
+			
+			console.log(rows, lic_nbr)
+
+		}
+		
+		return;
+		
 		$.ajax({
 			type:"POST",
 			url:"ws/updateTable.py",
 			dataType:"json",
 			data:{
-				lic_nbr:"0100201100",
-				rows:[
+				lic_nbr:lic_nbr,
+				rows:rows.join('|')
+				/**
+				[
 					"1",
 					"10061",
 					"Bi-Bett Education Program",
@@ -694,6 +789,7 @@ var run={
 					"bibetthwd@sbcglobal.net",
 					"OTHER: 5 / XFEROU: 30 / MISACT: 18.44 / LATPYM: 5 / REINST: 50"
 				].join("|")
+				*/
 			},
 			success: function(json){
 				console.log(json)

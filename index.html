@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>DUI Map</title>
+		<title>California DUI Provider Map || HDMA@SDSU</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="description" content="" />
 		<meta name="keywords" content="" />
@@ -23,7 +23,7 @@
 	<body>
 			<!--header-->
 			<div id='header'>
-				<h4>DUI Map</h4>
+				<h4>DUI MAP</h4>
 				<div class="input-group">
 		          <input type="text" class="form-control" placeholder="Input an address or zipcode" data-value='address'>
 		          <img class='loading' src='images/loading.gif' />
@@ -67,7 +67,23 @@
 			</div>
 		
 		
-		
+			<!--popup edit-->
+			<div id='popup_edit' class='modal'>
+				<div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				        <h4 class="modal-title">Update DUI Provider's information</h4>
+				      </div>
+				      <div class="modal-body">
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				        <button type="button" class="btn btn-primary updateData" onclick='run.updateData()'>Save changes</button>
+				      </div>
+				   </div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div>
 		
 		
 		
