@@ -18,14 +18,8 @@ ul {list-style:none; padding:0px; margin:0px; }
 /**
  * 	header
  */
-#header {width:100%; padding:10px !important; text-align:left !important; height:60px; }
-#header > * {float:left; }
-#header h4 {color:#ffffff;}
-#header .input-group {width:60.5%; margin-left:20px; }
-#header #logo {float:right; }
-#header img.logo {height:32px; margin-left:5px;}
-#header .alert {position:absolute; top:33px; left:0px; z-index:100; width:86%; display:none; }
-#header .loading {position:absolute; top:6px; right:195px; width:20px; height:20px; display:none;  }
+.header ul.navbar-nav {float:right; }
+
 
 /**
  * 	list
@@ -80,6 +74,9 @@ ul {list-style:none; padding:0px; margin:0px; }
 .modal .subtitle {font-size:12px; }
 .modal .loading {width:25px; height:25px; margin-right:20px; display:none;  }
 .modal .error {color:#ff0000;}
+
+#popup_confirmUpdate .modal-body ul {list-style:disc; padding:10px; }
+#popup_confirmUpdate .modal-body ul > li {padding-bottom:5px; }
 
 /**
  * 	responsive UI

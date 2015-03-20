@@ -41,8 +41,8 @@ var app={
 			"XFEROU":"Transfer Out",
 			"OTHER":"Other"
 		}
-	}
-	
+	},
+	changes:{}
 }
 
 
@@ -112,8 +112,8 @@ var init={
 			//if value=all, make a default view to search by addresses
 			if(value=='all'){value='address'; placeHolder='Input a location'; text='Search by Address';$header.find("input[type='text']").val("")}
 			
-			$header.find("input[type='text']").attr({"data-value": value, 'placeHolder': placeHolder});
-			$header.find("#btn-search").text(text);
+			//$header.find("input[type='text']").attr({"data-value": value, 'placeHolder': placeHolder});
+			//$header.find("#btn-search").text(text);
 			
 			run.search();
 		});
@@ -159,6 +159,15 @@ var init={
             }, 500)
 		})
 		
+		
+		//popup_edit input chnage event
+		$('#popup_edit').on("change", "input[type='text']", function(){
+			var $this=$(this),
+				id=$this.attr('data-key'),
+				value=$this.val();
+				
+			app.changes[id]=value;
+		})
 		
 		
 		
@@ -467,10 +476,12 @@ var run={
 					var $target=$('#popup_edit'),
 						$body=$target.find('.modal-body').html(""),
 						label=app.label.fields;
-						
 					
 					if(value&&value.dui){
 						var serviceTypes=value.dui.values.serviceTypes;
+						
+						//clear app.changes
+						app.changes={};
 						
 						$.each(value.dui.values, function(k,v){
 							if(typeof(v)!="object"){
@@ -524,13 +535,36 @@ var run={
 				
 				break;
 				case "confirmUpdate":
-					$("#popup_edit").css('z-index', 1030);
-					$target=$('#popup_confirmUpdate').modal('show').on('hidden.bs.modal', function(){
-						$("#popup_edit").css('z-index', 1040);
+					var html="<ul>", $confirmUpdate=$('#popup_confirmUpdate'), $edit=$('#popup_edit'), labelField=app.label.fields, labelAdminFee=app.label.adminFees;
+					
+					$.each(app.changes, function(k,v){
+						k=k.split('&');
+						
+						if(k.length>1){
+							k=(labelField[k[0]])?(labelField[k[0]]+"---"+((labelAdminFee[k[1]])?labelAdminFee[k[1]]:k[1])):k[0]+"---"+k[1]
+						}else{
+							k=(labelField[k[0]])?labelField[k[0]]:k
+						}
+						
+						html+="<li><b>"+k+"</b>: "+ v+"</li>";
 					});
-				break;	
-			
-
+					html+="</ul>";
+					
+					//enable submit button
+					$confirmUpdate.find('button.updateData').prop('disabled', false);
+					if(html=="<ul></ul>"){html="No changes. Please check again!"; $confirmUpdate.find('button.updateData').prop('disabled', true);}
+					
+					
+					$confirmUpdate.find('.modal-body').html(html);
+					
+					$edit.css('z-index', 1030);
+					$target=$confirmUpdate.modal('show').off('hidden.bs.model').on('hidden.bs.modal', function(){
+						$edit.css('z-index', 1040);
+					});
+				break;
+				case "searchLocation":
+					$target=$('#popup_searchLocation');
+				break;
 			}
 			
 			if($target){
