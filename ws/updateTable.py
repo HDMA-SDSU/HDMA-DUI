@@ -1,4 +1,4 @@
-import requests, cgi, json
+import requests, cgi, json,os
 
 
 #temporary disable warning info in the requests
@@ -7,13 +7,15 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
+#to avoid the error: You can change the cache directory by setting the PYTHON_EGG_CACHE environment variable to point to an accessible directory.
+os.environ['PYTHON_EGG_CACHE'] = '/tmp'
+
 
 print ""
 
 
 #===========================================================================================
 def googleLogin():
-    import os
     
     #login and use google api
     p12=os.path.join(os.path.dirname(os.path.realpath(__file__)),"key1.pem") #"D:\\github\\hdma-dui\\ws\\key1.pem"
@@ -91,7 +93,7 @@ if(lic_nbr is not None and updateData is not None):
             col=columns[i]
             if col in inputObject:
                 if(str(inputObject[col])!=str(row)):
-                    updates.append(str(col) + "=" + inputObject[col])
+                    updates.append(str(col) + "='" + inputObject[col]+"'")
 
 
         #output

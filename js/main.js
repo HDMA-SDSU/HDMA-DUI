@@ -459,7 +459,7 @@ var run={
 	
 	//show popup
 	showPopup: function(type, value){
-		if(type&&value){
+		if(type){
 			var $target;
 			
 			switch(type){
@@ -523,7 +523,13 @@ var run={
 				
 				
 				break;
-				
+				case "confirmUpdate":
+					$("#popup_edit").css('z-index', 1030);
+					$target=$('#popup_confirmUpdate').modal('show').on('hidden.bs.modal', function(){
+						$("#popup_edit").css('z-index', 1040);
+					});
+				break;	
+			
 
 			}
 			
@@ -828,8 +834,11 @@ var run={
 
 		}
 		
+		//show loading
+		var $confirm=$("#popup_confirmUpdate");
+		$confirm.find(".loading").show();
 		
-		
+		//send back to update
 		$.ajax({
 			type:"POST",
 			url:"ws/updateTable.py",
@@ -837,36 +846,24 @@ var run={
 			data:{
 				lic_nbr:lic_nbr,
 				rows:rows.join('|')
-				/**
-				[
-					"1",
-					"10061",
-					"Bi-Bett Education Program",
-					"100201100",
-					"1",
-					"Alameda",
-					"1",
-					"First Offender / First Offender",
-					"22429 Hesperian Boulevard, Hayward, CA 94541",
-					"",
-					"(510)7838708",
-					"(510)7838725",
-					"",
-					-122.1141834,
-					37.6586068,
-					"100201100",
-					"DUI",
-					"ACTIVE",
-					"First Offender: 345 / 6 Month: 552.88 / 9 Month: 695 / 3 Month - Ages 18-20 Years: 345 / 12 Hour - Ages 18-20 Years: 145.64 / Wet Reckless: 145.65",
-					"",
-					"Josephine Ojeda",
-					"bibetthwd@sbcglobal.net",
-					"OTHER: 5 / XFEROU: 30 / MISACT: 18.44 / LATPYM: 5 / REINST: 50"
-				].join("|")
-				*/
 			},
 			success: function(json){
 				console.log(json)
+				//if update successfully
+				if(json&&json.response&&json.response.kind=='fusiontables#sqlresponse'&&json.response.columns.length==1&&json.response.columns[0]=='affected_rows'){
+					alert('updateData: succeed!!!');
+					
+					
+					$('#popup_edit, #popup_confirmUpdate').modal('hide');	
+				}else{
+					$confirm.find(".modal-body").append("<div class='error'>[ERROR] updateData:" + (function(){$.each(json, function(k,v){return k+": "+v})})()+"</div>");
+				}
+				
+				$confirm.find(".loading").hide();
+			},
+			error: function(){
+				$confirm.find(".modal-body").append("<div class='error'>[ERROR] cannot post the request to server!</div>");
+				$confirm.find(".loading").hide();
 			}
 			
 		})
