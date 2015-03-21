@@ -13,6 +13,7 @@
 		<link rel="stylesheet" href="css/bootstrap.min.css" />
 		<link rel="stylesheet" href="css/main.css" />
 		<!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
+		
 		<script src="js/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyAqd6BFSfKhHPiGaNUXnSt6jAzQ9q_3DyU'></script>
@@ -23,44 +24,26 @@
 	<body>
 			<!--header-->
 			<nav class="navbar navbar-inverse navbar-static-top header">
-				  <div class="container-fluid">
-				    <div class="navbar-header">
-				      <a class="navbar-brand" href="#">
-				        California DUI Directory
-				      </a>
-				      
-				      
-				    </div>
-				  </div>
-				  
-				  
-				  <ul class="nav navbar-nav">
-					     <li class="active"><a href="#" onclick='run.showPopup("searchLocation")'>search location</a></li>
-					     <li><a href="#">Link</a></li>
-					  </ul>
-				  
-				  
-				  
-				  
+				<div class="container-fluid">
+					<div class="navbar-header">
+					   <a class="navbar-brand" href="#">California DUI Directory Map</a>
+					   <ul>
+							<li><a href='http://humandynamics.sdsu.edu/' target='_blank'><img class='logo' src='images/HDMA_Logo_Small_For_Dark_Background_ICON.png' /></a></li>
+							<li><a href='http://www.sdsu.edu/' target='_blank'><img class='logo' src='images/SDSUhorz_2color_RV.png' /></a></li>
+						</ul>
+					</div>
+				</div>
+					  
+				<!--menu-->  
+				<ul class="nav navbar-nav">
+					<li value='searchLocation' title='Search the 10 nearest DUI providers based on your location'><a href="#"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><span class="glyphicon-class">Search DUI by Address</span></a></li>
+					<li value='resource' title='Read more about DUI'><a href="#"><span class="glyphicon glyphicon-book" aria-hidden="true"></span><span class="glyphicon-class">DUI Resource</span></a></li>
+					<li value='about' title='About us'><a href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><span class="glyphicon-class">About</span></a></li>
+					<li value='login' title='Login'><a href="#"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="glyphicon-class login-text">Login</span></a></li>
+						     
+				</ul>  
 			</nav>
 				
-				
-				 
-				
-				
-		
-				
-			
-		        
-		        <!--
-		        <div id='logo'>
-		        	<a href='http://humandynamics.sdsu.edu/' target='_blank'><img class='logo' src='images/HDMA_Logo_Small_For_Dark_Background_ICON.png' /></a>
-		        	<a href='http://www.sdsu.edu/' target='_blank'><img class='logo' src='images/SDSUhorz_2color_RV.png' /></a>
-		        </div>
-		        -->
-		        
-		
-			
 			<div id='mainContent'>
 				<!-- map content -->
 				<div id='gmap'></div>
@@ -74,6 +57,9 @@
 					</div>
 				</div>
 			</div>
+		
+		
+		
 		
 		
 			<!--popup edit-->
@@ -116,36 +102,112 @@
 			</div>
 			
 			
+			
 			<!--popup confirm update-->
 			<div id='popup_searchLocation' class='modal'>
-				<!--search-->
-				<div class="input-group">
-				    <input type="text" class="form-control" placeholder="Input an address or zipcode to find the 10 nearest DUI near your place" data-value='address'>
-				    <img class='loading' src='images/loading.gif' />
-				          
-				    <div class="alert alert-warning" role="alert">No Result. Please search again.</div>
-				    <div class="input-group-btn">
-				          	<button type="button" class="btn btn-primary" tabindex="-1" id='btn-search' >Search by Location</button>
-				            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-				              <span class="caret"></span>
-				              <span class="sr-only">Toggle Dropdown</span>
-				            </button>
-				            <ul class="dropdown-menu dropdown-menu-left" role="menu">
-				              <!--<li><a href='#'>Advanced Search</a></li>
-				              <li class="divider"></li>-->
-				              <li><a href="#" data-value='address' data-placeHolder='Input an address or zipcode to find the 10 nearest DUI near your place' >Search by Location</a></li>
-				              <!--<li><a href="#" data-value='serviceType' data-placeHolder='Select a service type' >Search by DUI Type</a></li>
-				              <li><a href="#" data-value='name' data-placeHolder='Input a DUI name' >Search by DUI name</a></li>-->
-				              <li><a href="#" data-value='all' data-placeHolder='Input an address or zipcode to find the 10 nearest DUI near your place' >Show All</a></li>
-				            </ul>
-				            
-				    </div>
-				</div>
+				<div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				        <h4 class="modal-title">Search DUI by Address or Zip Code</h4>
+				      </div>
+				      <div class="modal-body">
+				      	<p>Please input an address or zipcode to find the 10 nearest DUI near your place</p>
+				      	<!--search-->
+						<div class="input-group">
+						    <input type="text" class="form-control" placeholder="Input an address or zipcode" data-value='address'>
+						    <img class='loading' src='images/loading.gif' />
+						          
+						    <div class="alert alert-warning" role="alert">No Result. Please search again.</div>
+						    <div class="input-group-btn">
+						          	<button type="button" class="btn btn-primary" tabindex="-1" id='btn-search' >Search by Location</button>
+						            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						              <span class="caret"></span>
+						              <span class="sr-only">Toggle Dropdown</span>
+						            </button>
+						            <ul class="dropdown-menu dropdown-menu-left" role="menu">
+						              <!--<li><a href='#'>Advanced Search</a></li>
+						              <li class="divider"></li>-->
+						              <li><a href="#" data-value='address' data-placeHolder='Input an address or zipcode to find the 10 nearest DUI near your place' >Search by Location</a></li>
+						              <!--<li><a href="#" data-value='serviceType' data-placeHolder='Select a service type' >Search by DUI Type</a></li>
+						              <li><a href="#" data-value='name' data-placeHolder='Input a DUI name' >Search by DUI name</a></li>-->
+						              <li><a href="#" data-value='all' data-placeHolder='Input an address or zipcode to find the 10 nearest DUI near your place' >Show All</a></li>
+						            </ul>
+						            
+						    </div>
+						</div>
+				      </div>
+				   </div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
 			</div>
 			
+			
+			
+			
+			<!--popup login-->
+			<div id='popup_login' class='modal'>
+				<div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				        <h4 class="modal-title">Login</h4>
+				      </div>
+				      <div class="modal-body">
+				      	<p>Please login by your username and password to update the information of DUI program.</p>
+				      	<p></p>
+				      	<div class="input-group">
+						  <span class="input-group-addon" id="basic-addon1">Username</span>
+						  <input type="text" class="form-control" id='username' placeholder="Username" >
+						</div>
+						<P></P>
+						<div class="input-group">
+						  <span class="input-group-addon" id="basic-addon1">Password</span>
+						  <input type="text" class="form-control" id='password' placeholder="Password">
+						</div>
+				      </div>
+				      <div class="modal-footer">
+						<img class='loading' src='images/loading.gif'/>
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="button" class="btn btn-primary updateData" onclick='run.login()'>Log in</button>
+				      </div>
+				   </div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div>
 		
 		
 		
+			<!--popup about-->
+			<div id='popup_about' class='modal'>
+				<div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				        <h4 class="modal-title">About</h4>
+				      </div>
+				      <div class="modal-body">
+				      	<p>If you are the offender of DUI (Driving under the influence) in CA, you need to attend one of DUI programs. California Department of Human Service already provides a directory of DUI providers on its website (<a href='http://www.dhcs.ca.gov/individuals/Pages/ProviderDirectory-DUI.aspx' target='_blank'>http://www.dhcs.ca.gov/individuals/Pages/ProviderDirectory-DUI.aspx</a>). But, it is in PDF format and may be time-consuming to find an appropriate one.</p>
+				      	<p>HDMA collaborates with Prof. Sheldon Wong (SDSU) and California Department of Human Service to create a Web application to visualize and map DUI providers in CA. Users can directly go to http://vision.sdsu.edu/dui/ to check and search a DUI providers.</p>
+				      </div>
+				   </div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div>
+		
+		
+			<!--popup about-->
+			<div id='popup_resource' class='modal'>
+				<div class="modal-dialog">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				        <h4 class="modal-title">DUI Resource</h4>
+				      </div>
+				      <div class="modal-body">
+				      	
+				      	
+				      </div>
+				   </div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div>
 		
 		
 		

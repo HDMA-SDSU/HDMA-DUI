@@ -6,7 +6,7 @@ ul {list-style:none; padding:0px; margin:0px; }
 /**
  * 	mainContent
  */
-#mainContent {width:100%; position:relative; height:94%; }
+#mainContent {width:100%; position:relative; height:95%; }
 
 
 /**
@@ -18,7 +18,14 @@ ul {list-style:none; padding:0px; margin:0px; }
 /**
  * 	header
  */
-.header ul.navbar-nav {float:right; }
+.header ul.navbar-nav {float:right; margin-right:5px; }
+.header {margin-bottom:2px; background-color:transparent; border:0px; }
+.header img {height:25px; }
+.header .glyphicon-class {margin-left:5px; }
+.header .navbar-header ul {float:left; margin-top:11px; }
+.header .navbar-header ul li {float:left; margin-right:20px; }
+
+
 
 
 /**
@@ -77,6 +84,21 @@ ul {list-style:none; padding:0px; margin:0px; }
 
 #popup_confirmUpdate .modal-body ul {list-style:disc; padding:10px; }
 #popup_confirmUpdate .modal-body ul > li {padding-bottom:5px; }
+
+#popup_searchLocation .modal-content {}
+#popup_searchLocation .alert {display:none; }
+#popup_searchLocation .loading {display:none; position:absolute; left:60%; margin:0px; top:3px;  }
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * 	responsive UI
