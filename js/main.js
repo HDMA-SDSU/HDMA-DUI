@@ -888,9 +888,10 @@ var run={
 		//send back to update
 		$.ajax({
 			type:"POST",
-			url:"ws/updateTable.py",
+			url:"ws/ws.py",
 			dataType:"json",
 			data:{
+				type:"updateData",
 				lic_nbr:lic_nbr,
 				rows:rows.join('|')
 			},
@@ -916,6 +917,53 @@ var run={
 		})
 		
 	
+		
+	},
+	
+	
+	//login 
+	login: function(){
+		var $target=$("#popup_login"),
+			username=$target.find("input[id='username']").val(),
+			password=$target.find("input[id='password']").val(),
+			$msg=$target.find('.error'),
+			$loading=$target.find('.loading'),
+			msg="Username and Password is not match. Please check again!";
+			
+		if(username&&username!=""&&password&&password!=""){
+			//clear msg and show loading
+			$msg.html("");
+			$loading.show();
+			
+			//password md5
+			password=$.md5(password)
+			
+			//send request
+			$.ajax({
+				url:"ws/ws.py",
+				type:"POST",
+				dataType:"json",
+				data:{
+					username:username,
+					password:password,
+					type:"login"
+				},
+				success: function(json){
+					console.log(json)
+					
+					$loading.hide();
+					$target.modal('hide');
+				},
+				error: function(err){
+					$msg.html(err);
+				}
+			});
+			
+		}else{
+			$msg.html(msg)
+		}
+		
+		
 		
 	}
 	
