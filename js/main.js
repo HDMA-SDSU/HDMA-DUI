@@ -92,18 +92,28 @@ $(function(){
 //init
 var init={
 	ui: function(){
-		var $header=$("#header");
+		//header click event
+		$(".header ul.navbar-nav li").click(function(){
+			var $this=$(this),
+				value=$this.attr('value');
+			
+			if(value){
+				$("#popup_"+value).modal('show');
+			}
+		});
+		
+		
+		var $searchLocation=$("#popup_searchLocation");
 		
 		//input 
-		$header.find("input[type='text']").keyup(function(e){
+		$searchLocation.find("input[type='text']").keyup(function(e){
 			if(e.keyCode==13){
 				run.search();
 			}
 		})
 		
-		
 		//search dropdown menu
-		$header.find(".dropdown-menu > li > a").click(function(){
+		$searchLocation.find(".dropdown-menu > li > a").click(function(){
 			var $this=$(this),
 				value=$this.attr("data-value"),
 				placeHolder=$this.attr('data-placeHolder'),
@@ -119,9 +129,10 @@ var init={
 		});
 		
 		//search button
-		$header.find("#btn-search").click(function(){
+		$searchLocation.find("#btn-search").click(function(){
 			run.search();
 		});
+		
 		
 		
 		//filter
@@ -200,7 +211,7 @@ var run={
 	//search
 	search: function(){
 		//geocoding
-		var $this=$("#header input[type='text']"), 
+		var $this=$("#popup_searchLocation input[type='text']"), 
 			value=$this.val(),
 			type=$this.attr('data-value');
 		
@@ -212,7 +223,7 @@ var run={
 		$("#listFilter").val("");
 		
 		//show loading
-		$("#header .loading").show();
+		$("#popup_searchLocation .loading").show();
 		
 		if(type&&type!=""){
 			switch(type){
@@ -294,7 +305,7 @@ var run={
 				//size:new google.maps.Size(35,35),
 				scaledSize: new google.maps.Size(35,35)
 			},
-			title: "Your Location: "+ $("#header input[type='text']").val()
+			title: "Your Location: "+ $("#popup_searchLocation input[type='text']").val()
 		});
 		
 		
@@ -357,9 +368,9 @@ var run={
 			
 
 			//show Badge nad hide loading
-			var $header=$("#header")
+			var $searchLocation=$("#popup_searchLocation")
 			$("#listContent .badge").html(rows.length).show();
-			$header.find(".alert, .loading").hide();
+			$searchLocation.find(".alert, .loading").hide();
 			
 			//enable filter
 			$("#listFilter").removeAttr('disabled');
@@ -455,11 +466,13 @@ var run={
 			})
 			
 		
+			//hide modal
+			$("#popup_searchLocation").modal('hide')
 		}else{
 			//if no result
 			//hide Badge
 			$("#listContent .badge").html("").hide();
-			$("#header .alert").show();
+			$("#popup_searchLocation .alert").show();
 			
 		}
 			
