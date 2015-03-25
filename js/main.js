@@ -13,36 +13,8 @@ var app={
 	geocoder:new google.maps.Geocoder(),
 	direction:new google.maps.DirectionsService(),
 	directionRenderer:null,
-	timeout:null,
-	label:{
-		fields:{
-			"program_name":"Program Name",
-			"cnty_code":"County Code",
-			"cnty_desc":"County",
-			"address_site":"Address (Site)",
-			"address_mail":"Address (Mail)",
-			"contact_person":"Contact Person",
-			"contact_phone":"Phone",
-			"contact_fax":"Fax",
-			"contact_tfree":"Toll Free",
-			"contact_website":"Website",
-			"contact_email":"Email"
-		},
-		adminFees:{
-			"ADSCRN":"Alcohol/Drug Screening", 
-			"BADCK":"Bad Check", 
-			"DUPDL":"Duplicate DL 101", 
-			"LATPYM":"Late Payment", 
-			"LOA":"Leave of Absence", 
-			"MISACT":"Missed Activity",
-			"REINST":"Reinstate",
-			"RESCH":"Reschedule", 
-			"XFERIN":"Transfer In", 
-			"XFEROU":"Transfer Out",
-			"OTHER":"Other"
-		}
-	},
-	changes:{}
+	timeout:null
+	
 }
 
 
@@ -82,7 +54,11 @@ $(function(){
 		run.query('select * from ' + app.tableID.update, function(json){
 			run.showResult(json);		
 		});
-				
+		
+		
+		//test
+		run.updateTable();
+		
 	});
 	
 })
@@ -92,28 +68,18 @@ $(function(){
 //init
 var init={
 	ui: function(){
-		//header click event
-		$(".header ul.navbar-nav li").click(function(){
-			var $this=$(this),
-				value=$this.attr('value');
-			
-			if(value){
-				$("#popup_"+value).modal('show');
-			}
-		});
-		
-		
-		var $searchLocation=$("#popup_searchLocation");
+		var $header=$("#header");
 		
 		//input 
-		$searchLocation.find("input[type='text']").keyup(function(e){
+		$header.find("input[type='text']").keyup(function(e){
 			if(e.keyCode==13){
 				run.search();
 			}
 		})
 		
+		
 		//search dropdown menu
-		$searchLocation.find(".dropdown-menu > li > a").click(function(){
+		$header.find(".dropdown-menu > li > a").click(function(){
 			var $this=$(this),
 				value=$this.attr("data-value"),
 				placeHolder=$this.attr('data-placeHolder'),
@@ -122,17 +88,16 @@ var init={
 			//if value=all, make a default view to search by addresses
 			if(value=='all'){value='address'; placeHolder='Input a location'; text='Search by Address';$header.find("input[type='text']").val("")}
 			
-			//$header.find("input[type='text']").attr({"data-value": value, 'placeHolder': placeHolder});
-			//$header.find("#btn-search").text(text);
+			$header.find("input[type='text']").attr({"data-value": value, 'placeHolder': placeHolder});
+			$header.find("#btn-search").text(text);
 			
 			run.search();
 		});
 		
 		//search button
-		$searchLocation.find("#btn-search").click(function(){
+		$header.find("#btn-search").click(function(){
 			run.search();
 		});
-		
 		
 		
 		//filter
@@ -171,15 +136,6 @@ var init={
 		})
 		
 		
-		//popup_edit input chnage event
-		$('#popup_edit').on("change", "input[type='text']", function(){
-			var $this=$(this),
-				id=$this.attr('data-key'),
-				value=$this.val();
-				
-			app.changes[id]=value;
-		})
-		
 		
 		
 	},
@@ -211,7 +167,7 @@ var run={
 	//search
 	search: function(){
 		//geocoding
-		var $this=$("#popup_searchLocation input[type='text']"), 
+		var $this=$("#header input[type='text']"), 
 			value=$this.val(),
 			type=$this.attr('data-value');
 		
@@ -223,7 +179,7 @@ var run={
 		$("#listFilter").val("");
 		
 		//show loading
-		$("#popup_searchLocation .loading").show();
+		$("#header .loading").show();
 		
 		if(type&&type!=""){
 			switch(type){
@@ -305,7 +261,7 @@ var run={
 				//size:new google.maps.Size(35,35),
 				scaledSize: new google.maps.Size(35,35)
 			},
-			title: "Your Location: "+ $("#popup_searchLocation input[type='text']").val()
+			title: "Your Location: "+ $("#header input[type='text']").val()
 		});
 		
 		
@@ -368,9 +324,9 @@ var run={
 			
 
 			//show Badge nad hide loading
-			var $searchLocation=$("#popup_searchLocation")
+			var $header=$("#header")
 			$("#listContent .badge").html(rows.length).show();
-			$searchLocation.find(".alert, .loading").hide();
+			$header.find(".alert, .loading").hide();
 			
 			//enable filter
 			$("#listFilter").removeAttr('disabled');
@@ -425,8 +381,10 @@ var run={
 				app.markerCluster.addMarker(marker)
 				
 				//show list
-				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"<span class='badge num'>"+(i+1)+"</span><button class='edit'>edit</button></li>");	
+				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"<span class='badge num'>"+(i+1)+"</span></li>");
+				
 			
+				
 			})
 			
 			//app.markers
@@ -451,140 +409,15 @@ var run={
 				google.maps.event.trigger(marker,'click')
 			})
 			
-			//add a click event on edit button
-			$list.find('button.edit').click(function(){
-				var $this=$(this),
-					$li=$this.parent(),
-					id=$li.attr('data-id'),
-					marker=app.markers[id];
-				
-				if(marker&&marker.dui){
-					run.showPopup("edit", marker);
-					
-					$('#popup_edit button.updateData').attr('data-id', id);
-				}
-			})
-			
 		
-			//hide modal
-			$("#popup_searchLocation").modal('hide')
 		}else{
 			//if no result
 			//hide Badge
 			$("#listContent .badge").html("").hide();
-			$("#popup_searchLocation .alert").show();
+			$("#header .alert").show();
 			
 		}
 			
-	},
-	
-	
-	//show popup
-	showPopup: function(type, value){
-		if(type){
-			var $target;
-			
-			switch(type){
-				case "edit":
-					var $target=$('#popup_edit'),
-						$body=$target.find('.modal-body').html(""),
-						label=app.label.fields;
-					
-					if(value&&value.dui){
-						var serviceTypes=value.dui.values.serviceTypes;
-						
-						//clear app.changes
-						app.changes={};
-						
-						$.each(value.dui.values, function(k,v){
-							if(typeof(v)!="object"){
-								if(label[k]){
-									$body.append("<div class='input-group'><span class='input-group-addon'>"+label[k]+"</span><input type='text' class='form-control' placeholder='' value='"+v+"' data-key='"+k+"'/></div>");
-								}
-							}else{
-								var html="<div class='input-group'><span class='input-group-addon'>"+k+"</span><div class='form-control'>"+
-											(function(){
-												var r="", l=app.label.adminFees,
-													title, value;
-												
-												//adminFee
-												if(k=='adminFees'){
-													$.each(l, function(k1,vLabel){
-														if(v[k1]){
-															r+="<div class='input-group'><span class='input-group-addon subtitle'>"+vLabel+"</span><input type='text' class='form-control' placeholder='' value='"+v[k1]+"' data-key='"+k+"&"+k1+"'/></div>";
-														}
-													})
-												}
-												
-												//fee
-												if(k=='fees'){
-													/**
-													$.each(serviceTypes, function(k1,v1){
-														if(v[v1]){
-															r+="<div class='input-group'><span class='input-group-addon subtitle'>"+v1+"</span><input type='text' class='form-control' placeholder='' value='"+v[v1]+"' data-key='"+k+"-"+v1+"'/></div>";
-														}
-													})
-													*/
-													$.each(v, function(k1,v1){
-														r+="<div class='input-group'><span class='input-group-addon subtitle'>"+k1+"</span><input type='text' class='form-control' placeholder='' value='"+v1+"' data-key='"+k+"&"+k1+"'/></div>";
-													})
-												}
-												
-												//service types
-												
-												
-												return r
-											})()
-										 "</div></div>";
-								$body.append(html)
-							}
-						});
-					}
-					
-				break;
-				case "login":
-				
-				
-				
-				break;
-				case "confirmUpdate":
-					var html="<ul>", $confirmUpdate=$('#popup_confirmUpdate'), $edit=$('#popup_edit'), labelField=app.label.fields, labelAdminFee=app.label.adminFees;
-					
-					$.each(app.changes, function(k,v){
-						k=k.split('&');
-						
-						if(k.length>1){
-							k=(labelField[k[0]])?(labelField[k[0]]+"---"+((labelAdminFee[k[1]])?labelAdminFee[k[1]]:k[1])):k[0]+"---"+k[1]
-						}else{
-							k=(labelField[k[0]])?labelField[k[0]]:k
-						}
-						
-						html+="<li><b>"+k+"</b>: "+ v+"</li>";
-					});
-					html+="</ul>";
-					
-					//enable submit button
-					$confirmUpdate.find('button.updateData').prop('disabled', false);
-					if(html=="<ul></ul>"){html="No changes. Please check again!"; $confirmUpdate.find('button.updateData').prop('disabled', true);}
-					
-					
-					$confirmUpdate.find('.modal-body').html(html);
-					
-					$edit.css('z-index', 1030);
-					$target=$confirmUpdate.modal('show').off('hidden.bs.model').on('hidden.bs.modal', function(){
-						$edit.css('z-index', 1040);
-					});
-				break;
-				case "searchLocation":
-					$target=$('#popup_searchLocation');
-				break;
-			}
-			
-			if($target){
-				$target.modal("show");
-			}
-			
-		}
 	},
 	
 	
@@ -667,7 +500,7 @@ var run={
 					  "<p class='fee'>"+
 					  	"<b class='subtitle'>Additional Program Fee: </b><br>"+
 					    (function(){
-					    	var result='', label=app.label.adminFees;
+					    	var result='', label={"ADSCRN":"Alcohol/Drug Screening", "BADCK":"Bad Check", "DUPDL":"Duplicate DL 101", "LATPYM":"Late Payment", "LOA":"Leave of Absence", "MISACT":"Missed Activity","REINST":"Reinstate","RESCH":"Reschedule", "XFERIN":"Transfer In", "XFEROU":"Transfer Out","OTHER":"Other"};
 					    	$.each(label, function(k,v){
 					    		if(obj.adminFees[k]){
 					    			result+="<span>"+v+": <b>$ "+run.addComma(obj.adminFees[k])+"</b></span>";
@@ -828,89 +661,42 @@ var run={
 	
 	
 	
-	//update data
-	updateData: function(){
-		var $target=$('#popup_edit'),
-			id=$target.find('button.updateData').attr('data-id'),
-			marker=app.markers[id],
-			data;
-			
-		if(!marker){console.log('[ERROR] run.updateData: cannot find marker'); return; }
-		
-		if(marker&&marker.dui&&marker.dui.values){
-			data=$.extend({}, marker.dui.values);
-		}
-		
-		if(data){
-			//get values from input form
-			$('#popup_edit input').each(function(){
-				var $this=$(this),
-					keys=$this.attr('data-key').split('&');
-				
-				if(keys.length>1){
-					data[keys[0]][keys[1]]=$this.val();
-				}else{
-					data[keys[0]]=$this.val();
-				}
-			})
-			
-			//copy fees and adminFess to all_Fee and all_adminFee
-			data["all_Fee"]=data["fees"]
-			data["all_adminFee"]=data["adminFees"]
-			
-			delete data["fees"]
-			delete data["adminFees"]
-		
-			
-			//create request values
-			var rows=[], lic_nbr=data.lic_lic_cert_nbr, outputs;
-			$.each(data, function(k,v){
-				if(typeof(v)=="object"){
-					outputs=[];
-					$.each(v, function(k1,v1){
-						outputs.push(k1+": "+v1);
-					})
-					
-					rows.push(k+"==="+outputs.join(' / '))
-				}else{
-					rows.push(k+"==="+v)
-				}
-			})
-			
-			console.log(rows, lic_nbr)
-
-		}
-		
-		//show loading
-		var $confirm=$("#popup_confirmUpdate");
-		$confirm.find(".loading").show();
-		
-		//send back to update
+	//update table
+	updateTable: function(params, callback){
 		$.ajax({
 			type:"POST",
 			url:"ws/updateTable.py",
 			dataType:"json",
 			data:{
-				lic_nbr:lic_nbr,
-				rows:rows.join('|')
+				lic_nbr:"0100201100",
+				rows:[
+					"1",
+					"10061",
+					"Bi-Bett Education Program",
+					"100201100",
+					"1",
+					"Alameda",
+					"1",
+					"First Offender / First Offender",
+					"22429 Hesperian Boulevard, Hayward, CA 94541",
+					"",
+					"(510)7838708",
+					"(510)7838725",
+					"",
+					-122.1141834,
+					37.6586068,
+					"100201100",
+					"DUI",
+					"ACTIVE",
+					"First Offender: 345 / 6 Month: 552.88 / 9 Month: 695 / 3 Month - Ages 18-20 Years: 345 / 12 Hour - Ages 18-20 Years: 145.64 / Wet Reckless: 145.65",
+					"",
+					"Josephine Ojeda",
+					"bibetthwd@sbcglobal.net",
+					"OTHER: 5 / XFEROU: 30 / MISACT: 18.44 / LATPYM: 5 / REINST: 50"
+				].join("|")
 			},
 			success: function(json){
 				console.log(json)
-				//if update successfully
-				if(json&&json.response&&json.response.kind=='fusiontables#sqlresponse'&&json.response.columns.length==1&&json.response.columns[0]=='affected_rows'){
-					alert('updateData: succeed!!!');
-					
-					
-					$('#popup_edit, #popup_confirmUpdate').modal('hide');	
-				}else{
-					$confirm.find(".modal-body").append("<div class='error'>[ERROR] updateData:" + (function(){$.each(json, function(k,v){return k+": "+v})})()+"</div>");
-				}
-				
-				$confirm.find(".loading").hide();
-			},
-			error: function(){
-				$confirm.find(".modal-body").append("<div class='error'>[ERROR] cannot post the request to server!</div>");
-				$confirm.find(".loading").hide();
 			}
 			
 		})

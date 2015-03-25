@@ -6,7 +6,7 @@ ul {list-style:none; padding:0px; margin:0px; }
 /**
  * 	mainContent
  */
-#mainContent {width:100%; position:relative; height:95%; }
+#mainContent {width:100%; position:relative; height:94%; }
 
 
 /**
@@ -18,15 +18,14 @@ ul {list-style:none; padding:0px; margin:0px; }
 /**
  * 	header
  */
-.header ul.navbar-nav {float:right; margin-right:5px; }
-.header {margin-bottom:2px; background-color:transparent; border:0px; }
-.header img {height:25px; }
-.header .glyphicon-class {margin-left:5px; }
-.header .navbar-header ul {float:left; margin-top:11px; }
-.header .navbar-header ul li {float:left; margin-right:20px; }
-
-
-
+#header {width:100%; padding:10px !important; text-align:left !important; height:60px; }
+#header > * {float:left; }
+#header h4 {color:#ffffff;}
+#header .input-group {width:60.5%; margin-left:20px; }
+#header #logo {float:right; }
+#header img.logo {height:32px; margin-left:5px;}
+#header .alert {position:absolute; top:33px; left:0px; z-index:100; width:86%; display:none; }
+#header .loading {position:absolute; top:6px; right:195px; width:20px; height:20px; display:none;  }
 
 /**
  * 	list
@@ -41,13 +40,10 @@ ul {list-style:none; padding:0px; margin:0px; }
 #listContent .contentHtml {width:auto; font-size:16px; }
 #listContent .contentHtml span {  }
 
+
 #listContent .contentHtml .type {font-size:14px; }
 #listContent li .num {position:absolute; top:10px; right:10px; height:30px; padding:6px 7px; font-size:14px; color:#ffffff; background-color:#CC1A4A; background:url("../images/symbol_blank.png") no-repeat top left; background-size: 100% 100%; border-radius:0px; }
 #listContent .contentHtml .distance {}
-
-#listResult button.edit {position:absolute; top:10px; right:30px; }
-
-
 
 /**
  * 	content html
@@ -70,34 +66,6 @@ ul {list-style:none; padding:0px; margin:0px; }
 .contentHtml .route {position:absolute; bottom:0px; right:0px; }
 .contentHtml .route img {width:50px; height:50px; }
 .contentHtml hr {margin-bottom:0px; margin-top:10px; }
-
-
-
-/**
- * 	popup window
- */
-.modal .input-group {width:100%; margin-bottom:2px; }
-.modal .input-group .input-group-addon {width:27%; text-align:left; max-width:180px;  }
-.modal .subtitle {font-size:12px; }
-.modal .loading {width:25px; height:25px; margin-right:20px; display:none;  }
-.modal .error {color:#ff0000;}
-
-#popup_confirmUpdate .modal-body ul {list-style:disc; padding:10px; }
-#popup_confirmUpdate .modal-body ul > li {padding-bottom:5px; }
-
-#popup_searchLocation .modal-content {}
-#popup_searchLocation .alert {display:none; }
-#popup_searchLocation .loading {display:none; position:absolute; left:60%; margin:0px; top:3px;  }
-
-
-
-
-
-
-
-
-
-
 
 
 /**

@@ -1,14 +1,11 @@
-import requests, cgi, json,os
+import requests, cgi, json
 
 
 #temporary disable warning info in the requests
-#requests.packages.urllib3.disable_warnings()
+requests.packages.urllib3.disable_warnings()
 import warnings
 warnings.filterwarnings("ignore")
 
-
-#to avoid the error: You can change the cache directory by setting the PYTHON_EGG_CACHE environment variable to point to an accessible directory.
-os.environ['PYTHON_EGG_CACHE'] = '/tmp'
 
 
 print ""
@@ -16,6 +13,7 @@ print ""
 
 #===========================================================================================
 def googleLogin():
+    import os
     
     #login and use google api
     p12=os.path.join(os.path.dirname(os.path.realpath(__file__)),"key1.pem") #"D:\\github\\hdma-dui\\ws\\key1.pem"
@@ -51,7 +49,6 @@ def googleLogin():
 #variables
 tableID="1Eg5WpSFKryXCs9PNfdTbeInw8tbnHLDBQCc-X3z3"
 apiKey="AIzaSyAqd6BFSfKhHPiGaNUXnSt6jAzQ9q_3DyU"
-tableID_userAccount="1dcHBafxUnjkwRVokWA-6uztkb_ZE2YYDb5K0rWIo"
 
 
 
@@ -63,11 +60,7 @@ updateData= form["rows"].value if form["rows"] is not None else None
 
 if(lic_nbr is not None and updateData is not None):
     updateData=updateData.split("|")
-    inputObject={}
-    for r in updateData:
-        t=r.split('===')
-        inputObject[t[0]]=t[1]
-
+ 
     
     #query params
     params={
@@ -91,10 +84,8 @@ if(lic_nbr is not None and updateData is not None):
         updates=[]
         columns=rowData["columns"]
         for i, row in enumerate(rowData["rows"][0]):
-            col=columns[i]
-            if col in inputObject:
-                if(str(inputObject[col])!=str(row)):
-                    updates.append(str(col) + "='" + inputObject[col]+"'")
+            if(str(updateData[i])!=str(row)):
+                updates.append(str(columns[i]) + "=" + updateData[i])
 
 
         #output
@@ -119,7 +110,7 @@ if(lic_nbr is not None and updateData is not None):
             #update
             if(googleService is not None):
                 output["response"]=googleService.query().sql(sql=updateSQL).execute()
-        
+
 
 
         #output results
