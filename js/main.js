@@ -42,7 +42,8 @@ var app={
 			"OTHER":"Other"
 		}
 	},
-	changes:{}
+	changes:{},
+	user:{}
 }
 
 
@@ -178,6 +179,14 @@ var init={
 				value=$this.val();
 				
 			app.changes[id]=value;
+		})
+		
+		
+		//password input 
+		$("#password").keyup(function(e){
+			if(e.keyCode==13){
+				run.login();	
+			}
 		})
 		
 		
@@ -636,7 +645,7 @@ var run={
 
 		if(obj){
 			//console.log(obj)
-			html="<div class='contentHtml'>"+
+			html="<div class='contentHtml' data-id='"+obj.lic_lic_cert_nbr+"'>"+
 					  "<p class='type'>DUI for "+ obj.serviceTypes.join(" / ") +"</p>"+
 					  "<h3 class='title'>"+
 					  	((obj.contact_website!="")?("<a href='"+obj.contact_website+"' target='_blank'>"+obj.program_name+"</a>"):obj.program_name) +
@@ -885,36 +894,43 @@ var run={
 		var $confirm=$("#popup_confirmUpdate");
 		$confirm.find(".loading").show();
 		
-		//send back to update
-		$.ajax({
-			type:"POST",
-			url:"ws/ws.py",
-			dataType:"json",
-			data:{
-				type:"updateData",
-				lic_nbr:lic_nbr,
-				rows:rows.join('|')
-			},
-			success: function(json){
-				console.log(json)
-				//if update successfully
-				if(json&&json.response&&json.response.kind=='fusiontables#sqlresponse'&&json.response.columns.length==1&&json.response.columns[0]=='affected_rows'){
-					alert('updateData: succeed!!!');
+		
+		if(app.user&&app.user.username&&app.user.password){
+			//send back to update
+			$.ajax({
+				type:"POST",
+				url:"ws/ws.py",
+				dataType:"json",
+				data:{
+					type:"updateData",
+					lic_nbr:lic_nbr,
+					username:app.user.username,
+					password:app.user.password,
+					rows:rows.join('|')
+				},
+				success: function(json){
+					console.log(json)
+					//if update successfully
+					if(json&&json.status=='OK'){
+						alert('updateData: succeed!!!');
+						
+						
+						$('#popup_edit, #popup_confirmUpdate').modal('hide');	
+					}else{
+						$confirm.find(".modal-body").append("<div class='error'>[ERROR] updateData:" + json.msg+"</div>");
+					}
 					
-					
-					$('#popup_edit, #popup_confirmUpdate').modal('hide');	
-				}else{
-					$confirm.find(".modal-body").append("<div class='error'>[ERROR] updateData:" + (function(){$.each(json, function(k,v){return k+": "+v})})()+"</div>");
+					$confirm.find(".loading").hide();
+				},
+				error: function(){
+					$confirm.find(".modal-body").append("<div class='error'>[ERROR] cannot post the request to server!</div>");
+					$confirm.find(".loading").hide();
 				}
 				
-				$confirm.find(".loading").hide();
-			},
-			error: function(){
-				$confirm.find(".modal-body").append("<div class='error'>[ERROR] cannot post the request to server!</div>");
-				$confirm.find(".loading").hide();
-			}
-			
-		})
+			})
+		}
+		
+		
 		
 	
 		
@@ -952,7 +968,27 @@ var run={
 					console.log(json)
 					
 					$loading.hide();
-					$target.modal('hide');
+					
+					if(json.status!="OK"){
+						$msg.html(json.status); 
+					}else{
+						//check if it is needed to change password
+						if(json.login_times&&json.login_times==1){
+							//show change password modal
+							$target.css('z-index', 1030);
+							$("#popup_changePW").modal('show').off('hidden.bs.model').on('hidden.bs.modal', function(){
+								$target.css('z-index', 1040);
+							});
+						}else{
+							
+							$target.modal('hide');
+						}
+						
+						
+						//after login
+						run.afterLogin(json)
+						
+					}
 				},
 				error: function(err){
 					$msg.html(err);
@@ -962,6 +998,88 @@ var run={
 		}else{
 			$msg.html(msg)
 		}
+		
+		
+		
+	},
+	
+	
+	//after login
+	afterLogin: function(json){
+		app.user=json;
+						
+		$(".login-text").html(json.username +" Logout").parents("li[value='login']").off("click").on("click", function(){
+			location.reload();
+		});
+		
+		//enable edit button
+		$("#listResult .contentHtml[data-id='"+parseInt(json.username)+"']").siblings(".edit").show();
+		
+		
+	},
+	
+	
+	//CHANGE PASSWORD
+	changePW: function(){
+		var $target=$("#popup_changePW"),
+			oldPW=$target.find("input#oldPW").val(),
+			newPW=$target.find("input#newPW").val(),
+			confirmPW=$target.find("input#confirmPW").val(),
+			email=$target.find("input#email").val(),
+			$msg=$target.find(".error")
+			$loading=$target.find(".loading");
+			
+		
+		//check value
+		var check=true;
+		$.each([oldPW, newPW, confirmPW, email], function(i,o){
+			if(!o&&o==""){check=false;}
+		})
+		if(!check){
+			$msg.html("Please check email, oldPW, newPW, confirmPW again!");return; 
+		}
+		
+		//check old pw
+		if($.md5(oldPW)!=app.user.password){$msg.html("The old password is not matching your current password. Please check again!"); return;}	
+		
+		//check new pw and confirm pw
+		if(newPW!=confirmPW){$msg.html("The confirm and new password is not matching. Please check again!"); return;}
+		
+		$msg.html("");
+		$loading.show();
+		
+		//update password
+		$.ajax({
+			url:"ws/ws.py",
+			type:"POST",
+			dataType:"json",
+			data:{
+				type:"changePW",
+				username:app.user.username,
+				oldPW: oldPW,
+				newPW: newPW,
+				email: email
+			},
+			success: function(json){
+				console.log(json);
+				
+				$loading.hide();
+				if(json.status!="OK"){$msg.html(json.msg); return;}
+				
+				//update password
+				app.user.password=$.md5(newPW)
+
+				$target.modal("hide");
+				$("#popup_login").modal("hide")
+				alert("Change Password Successfully!!")
+			},
+			error: function(e){
+				$msg.html("The process was not succeeded. Please contact the system administrator.");
+			}
+		});
+		
+		
+		
 		
 		
 		

@@ -45,14 +45,24 @@ def googleLogin():
     #print(googleService.query().sql(sql='SELECT * FROM 1gvB3SedL89vG5r1128nUN5ICyyw7Wio5g1w1mbk').execute())
 #===========================================================================================
 
+
 #update data
 def updateData(form):
+    import md5
+    
     lic_nbr= form["lic_nbr"].value if form["lic_nbr"] is not None else "0100201100"
     updateData= form["rows"].value if form["rows"] is not None else None
+    username= form["username"].value if form["username"] is not None else None
+    password= form["password"].value if form["password"] is not None else None
 
     tableID="1Eg5WpSFKryXCs9PNfdTbeInw8tbnHLDBQCc-X3z3"
     apiKey="AIzaSyAqd6BFSfKhHPiGaNUXnSt6jAzQ9q_3DyU"
+    tableID_account="1dcHBafxUnjkwRVokWA-6uztkb_ZE2YYDb5K0rWIo"
 
+    #output
+    output={"status":"error", "msg":""}
+
+    
     if(lic_nbr is not None and updateData is not None):
         updateData=updateData.split("|")
         inputObject={}
@@ -60,6 +70,55 @@ def updateData(form):
             t=r.split('===')
             inputObject[t[0]]=t[1]
 
+        #get google API
+        googleService=googleLogin()
+
+        if(googleService is not None):
+            #check username and password
+            sql="SELECT password FROM " + tableID_account + " WHERE lic_lic_cert_nbr='"+username+"'"
+            result=googleService.query().sql(sql=sql).execute()
+
+            if(result is not None and result["rows"] is not None):
+                pw=result["rows"][0][0]
+
+                #check password
+                if(password==md5.new(pw).hexdigest()):
+                    #get rowdata
+                    sql="SELECT * FROM " + tableID +" WHERE lic_lic_cert_nbr='"+username+"'"
+                    rowData=googleService.query().sql(sql=sql).execute()
+
+                    #get rowid
+                    sql="SELECT ROWID FROM " + tableID +" WHERE lic_lic_cert_nbr='"+username+"'"
+                    rowID=googleService.query().sql(sql=sql).execute()["rows"][0][0]
+                    
+                    
+                    if(rowData is not None and rowID is not None):
+                        #check each row if it is different with updateData
+                        updates=[]
+                        columns=rowData["columns"]
+                        for i, row in enumerate(rowData["rows"][0]):
+                            col=columns[i]
+                            if col in inputObject:
+                                if(str(inputObject[col])!=str(row)):
+                                    updates.append(str(col) + "='" + inputObject[col]+"'")
+
+
+                        #check if there is any updates from client sides   
+                        if(len(updates)>0):
+                            #make query sql
+                            sql="UPDATE " + tableID +" SET " + ', '.join(updates) + " WHERE ROWID='"+ rowID +"'"
+                            output["msg"]=googleService.query().sql(sql=sql).execute()
+                            output["status"]="OK"
+                        else:
+                            output["msg"]="No values are changed! Please check again!"
+
+
+    #output results
+    return output
+        
+
+        
+'''
         
         #query params
         params={
@@ -76,57 +135,107 @@ def updateData(form):
         params["sql"]="SELECT ROWID FROM " + tableID +" WHERE lic_lic_cert_nbr="+lic_nbr
         r=requests.get("https://www.googleapis.com/fusiontables/v2/query", params=params, verify=False)
         rowID=r.json()["rows"][0][0]
-       
+'''    
 
-        if(rowData is not None and rowID is not None):
-            #check each row if it is different with updateData
-            updates=[]
-            columns=rowData["columns"]
-            for i, row in enumerate(rowData["rows"][0]):
-                col=columns[i]
-                if col in inputObject:
-                    if(str(inputObject[col])!=str(row)):
-                        updates.append(str(col) + "='" + inputObject[col]+"'")
-
-
-            #output
-            output={
-                "updateRow":{
-                    "rowID": rowID,
-                    "values": updates
-                },
-                "response":None
-            }
-
-
-            #check if there is any updates from client sides   
-            if(len(updates)>0):
-                #google login
-                googleService=googleLogin()
-                
-                #make query sql
-                updateSQL="UPDATE " + tableID +" SET " + ', '.join(updates) + " WHERE ROWID='"+ rowID +"'"
-
-
-                #update
-                if(googleService is not None):
-                    output["response"]=googleService.query().sql(sql=updateSQL).execute()
-            
-
-
-            #output results
-            return output
 #===========================================================================================
 
 #login
 def login(form):
-    tableID_userAccount="1dcHBafxUnjkwRVokWA-6uztkb_ZE2YYDb5K0rWIo"
+    import md5
+    
+    tableID="1dcHBafxUnjkwRVokWA-6uztkb_ZE2YYDb5K0rWIo"
     username= form["username"].value if form["username"] is not None else None
     password= form["password"].value if form["password"] is not None else None
 
-    return {"username":username, "password":password }
+    #output
+    output={"username":username, "status":"error", "msg":"login error. Username or password is not correct! Please input again.", "login_times": 0 }
+
+    if(password is not None and password <>""): 
+        #query userAccount spreadsheet in the googld doc
+        #beacuse the spreadsheet is private, we need to use google API to login and query
+        #google login
+        googleService=googleLogin()
+                    
+        #make query sql
+        sql="SELECT lic_lic_cert_nbr, password, login_times, ROWID FROM " + tableID +" WHERE lic_lic_cert_nbr='" + username +"'"
+        
+        #query
+        if(googleService is not None):
+            result=googleService.query().sql(sql=sql).execute()
+
+            #if username is in the spreadsheet >> check password
+            if(result["rows"] is not None and len(result["rows"])==1):
+                row=result["rows"]
+                pw=row[0][1]
+                pw=md5.new(pw).hexdigest()
+                
+                if(password==pw):
+                    output["status"]="OK"
+                    output["password"]=pw
+
+                    #update login time
+                    login_times=int(row[0][2])+1
+                    rowid=row[0][3]
+                    sql="UPDATE "+tableID+" SET login_times="+str(login_times)+" WHERE ROWID='"+rowid+"'"
+                    googleService.query().sql(sql=sql).execute()
+                    
+                    output["login_times"]=login_times
+        
+    return output
 
 #===========================================================================================
+
+
+#change password
+def changePW(form):
+    import md5
+    
+    tableID="1dcHBafxUnjkwRVokWA-6uztkb_ZE2YYDb5K0rWIo"
+    username= form["username"].value if form["username"] is not None else None
+    old_pw= form["oldPW"].value if form["oldPW"] is not None else None
+    new_pw= form["newPW"].value if form["newPW"] is not None else None
+    email= form["email"].value if form["email"] is not None else None
+
+    #output
+    output={"username":username, "status":"error", "msg":"" }
+        
+    if(new_pw is not None and new_pw!="" and email is not None and email <>"" and username is not None and username <>""):
+        #query userAccount spreadsheet in the googld doc
+        #beacuse the spreadsheet is private, we need to use google API to login and query
+        #google login
+        googleService=googleLogin()
+                    
+        #query
+        if(googleService is not None):
+            #make query sql
+            sql="SELECT ROWID FROM "+ tableID +" WHERE lic_lic_cert_nbr='"+username+"'";
+            result=googleService.query().sql(sql=sql).execute()
+            
+            if(result is not None and result["rows"] is not None and len(result["rows"])==1):
+                rowid=result["rows"][0][0]
+
+                output["msg"]=rowid
+                if(rowid is not None):
+                    sql="UPDATE " + tableID +" SET password='" + new_pw +"', input_email='"+email+"' WHERE ROWID='" + rowid +"'"
+                    result=googleService.query().sql(sql=sql).execute()
+
+                    output["msg"]=result
+                    
+                    if(result is not None):
+                        if(result["rows"][0][0]=="1"):
+                             output["status"]="OK"
+                    
+            else:
+                output["msg"]="Cannot find a ROWID";
+            
+
+        
+    return output
+
+#===========================================================================================
+
+
+
 
 
 
@@ -141,6 +250,7 @@ if(serviceType is not None):
         output=updateData(form)
     if(serviceType=='login'):
         output=login(form)
-
+    if(serviceType=="changePW"):
+        output=changePW(form);
 
 print json.dumps(output)

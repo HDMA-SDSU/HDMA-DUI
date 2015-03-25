@@ -45,7 +45,7 @@ ul {list-style:none; padding:0px; margin:0px; }
 #listContent li .num {position:absolute; top:10px; right:10px; height:30px; padding:6px 7px; font-size:14px; color:#ffffff; background-color:#CC1A4A; background:url("../images/symbol_blank.png") no-repeat top left; background-size: 100% 100%; border-radius:0px; }
 #listContent .contentHtml .distance {}
 
-#listResult button.edit {position:absolute; top:10px; right:30px; }
+#listResult button.edit {position:absolute; top:10px; right:30px; display:none;  }
 
 
 
