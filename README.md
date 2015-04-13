@@ -4,10 +4,8 @@ Deverloper: Chin-Te (Calvin) Jung
 
 
 
-If you are the offender of DUI (Driving under the influence) in CA, you need to attend one of DUI programs. California Department of Human Service already provides a directory of DUI providers on its website (http://www.dhcs.ca.gov/individuals/Pages/ProviderDirectory-DUI.aspx). But, it is PDF file and may be time-consuming to find an appropriate one. 
+If you receive a DUI (Driving Under the Influence) in California (CA), you must attend a DUI program. The CA Department of Human Services provides a PDF of DUI providers (http://www.dhcs.ca.gov/individuals/Pages/ProviderDirectory-DUI.aspx), but using this may be cumbersome. The HDMA Center collaborates with Prof. Sheldon Wong at SDSU and the CA Department of Human Service to create a Web application to visualize and map DUI providers in CA. Users can go directly to http://vision.sdsu.edu/dui/ to check and search for DUI providers.
 
-HDMA collaborates with Prof. Sheldon Wong (SDSU) and California Department of Human Service to create a Web application to visualize and map DUI providers in CA. Users can directly go to http://vision.sdsu.edu/dui/ to check and search a DUI providers.
-
-The Web application is powered by jQuery, Bootstrap, leaflet API, and Google Fusion Table. Please visit the Web application here (http://vision.sdsu.edu/dui/)
+The Web application is powered by jQuery, Bootstrap, Leaflet API, and Google Fusion Tables. Please visit the Web application at http://vision.sdsu.edu/dui/
 
 ![screen shot](http://vision.sdsu.edu/dui/images/hdma-dui.png)
