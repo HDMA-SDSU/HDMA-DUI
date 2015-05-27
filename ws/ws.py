@@ -55,7 +55,7 @@ def updateData(form):
     username= form["username"].value if form["username"] is not None else None
     password= form["password"].value if form["password"] is not None else None
 
-    tableID="1Eg5WpSFKryXCs9PNfdTbeInw8tbnHLDBQCc-X3z3"
+    tableID="1kT9b0pA2m_J_dL0ARBuqZ5ZaOfFc9y7gblw9Ahzi" #"1Eg5WpSFKryXCs9PNfdTbeInw8tbnHLDBQCc-X3z3"
     apiKey="AIzaSyAqd6BFSfKhHPiGaNUXnSt6jAzQ9q_3DyU"
     tableID_account="1dcHBafxUnjkwRVokWA-6uztkb_ZE2YYDb5K0rWIo"
 
@@ -172,6 +172,8 @@ def login(form):
                 if(password==pw):
                     output["status"]="OK"
                     output["password"]=pw
+                    output["msg"]="succeed"
+                    
 
                     #update login time
                     login_times=int(row[0][2])+1

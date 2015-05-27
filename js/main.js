@@ -4,7 +4,7 @@ var app={
 	tableID:{
 		provider:'1qBvlmKMt_9vx6A0nts95ZLbTQE6gtIO9NYyc6jKl',
 		fee:'1BJaFjSBV247xqMbWpGQyAsE4qC6Px8HAH7JPXb2c',
-		update:'14RvFaXQoatlV2-EVutvmek5PSWtt-00rmMaHFhYp'//'1s4VLjbbYjCzu0Ys26HV3v_sHxdpW43aKZpnraxNG'
+		update:'1kT9b0pA2m_J_dL0ARBuqZ5ZaOfFc9y7gblw9Ahzi' //'14RvFaXQoatlV2-EVutvmek5PSWtt-00rmMaHFhYp'//'1s4VLjbbYjCzu0Ys26HV3v_sHxdpW43aKZpnraxNG'
 	},
 	popup:new google.maps.InfoWindow(),
 	markers:[],
@@ -80,7 +80,7 @@ $(function(){
 		});
 		*/
 		
-		run.query('select * from ' + app.tableID.update, function(json){
+		run.query('select * from ' + app.tableID.update + " order by lic_lic_cert_nbr", function(json){
 			run.showResult(json);		
 		});
 				
@@ -121,7 +121,7 @@ var init={
 				text=$this.text();
 			
 			//if value=all, make a default view to search by addresses
-			if(value=='all'){value='address'; placeHolder='Input a location'; text='Search by Address';$header.find("input[type='text']").val("")}
+			if(value=='all'){value='address'; placeHolder='Input a location'; text='Search by Address';$("#inputAddress").val("");}
 			
 			//$header.find("input[type='text']").attr({"data-value": value, 'placeHolder': placeHolder});
 			//$header.find("#btn-search").text(text);
@@ -243,12 +243,14 @@ var run={
 								//get first result
 								var latlng=results[0].geometry.location;
 								run.spatialQuery(latlng.lat(), latlng.lng())
+								$("#listResult li span.badge.num").show();
 							}
 						})
 					}else{
 						//load all dui data
-						run.query('select * from ' + app.tableID.update, function(json){
+						run.query('select * from ' + app.tableID.update +" order by lic_lic_cert_nbr", function(json){
 							run.showResult(json);
+							$("#listResult li span.badge.num").hide();
 						});
 					}
 				break;
@@ -407,7 +409,7 @@ var run={
 						url:"images/symbol_blank.png",
 						scaledSize:new google.maps.Size(30,30),
 					},
-					labelContent:i+1,
+					//labelContent:i+1,
 					labelAnchor: new google.maps.Point(10,25),
 					labelClass: "mapIconLabel",
 					labelInBackground:false
@@ -422,7 +424,7 @@ var run={
 				mapEvent.addListener(marker, 'click', function(e){
 					var values=this.dui.values,
 						serviceTypes=values.serviceTypes,
-						contentHtml=this.dui.contentHtml;
+						contentHtml=run.makeContentHtml(values); //this.dui.contentHtml;
 					
 					app.popup.setContent(contentHtml)
 					app.popup.open(app.gmap, this);
@@ -434,7 +436,7 @@ var run={
 				app.markerCluster.addMarker(marker)
 				
 				//show list
-				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"<span class='badge num'>"+(i+1)+"</span><button class='edit'>edit</button></li>");	
+				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"<span class='badge num' style='display:none;'>"+(i+1)+"</span><button class='edit'>edit</button></li>");	
 			
 			})
 			
@@ -641,12 +643,14 @@ var run={
 	
 	//generate html for popup window and list
 	makeContentHtml: function(obj){
-		var html="";
+		var html="",
+			order_serviceTypes=["First Offender", "18 Month", "30 Month"],
+			serviceTypes=[];
 
 		if(obj){
 			//console.log(obj)
 			html="<div class='contentHtml' data-id='"+obj.lic_lic_cert_nbr+"'>"+
-					  "<p class='type'>DUI for "+ obj.serviceTypes.join(" / ") +"</p>"+
+					  "<p class='type'>DUI Programs Available: "+ (function(){order_serviceTypes.forEach(function(t,i){if(obj.serviceTypes.indexOf(t)!=-1){serviceTypes.push(t)}}); return serviceTypes.join(" / ")})() +"</p>"+
 					  "<h3 class='title'>"+
 					  	((obj.contact_website!="")?("<a href='"+obj.contact_website+"' target='_blank'>"+obj.program_name+"</a>"):obj.program_name) +
 					  	//((app.geocodingMarker)?("<div class='route'><a href='#' onclick='run.route("+obj.lat+", "+obj.lng+")'><img  src='images/1420698239_directions.png' title='get Direction' /></a></div>"):"")+
@@ -667,19 +671,27 @@ var run={
 					  	"<b class='subtitle'>Fee: </b><br>"+
 					    (function(){
 					    	var result='';
+					    	
+					    	$.each(order_serviceTypes, function(i,type){
+					    		if(obj.serviceTypes.indexOf(type)!=-1){
+					    			result+="<span>"+type+": <b>$"+run.addComma(obj.fees[type])+"</b></span>";
+					    		}
+					    	})
+					    	/**
 					    	$.each(obj.serviceTypes, function(i,k){
 					    		result+="<span>"+k+": <b>$ "+run.addComma(obj.fees[k])+"</b></span>";
 					    	})
+					    	*/
 					    	return result;
 					    })()+
 					  "</p>"+
 					  "<p class='fee'>"+
-					  	"<b class='subtitle'>Additional Program Fee: </b><br>"+
+					  	"<b class='subtitle'>Additional Program Fees: </b><br>"+
 					    (function(){
 					    	var result='', label=app.label.adminFees;
 					    	$.each(label, function(k,v){
 					    		if(obj.adminFees[k]){
-					    			result+="<span>"+v+": <b>$ "+run.addComma(obj.adminFees[k])+"</b></span>";
+					    			result+="<span>"+v+": <b>$"+run.addComma(obj.adminFees[k])+"</b></span>";
 					    		}
 					    	})
 					    	return result;
@@ -842,7 +854,8 @@ var run={
 		var $target=$('#popup_edit'),
 			id=$target.find('button.updateData').attr('data-id'),
 			marker=app.markers[id],
-			data;
+			data,
+			$li=$("#listResult li[data-id='"+id+"']");
 			
 		if(!marker){console.log('[ERROR] run.updateData: cannot find marker'); return; }
 		
@@ -870,6 +883,7 @@ var run={
 			delete data["fees"]
 			delete data["adminFees"]
 		
+			console.log(data)
 			
 			//create request values
 			var rows=[], lic_nbr=data.lic_lic_cert_nbr, outputs;
@@ -913,6 +927,21 @@ var run={
 					//if update successfully
 					if(json&&json.status=='OK'){
 						alert('updateData: succeed!!!');
+						
+						//update the html of li and values in the marker
+						//copy fees and adminFess to all_Fee and all_adminFee
+						data["fees"]=data["all_Fee"]
+						data["adminFees"]=data["all_adminFee"]
+						if(app.markers[id]){
+							var marker=app.markers[id];
+							marker.dui={
+								values:data,
+								contentHtml:run.makeContentHtml(data)
+							}
+							$li.html(marker.dui.contentHtml)
+							app.popup.close()
+						}
+						
 						
 						
 						$('#popup_edit, #popup_confirmUpdate').modal('hide');	
