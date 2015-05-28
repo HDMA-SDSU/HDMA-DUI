@@ -16,6 +16,15 @@ ul {list-style:none; padding:0px; margin:0px; }
 .mapIconLabel {font-size:11px; font-weight:bold; color:#f1f1f1; text-align:center; width:20px;}
 
 /**
+ * 	popup window
+ */
+.gm-style-iw .mapit {display:none; }
+
+
+
+
+
+/**
  * 	header
  */
 .header ul.navbar-nav {float:right; margin-right:5px; }
@@ -26,6 +35,10 @@ ul {list-style:none; padding:0px; margin:0px; }
 .header .navbar-header ul li {float:left; margin-right:20px; }
 
 
+/**
+ * 	nav bar 
+ */
+.navbar-inverse .navbar-nav>li>a {color:#dddddd; }
 
 
 /**
@@ -58,20 +71,22 @@ ul {list-style:none; padding:0px; margin:0px; }
 .contentHtml .contactContent {width: 70%; }
 .contentHtml .type {font-weight:bold; }
 .contentHtml .title {margin-bottom:15px;  font-size:18px;  }
-.contentHtml span {display:block; font-size:13px; color:#555555; line-height:20px; }
+.contentHtml .content span {display:block; font-size:13px; color:#555555; line-height:20px; }
 .contentHtml .feeContent {width:30%; }
 .contentHtml .fee {margin-top:15px; display:table; width:100%;}
 
 .contentHtml .fee span {display:block; float:left; width:50%;  }
 .contentHtml .fee span b {font-size:13px; color:#555555;}
 .contentHtml .fee b.subtitle {color:#555555; font-size:13px; }
-.contentHtml button {display:block; font-size:12px; padding:4px; margin-top:10px; }
-.contentHtml .distance {position:absolute; bottom:52px; right:5px; }
+/**.contentHtml button {display:block; font-size:12px; padding:4px; margin-top:10px; }*/
+
 .contentHtml .route {position:absolute; bottom:0px; right:0px; }
 .contentHtml .route img {width:50px; height:50px; }
 .contentHtml hr {margin-bottom:0px; margin-top:10px; }
 
-
+.contentHtml ul.toolbar {display:inline-block; margin-top:0px; margin-bottom:10px;  }
+.contentHtml ul.toolbar li {float:left; margin-right:10px; }
+.contentHtml .distance {font-size:0.8em; }
 
 /**
  * 	popup window
@@ -89,6 +104,9 @@ ul {list-style:none; padding:0px; margin:0px; }
 #popup_searchLocation .modal-content {}
 #popup_searchLocation .alert {display:none; }
 #popup_searchLocation .loading {display:none; position:absolute; left:60%; margin:0px; top:3px;  }
+
+#popup_review span.rating {float:right; position:relative; top:-20px; }
+#popup_review span.rating img {width:25px; height:25px; }
 
 
 

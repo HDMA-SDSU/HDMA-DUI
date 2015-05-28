@@ -1,6 +1,7 @@
 
 var app={
 	gmap:null,
+	gplace:null,
 	tableID:{
 		provider:'1qBvlmKMt_9vx6A0nts95ZLbTQE6gtIO9NYyc6jKl',
 		fee:'1BJaFjSBV247xqMbWpGQyAsE4qC6Px8HAH7JPXb2c',
@@ -191,6 +192,30 @@ var init={
 		
 		
 		
+		var googleReview=function(){
+				var $this=$(this),
+					name=$this.data('value');
+						
+				run.googlePlace("text", name, function(result){
+					console.log(result)
+				});
+			},
+			directions=function(){
+				var $this=$(this),
+					$btn=$this.closest("div.btn-group.directions"),
+					lat=$btn.data("lat"),
+					lng=$btn.data("lng"),
+					type=$this.data("type") || "driving";
+				
+				if(lat&&lng&&type&&type!=""){
+					run.route(lat, lng, type);
+				}
+			}
+		$("#gmap").on("click",".gm-style-iw .googleReview", googleReview).on("click", ".gm-style-iw .directions button:not(.dropdown-toggle), .gm-style-iw .directions ul.dropdown-menu > li > a", directions);
+		$("#listResult").on("click",".googleReview", googleReview).on("click", ".directions button:not(.dropdown-toggle), .directions ul.dropdown-menu > li > a", directions);
+		
+		
+		
 	},
 	
 	
@@ -211,6 +236,8 @@ var init={
 			imagePath:"images/m"
 		});
 	
+		//google place
+		app.gplace=new google.maps.places.PlacesService(app.gmap);
 	}
 }
 
@@ -426,6 +453,7 @@ var run={
 						serviceTypes=values.serviceTypes,
 						contentHtml=run.makeContentHtml(values); //this.dui.contentHtml;
 					
+					$(".gm-style-iw > div").html("")
 					app.popup.setContent(contentHtml)
 					app.popup.open(app.gmap, this);
 				})
@@ -448,9 +476,10 @@ var run={
 			if(options.fitBounds){app.gmap.fitBounds(latlngBounds)}
 			
 			//add a click event on each li in the contentList
-			$list.find("> li").click(function(){
+			$list.on("click", " > li .mapit", function(){
 				var $this=$(this),
-					id=$this.attr('data-id'),
+					$li=$this.closest("div.contentHtml").parent(),
+					id=$li.attr('data-id'),
 					marker=app.markers[id];
 				
 				//sometimes marker cannot be shown on the map because marker.map is null
@@ -460,10 +489,7 @@ var run={
 				app.gmap.setZoom(12);
 				app.gmap.panTo(marker.position);
 				google.maps.event.trigger(marker,'click')
-			})
-			
-			//add a click event on edit button
-			$list.find('button.edit').click(function(){
+			}).on("click", "button.edit", function(){
 				var $this=$(this),
 					$li=$this.parent(),
 					id=$li.attr('data-id'),
@@ -488,6 +514,104 @@ var run={
 		}
 			
 	},
+	
+	
+	
+	//google place
+	googlePlace: function(type, value){
+		if(!type || type=="" || !value || value==''){console.log("[ERROR]run.googlePlace: no type or value! please check again."); return; }
+		
+		var params={
+		}
+		
+		switch(type){
+			case "text":
+				params.query=value
+			
+				app.gplace.textSearch(params, function(results, status){
+					if(status==google.maps.places.PlacesServiceStatus.OK&&results.length>0){
+						//get the first result
+						var place=results[0],
+							id=place.place_id;
+						
+						
+						//get detail
+						if(id){
+							run.googlePlace("detail", id)
+							$("#popup_review").find(".modal-title").html("Google Review: "+ value)
+						}
+						
+						
+						
+						
+					}else{
+						alert(status)
+					}
+					
+				})
+			
+			break;
+			case "detail":
+				params.placeId=value;
+				
+				app.gplace.getDetails(params, function(result, status){
+					if(result&&status==google.maps.places.PlacesServiceStatus.OK){
+						var reviews=result.reviews,
+							rating=result.rating,
+							$target=$("#popup_review"),
+							html="",
+							getName=function(r){
+								return (r.author_name.toUpperCase()=='A GOOGLE USER')?"Anonymous":((r.author_url)?("<a href='"+r.author_url+"' target='_blank'>"+r.author_name+"</a>"):r.author_name)
+							};
+							
+						if(reviews&&reviews.length>0){
+							$.each(reviews, function(i,r){
+								console.log(r)
+								html+="<div class='panel panel-default'>"+
+										"<div class='panel-heading'><h3 class='panel-title'>"+getName(r)+"</h3><span class='rating'>"+run.getRating(r.rating)+"</span><span class='time'>"+moment(r.time).format("MM-DD hh:mm")+"</span></div>"+
+										"<div class='panel-body'>"+r.text+"</div>"+
+									  "</div>";
+							})
+							
+							$target.find(".modal-body").html(html);
+							
+							$target.modal("show")
+						}else{
+							alert("No Reviews")
+						}
+						
+							
+
+						
+					}else{
+						console.log("[ERROR] run.googlePlace.getDetail")
+						console.log(status)
+					}
+					
+				})
+			
+			
+			break;
+			
+			
+		}
+	},
+	
+	
+	//get star
+	getRating: function(num){
+		var html="";
+								
+		for(var i=1;i<6;i++){
+			if(i<=num){
+				html+="<img src='images/star.png' />";
+			}else{
+				html+="<img src='images/star_silver.png' />";
+			}
+		}
+		return html;
+	},
+	
 	
 	
 	//show popup
@@ -645,7 +769,19 @@ var run={
 	makeContentHtml: function(obj){
 		var html="",
 			order_serviceTypes=["First Offender", "18 Month", "30 Month"],
-			serviceTypes=[];
+			serviceTypes=[],
+			getDirections=function(lat ,lng){
+				return '<div class="btn-group directions" data-lat='+obj.lat+' data-lng='+obj.lng+'>'+
+  							'<button type="button" class="btn btn-primary btn-xs" data-type="driving">Directions</button>'+
+  							'<button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button>'+
+  							'<ul class="dropdown-menu" role="menu">'+
+							    '<li><a href="#" data-type="driving">by Driving</a></li>'+
+							    //'<li><a href="#" data-type="bicycling">by Biking</a></li>'+
+							    '<li><a href="#" data-type="transit">by Public Transit</a></li>'+
+							    '<li><a href="#" data-type="walking">by Walk</a></li>'+
+							'</ul>'+
+					   '</div>';
+			};
 
 		if(obj){
 			//console.log(obj)
@@ -654,50 +790,55 @@ var run={
 					  "<h3 class='title'>"+
 					  	((obj.contact_website!="")?("<a href='"+obj.contact_website+"' target='_blank'>"+obj.program_name+"</a>"):obj.program_name) +
 					  	//((app.geocodingMarker)?("<div class='route'><a href='#' onclick='run.route("+obj.lat+", "+obj.lng+")'><img  src='images/1420698239_directions.png' title='get Direction' /></a></div>"):"")+
-					  	((app.geocodingMarker)?("<button onclick='run.route("+obj.lat+", "+obj.lng+")'>Directions</button>"):"")+
 					  "</h3>"+
-					  ((obj.address_site!="")?("<span class='address_site'><b>Address: </b>"+obj.address_site+"</span>"):"")+
-					  //((app.geocodingMarker)?("<span class='distance'>"+run.getDistance(obj.lat, obj.lng)+"</span>"):"")+
-					  ((obj.contact_person!="")?("<span class='contact_person'><b>Contact:</b> "+obj.contact_person+"</span>"):"")+
-					  ((obj.address_mail!="")?("<span class='address_mail'><b>Mail:</b> "+obj.address_mail+"</span>"):"")+
-					  
-					  ((obj.contact_phone!="")?("<span class='contact_phone'><b>Phone:</b> <a href='tel:"+obj.contact_phone+"'>"+run.formatPhone(obj.contact_phone)+"</a></span>"):"")+
-					  ((obj.contact_fax!="")?("<span class='contact_fax'><b>Fax:</b> <a href='tel:"+obj.contact_fax+"'>"+run.formatPhone(obj.contact_fax)+"</a></span>"):"")+
-					  ((obj.contact_tfree!="")?("<span class='contact_tfree'><b>Toll Free:</b> <a href='"+obj.contact_tfree+"'>"+run.formatPhone(obj.contact_tfree)+"</a></span>"):"")+
-					  ((obj.contact_email!="")?("<span class='contact_email'><b>Email:</b> <a href='mailto:"+obj.contact_email+"'>"+obj.contact_email+"</a></span>"):"")+
-					  ((obj.contact_website!="")?("<span class='contact_website'><b>Website:</b> <a href='"+obj.contact_website+"' target='_blank''>"+obj.contact_website+"</a></span>"):"")+
-					  "<hr>"+
-					  "<p class='fee' style='margin-top:5px; '>"+
-					  	"<b class='subtitle'>Fee: </b><br>"+
-					    (function(){
-					    	var result='';
-					    	
-					    	$.each(order_serviceTypes, function(i,type){
-					    		if(obj.serviceTypes.indexOf(type)!=-1){
-					    			result+="<span>"+type+": <b>$"+run.addComma(obj.fees[type])+"</b></span>";
-					    		}
-					    	})
-					    	/**
-					    	$.each(obj.serviceTypes, function(i,k){
-					    		result+="<span>"+k+": <b>$ "+run.addComma(obj.fees[k])+"</b></span>";
-					    	})
-					    	*/
-					    	return result;
-					    })()+
-					  "</p>"+
-					  "<p class='fee'>"+
-					  	"<b class='subtitle'>Additional Program Fees: </b><br>"+
-					    (function(){
-					    	var result='', label=app.label.adminFees;
-					    	$.each(label, function(k,v){
-					    		if(obj.adminFees[k]){
-					    			result+="<span>"+v+": <b>$"+run.addComma(obj.adminFees[k])+"</b></span>";
-					    		}
-					    	})
-					    	return result;
-					    })()+
-					  "</p>"+
-					  
+					  "<ul class='toolbar'>"+
+					  		"<li><button class='mapit btn btn-default btn-xs'>Map it</button></li>"+
+					  		((app.geocodingMarker)?("<li>"+getDirections(obj.lat, obj.lng)+"</li>"):"")+ //((app.geocodingMarker)?("<button onclick='run.route("+obj.lat+", "+obj.lng+")'>Directions</button>"):"")+
+					  		((app.geocodingMarker)?("<li><span class='distance'>"+run.getDistance(obj.lat, obj.lng)+"</span></li>"):"")+
+					  		"<li><button class='googleReview btn btn-default btn-xs' data-value='"+obj.program_name+"'>Google Review</button></li>"+
+					  "</ul>"+
+					  "<div class='content'>"+
+						  ((obj.address_site!="")?("<span class='address_site'><b>Address: </b>"+obj.address_site+"</span>"):"")+
+						  ((obj.contact_person!="")?("<span class='contact_person'><b>Contact:</b> "+obj.contact_person+"</span>"):"")+
+						  ((obj.address_mail!="")?("<span class='address_mail'><b>Mail:</b> "+obj.address_mail+"</span>"):"")+
+						  
+						  ((obj.contact_phone!="")?("<span class='contact_phone'><b>Phone:</b> <a href='tel:"+obj.contact_phone+"'>"+run.formatPhone(obj.contact_phone)+"</a></span>"):"")+
+						  ((obj.contact_fax!="")?("<span class='contact_fax'><b>Fax:</b> <a href='tel:"+obj.contact_fax+"'>"+run.formatPhone(obj.contact_fax)+"</a></span>"):"")+
+						  ((obj.contact_tfree!="")?("<span class='contact_tfree'><b>Toll Free:</b> <a href='"+obj.contact_tfree+"'>"+run.formatPhone(obj.contact_tfree)+"</a></span>"):"")+
+						  ((obj.contact_email!="")?("<span class='contact_email'><b>Email:</b> <a href='mailto:"+obj.contact_email+"'>"+obj.contact_email+"</a></span>"):"")+
+						  ((obj.contact_website!="")?("<span class='contact_website'><b>Website:</b> <a href='"+obj.contact_website+"' target='_blank''>"+obj.contact_website+"</a></span>"):"")+
+						  "<hr>"+
+						  "<p class='fee' style='margin-top:5px; '>"+
+						  	"<b class='subtitle'>Program Fees: </b><br>"+
+						    (function(){
+						    	var result='';
+						    	
+						    	$.each(order_serviceTypes, function(i,type){
+						    		if(obj.serviceTypes.indexOf(type)!=-1){
+						    			result+="<span>"+type+": <b>$"+run.addComma(obj.fees[type])+"</b></span>";
+						    		}
+						    	})
+						    	/**
+						    	$.each(obj.serviceTypes, function(i,k){
+						    		result+="<span>"+k+": <b>$ "+run.addComma(obj.fees[k])+"</b></span>";
+						    	})
+						    	*/
+						    	return result;
+						    })()+
+						  "</p>"+
+						  "<p class='fee'>"+
+						  	"<b class='subtitle'>Additional Fees: </b><br>"+
+						    (function(){
+						    	var result='', label=app.label.adminFees;
+						    	$.each(label, function(k,v){
+						    		if(obj.adminFees[k]){
+						    			result+="<span>"+v+": <b>$"+run.addComma(obj.adminFees[k])+"</b></span>";
+						    		}
+						    	})
+						    	return result;
+						    })()+
+						  "</p>"+
+					  "</div>"+
 				  "</div>";
 			
 		}
@@ -788,29 +929,35 @@ var run={
 	
 	
 	//route
-	route:function(lat,lng){
+	route:function(lat,lng,type){
 		if(!lat||!lng){console.log("[ERROR] run.route: no input lat or lng"); return;}
 		if(!app.geocodingMarker){console.log("[ERROR] run.route: no app.geocodingMarker"); return; }
 		
 		//clear existing route
 		if(app.directionRenderer){app.directionRenderer.setMap(null)}
-		
-		
+	
+		type=type || "driving";
+
 		//start routing
 		app.direction.route({
 			origin: app.geocodingMarker.getPosition(),
 			destination: new google.maps.LatLng(lat,lng),
-			travelMode: google.maps.TravelMode.DRIVING,
+			travelMode: google.maps.TravelMode[type.toUpperCase()],
 			unitSystem: google.maps.UnitSystem.IMPERIAL
 		}, function(result, status){
 			if(status=='OK'){
 				if(result.routes&&result.routes.length>0){
 					
+					app.popup.open(app.gmap, app.geocodingMarker)
+					$(".gm-style-iw > div").html("")
+					
 					app.directionRenderer=new google.maps.DirectionsRenderer({
 						directions: result,
 						map:app.gmap,
-						suppressMarkers:true
+						suppressMarkers:true,
+						panel:$(".gm-style-iw > div")[0]
 					})
+					
 					
 					
 					/**
