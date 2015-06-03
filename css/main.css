@@ -14,6 +14,11 @@ ul {list-style:none; padding:0px; margin:0px; }
  */
 #gmap {width:100%; height:45%;}
 .mapIconLabel {font-size:11px; font-weight:bold; color:#f1f1f1; text-align:center; width:20px;}
+#gmap .map-toc { position:absolute; top:5px; right:100px; z-index:1000; }
+#gmap .map-toc button.btn {float:right; }
+#gmap .map-toc ul {background-color:#ffffff; color:#000000; box-shadow:5px 5px 15px #cccccc; padding:5px 15px 5px 15px; display:none; margin-top:35px; }
+
+
 
 /**
  * 	popup window
@@ -74,10 +79,15 @@ ul {list-style:none; padding:0px; margin:0px; }
 .contentHtml .content span {display:block; font-size:13px; color:#555555; line-height:20px; }
 .contentHtml .feeContent {width:30%; }
 .contentHtml .fee {margin-top:15px; display:table; width:100%;}
-
 .contentHtml .fee span {display:block; float:left; width:50%;  }
 .contentHtml .fee span b {font-size:13px; color:#555555;}
 .contentHtml .fee b.subtitle {color:#555555; font-size:13px; }
+
+.contentHtml .operationHour {margin-top:15px; display:table; width:100%; border-top:1px solid #f1f1f1;}
+.contentHtml .operationHour span {display:block; float:left; width:50%;  }
+.contentHtml .operationHour span b {font-size:13px; color:#555555;}
+.contentHtml .operationHour b.subtitle {color:#555555; font-size:13px; }
+
 /**.contentHtml button {display:block; font-size:12px; padding:4px; margin-top:10px; }*/
 
 .contentHtml .route {position:absolute; bottom:0px; right:0px; }
@@ -109,7 +119,7 @@ ul {list-style:none; padding:0px; margin:0px; }
 #popup_review span.rating img {width:25px; height:25px; }
 
 
-
+#popup_resource .panel-body ul > li {float:left; width:50%; }
 
 
 

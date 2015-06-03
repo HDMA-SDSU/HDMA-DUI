@@ -44,7 +44,16 @@ var app={
 		}
 	},
 	changes:{},
-	user:{}
+	user:{},
+	layers:[
+		{type:"AGMS", label:"San Diego ZipCode", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/labels/MapServer/", options:{layerIds:[1]}},
+		{type:"WMS", label:"San Diego Crime HotSpot", url:"http://vision.sdsu.edu/geoserver/hdma/wms?", options:"hdma:crime2012"},
+		{type:"WMS", label:"San Diego Alcohol Permit", url:"http://vision.sdsu.edu/geoserver/hdma/wms?", options:"hdma:AlcoholLicense"},
+		{type:"AGMS", label:"San Diego Hospital", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{layerIds:[2]}},
+		{type:"AGMS", label:"San Diego Clinic", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{layerIds:[0]}},
+		{type:"AGMS", label:"San Diego Elderly Residential", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{layerIds:[4]}},
+		{type:"AGMS", label:"San Diego Affordable Residential", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{layerIds:[5]}}
+	]
 }
 
 
@@ -84,6 +93,8 @@ $(function(){
 		run.query('select * from ' + app.tableID.update + " order by lic_lic_cert_nbr", function(json){
 			run.showResult(json);		
 		});
+		
+	
 				
 	});
 	
@@ -216,6 +227,10 @@ var init={
 		
 		
 		
+		
+		
+		
+		
 	},
 	
 	
@@ -238,12 +253,136 @@ var init={
 	
 		//google place
 		app.gplace=new google.maps.places.PlacesService(app.gmap);
+		
+		
+		//create toc dom
+		$("#gmap").append("<div class='map-toc'></div>");
+		run.readLayer();
+		
 	}
 }
 
 
 //run
 var run={
+	//readLayer
+	readLayer:function(){
+		var layers=app.layers,
+			$target=$("#gmap .map-toc").html("<button class='btn btn-default'><i class='fa fa-bars'></i></button><ul></ul>"),
+			$ul=$target.find("ul"),
+			$li;
+			
+		$target.hover(function(){
+			$ul.show();
+		}, function(){
+			$ul.hide();
+		});
+		
+		
+
+		$.each(layers, function(i,l){
+			$li=$("<li><div class='checkbox'><label><input type='checkbox'>"+l.label+"</label></div></li>").data("layer", l);
+			$ul.append($li)
+		})
+		
+		//click event
+		$ul.on("click", "li input[type='checkbox']", function(){
+			var $this=$(this),
+				$l=$this.closest("li"),
+				checked=$this.is(':checked')?"show":"hide",
+				data=$l.data("layer");
+				
+			if(data){
+				//if no flayer >> create a flayer
+				if(!data.flayer){data.flayer=run.createLayer(data)}
+				
+				data.flayer.hdma.showhideLayer(checked);
+			}
+			
+		})
+		
+		
+	},
+	
+	
+	
+	//create layer
+	createLayer: function(obj){
+		var flayer=null;
+		if(obj.type&&obj.url){
+			switch(obj.type){
+				case "AGMS":
+					flayer=new gmaps.ags.MapOverlay(obj.url, {exportOptions:obj.options});
+					flayer.hdma={
+						showhideLayer:function(type){
+							if(type=='show'){flayer.setMap(app.gmap)}else{flayer.setMap(null)}
+						}
+					}
+				break;	
+				case "WMS":
+					flayer=run.createWMS(obj.url, obj.options)	
+					flayer.hdma={
+						showhideLayer:function(type){
+							if(type=='show'){app.gmap.overlayMapTypes.setAt(0, flayer)}else{app.gmap.overlayMapTypes.removeAt(0)}
+						}
+					}
+				break;
+
+			}
+		}
+		
+		return flayer;
+	},
+	
+	
+	
+	//create wms
+	createWMS: function(_url, layers){
+		return new google.maps.ImageMapType({
+                    getTileUrl: function (coord, zoom) {
+                        var proj = app.gmap.getProjection();
+                        var zfactor = Math.pow(2, zoom);
+                        // get Long Lat coordinates
+                        var top = proj.fromPointToLatLng(new google.maps.Point(coord.x * 256 / zfactor, coord.y * 256 / zfactor));
+                        var bot = proj.fromPointToLatLng(new google.maps.Point((coord.x + 1) * 256 / zfactor, (coord.y + 1) * 256 / zfactor));
+
+                        //corrections for the slight shift of the SLP (mapserver)
+                        var deltaX = 0.0013;
+                        var deltaY = 0.00058;
+
+                        //create the Bounding box string
+                        var bbox =     (top.lng() + deltaX) + "," +
+    	                               (bot.lat() + deltaY) + "," +
+    	                               (bot.lng() + deltaX) + "," +
+    	                               (top.lat() + deltaY);
+
+                        //base WMS URL
+                        var url=_url; //+"?";
+                        url += "&REQUEST=GetMap"; //WMS operation
+                        url += "&SERVICE=WMS";    //WMS service
+                        url += "&VERSION=1.1.1";  //WMS version  
+                        url += "&LAYERS=" + layers; //WMS layers
+                        url += "&FORMAT=image/png" ; //WMS format
+                        url += "&BGCOLOR=0xFFFFFF";  
+                        url += "&TRANSPARENT=TRUE";
+                        url += "&SRS=EPSG:4326";     //set WGS84 
+                        url += "&BBOX=" + bbox;      // set bounding box
+                        url += "&WIDTH=256";         //tile size in google
+                        url += "&HEIGHT=256";
+                        return url;                 // return URL for the tile
+
+                    },
+                    tileSize: new google.maps.Size(256, 256),
+                    isPng: true
+         });
+
+			
+		
+		
+	},
+	
+	
+	
 	//search
 	search: function(){
 		//geocoding
@@ -421,7 +560,9 @@ var run={
 				obj.serviceTypes=run.getServiceTypes(obj.all_programDescription)
 				obj.fees=run.getFee(obj.all_Fee);
 				obj.adminFees=run.getFee(obj.all_adminFee);
-				
+				obj.operation_hour=run.getOperationHour(obj.operation_hour);
+
+
 				//delete all fee
 				delete obj.all_Fee
 				delete obj.all_adminFee
@@ -665,6 +806,13 @@ var run={
 													})
 												}
 												
+												//operation hour
+												if(k=='operation_hour'){
+													$.each(v, function(k1,v1){
+														r+="<div class='input-group'><span class='input-group-addon subtitle'>"+k1+"</span><input type='text' class='form-control' placeholder='8am-4pm' value='"+v1+"' data-key='"+k+"&"+k1+"'/></div>";
+													})
+												}
+												
 												//service types
 												
 												
@@ -838,6 +986,21 @@ var run={
 						    	return result;
 						    })()+
 						  "</p>"+
+						  (function(){
+						  	if(obj.operation_hour){
+						  		var html="<p class='operationHour'><b class='subtitle'>Operation Hours: </b><br>",
+						  			orders=["Monday","Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+						  			hours=obj.operation_hour;
+						  			
+						  		$.each(orders, function(i,o){
+						  			if(hours[o]){
+						  				html+="<span>"+o+": <b>"+hours[o]+"</b></span>";
+						  			}
+						  		});
+						  		
+						  		return html+"</p>";
+						  	}
+						  })()+
 					  "</div>"+
 				  "</div>";
 			
@@ -878,6 +1041,27 @@ var run={
 			
 			result[temp[0]]=parseFloat(temp[1])
 		})
+		
+		return result;
+	},
+	
+	
+	//get operation hour
+	getOperationHour: function(str_hour){
+		//if(!str_hour){console.log('[ERROR] NO OPERATION_HOUR: please check'); return;}
+		
+		var result=null;
+		if(str_hour!=""){
+			var hours=str_hour.split(" / "),
+				temp;
+				
+			result={};
+			$.each(hours, function(i,f){
+				temp=f.split(":");
+				
+				result[temp[0].trim()]=temp[1].trim()
+			})	
+		}
 		
 		return result;
 	},
@@ -1026,11 +1210,12 @@ var run={
 			//copy fees and adminFess to all_Fee and all_adminFee
 			data["all_Fee"]=data["fees"]
 			data["all_adminFee"]=data["adminFees"]
+
 			
 			delete data["fees"]
 			delete data["adminFees"]
+
 		
-			console.log(data)
 			
 			//create request values
 			var rows=[], lic_nbr=data.lic_lic_cert_nbr, outputs;
@@ -1079,6 +1264,8 @@ var run={
 						//copy fees and adminFess to all_Fee and all_adminFee
 						data["fees"]=data["all_Fee"]
 						data["adminFees"]=data["all_adminFee"]
+				
+						
 						if(app.markers[id]){
 							var marker=app.markers[id];
 							marker.dui={
