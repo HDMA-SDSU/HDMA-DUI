@@ -268,7 +268,7 @@ var run={
 	//readLayer
 	readLayer:function(){
 		var layers=app.layers,
-			$target=$("#gmap .map-toc").html("<button class='btn btn-default'><i class='fa fa-bars'></i></button><ul></ul>"),
+			$target=$("#gmap .map-toc").html("<button class='btn btn-default'><i class='fa fa-bars'></i></button><ul><li><b>Layers</b></li></ul>"),
 			$ul=$target.find("ul"),
 			$li;
 			
