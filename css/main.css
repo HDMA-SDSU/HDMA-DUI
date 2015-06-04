@@ -119,8 +119,8 @@ ul {list-style:none; padding:0px; margin:0px; }
 #popup_review span.rating img {width:25px; height:25px; }
 
 
-#popup_resource .panel-body ul > li {float:left; width:50%; }
-
+#popup_resource .panel-body ul.report > li {float:left; width:50%; }
+#popup_resource a {color:#555555; }
 
 
 
