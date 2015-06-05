@@ -40,8 +40,8 @@
 					  
 				<!--menu-->  
 				<ul class="nav navbar-nav">
-					<li value='searchLocation' title='Search the 10 nearest DUI providers based on your location'><a href="#"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><span class="glyphicon-class">Search a DUI program by Address</span></a></li>
-					<li value='resource' title='Read more about DUI'><a href="#"><span class="glyphicon glyphicon-book" aria-hidden="true"></span><span class="glyphicon-class">Resources</span></a></li>
+					<!--<li value='searchLocation' title='Search the 10 nearest DUI providers based on your location'><a href="#"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><span class="glyphicon-class">Search a DUI program by Address</span></a></li>-->
+					<!--<li value='resource' title='Read more about DUI'><a href="#"><span class="glyphicon glyphicon-book" aria-hidden="true"></span><span class="glyphicon-class">Resources</span></a></li>-->
 					<li value='about' title='About us'><a href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><span class="glyphicon-class">About</span></a></li>
 					<li value='login' title='Login'><a href="#"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="glyphicon-class login-text">Login</span></a></li>	     
 				</ul>  
@@ -53,8 +53,21 @@
 				
 				<!--list-->
 				<div id='listContent' class='form-group'>
-					<input class='form-control' id='listFilter' type='search' placeholder='Filter by name or service type' disabled />
-					<span class="badge"></span>
+					<div id='menu'>
+						<button class='btn btn-primary' value='searchLocation'><i class='glyphicon glyphicon-search'></i><span>Search for a DUI Program by Address</span></button>
+						<button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-bookmark'></i><span>California DUI Program Directory</span></button>
+						<button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-book'></i><span>California DMV Annual Report</span></button>
+						<button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-thumbs-up'></i><span>Best Practice</span></button>
+						<button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-globe'></i><span>Useful Resources</span></button>
+					</div>
+					
+					<hr>
+					
+					<div id='filter'>
+						<input class='form-control' id='listFilter' type='search' placeholder='Filter DUI Program by name' disabled />
+						<span class="badge"></span>
+					</div>
+					
 					<div id='listResult' >
 						<ul></ul>
 					</div>

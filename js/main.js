@@ -46,13 +46,13 @@ var app={
 	changes:{},
 	user:{},
 	layers:[
-		{type:"AGMS", label:"San Diego ZipCode", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/labels/MapServer/", options:{layerIds:[1]}},
-		{type:"WMS", label:"San Diego Crime HotSpot", url:"http://vision.sdsu.edu/geoserver/hdma/wms?", options:"hdma:crime2012"},
-		{type:"WMS", label:"San Diego Alcohol Permit", url:"http://vision.sdsu.edu/geoserver/hdma/wms?", options:"hdma:AlcoholLicense"},
-		{type:"AGMS", label:"San Diego Hospital", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{layerIds:[2]}},
-		{type:"AGMS", label:"San Diego Clinic", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{layerIds:[0]}},
-		{type:"AGMS", label:"San Diego Elderly Residential", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{layerIds:[4]}},
-		{type:"AGMS", label:"San Diego Affordable Residential", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{layerIds:[5]}}
+		{type:"AGMS", label:"San Diego Alcohol Permit", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/DUI/dui/MapServer", options:{exportOptions:{layerIds:[1]}}},
+		{type:"AGMS", label:"San Diego DUI Crime", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/DUI/dui/MapServer", options:{exportOptions:{layerIds:[0]}}},
+		{type:"AGMS", label:"San Diego DUI Crime HotSpot", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/DUI/dui/MapServer", options:{exportOptions:{layerIds:[2]}, opacity:0.7}},
+		{type:"AGMS", label:"San Diego DUI Arrest Zipcode", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/DUI/dui/MapServer", options:{exportOptions:{layerIds:[4]}}},
+		{type:"AGMS", label:"San Diego DUI Resident Zipcode", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/DUI/dui/MapServer", options:{exportOptions:{layerIds:[3]}}},
+		{type:"AGMS", label:"San Diego Hospital", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{exportOptions:{layerIds:[2]}}},
+		{type:"AGMS", label:"San Diego Clinic", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{exportOptions:{layerIds:[0]}}},
 	]
 }
 
@@ -106,7 +106,7 @@ $(function(){
 var init={
 	ui: function(){
 		//header click event
-		$(".header ul.navbar-nav li").click(function(){
+		$(".header ul.navbar-nav li, #menu button").click(function(){
 			var $this=$(this),
 				value=$this.attr('value');
 			
@@ -151,7 +151,7 @@ var init={
 		//filter
 		$("#listFilter").keyup(function(){
             var rex = new RegExp($(this).val(), 'i'),
-            	$target=$('#listResult li'),
+            	$target=$('#listResult>ul>li'),
             	$select;
             $target.hide();
             
@@ -203,13 +203,22 @@ var init={
 		
 		
 		
-		var googleReview=function(){
+		var review=function(){
 				var $this=$(this),
-					name=$this.data('value');
-						
-				run.googlePlace("text", name, function(result){
-					console.log(result)
-				});
+					name=$this.data('value'),
+					type=$this.data("type"),
+					address=$this.data("address");
+					
+				if(type=='google'&&name){
+					run.googlePlace("text", name, function(result){
+						console.log(result)
+					});
+				}	
+				
+				if(type=='participant'){
+					run.participantReview(name);
+				}
+				
 			},
 			directions=function(){
 				var $this=$(this),
@@ -222,15 +231,9 @@ var init={
 					run.route(lat, lng, type);
 				}
 			}
-		$("#gmap").on("click",".gm-style-iw .googleReview", googleReview).on("click", ".gm-style-iw .directions button:not(.dropdown-toggle), .gm-style-iw .directions ul.dropdown-menu > li > a", directions);
-		$("#listResult").on("click",".googleReview", googleReview).on("click", ".directions button:not(.dropdown-toggle), .directions ul.dropdown-menu > li > a", directions);
-		
-		
-		
-		
-		
-		
-		
+		$("#gmap").on("click",".gm-style-iw ul.review > li > a", review).on("click", ".gm-style-iw .directions button:not(.dropdown-toggle), .gm-style-iw .directions ul.dropdown-menu > li > a", directions);
+		$("#listResult").on("click","ul.review > li > a", review).on("click", ".directions button:not(.dropdown-toggle), .directions ul.dropdown-menu > li > a", directions);
+
 	},
 	
 	
@@ -296,7 +299,7 @@ var run={
 				//if no flayer >> create a flayer
 				if(!data.flayer){data.flayer=run.createLayer(data)}
 				
-				data.flayer.hdma.showhideLayer(checked);
+				data.flayer.hdma.showhideLayer(checked, data.flayer.hdma.name);
 			}
 			
 		})
@@ -312,8 +315,9 @@ var run={
 		if(obj.type&&obj.url){
 			switch(obj.type){
 				case "AGMS":
-					flayer=new gmaps.ags.MapOverlay(obj.url, {exportOptions:obj.options});
+					flayer=new gmaps.ags.MapOverlay(obj.url, obj.options);
 					flayer.hdma={
+						name:obj.label,
 						showhideLayer:function(type){
 							if(type=='show'){flayer.setMap(app.gmap)}else{flayer.setMap(null)}
 						}
@@ -322,8 +326,10 @@ var run={
 				case "WMS":
 					flayer=run.createWMS(obj.url, obj.options)	
 					flayer.hdma={
-						showhideLayer:function(type){
-							if(type=='show'){app.gmap.overlayMapTypes.setAt(0, flayer)}else{app.gmap.overlayMapTypes.removeAt(0)}
+						name:obj.label,
+						showhideLayer:function(type, name){
+							var overlays=app.gmap.overlayMapTypes;
+							if(type=='show'){overlays.push(flayer)}else{overlays.forEach(function(l,i){if(l.hdma&&l.hdma.name==name){overlays.removeAt(i)}})}
 						}
 					}
 				break;
@@ -577,8 +583,8 @@ var run={
 						url:"images/symbol_blank.png",
 						scaledSize:new google.maps.Size(30,30),
 					},
-					//labelContent:i+1,
-					labelAnchor: new google.maps.Point(10,25),
+					labelContent:"DUI",
+					labelAnchor: new google.maps.Point(10,24),
 					labelClass: "mapIconLabel",
 					labelInBackground:false
 				})
@@ -605,7 +611,7 @@ var run={
 				app.markerCluster.addMarker(marker)
 				
 				//show list
-				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"<span class='badge num' style='display:none;'>"+(i+1)+"</span><button class='edit'>edit</button></li>");	
+				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"<span class='badge num' style='display:none;'>"+(i+1)+"</span><button class='edit btn btn-danger'>edit</button></li>");	
 			
 			})
 			
@@ -664,6 +670,15 @@ var run={
 		
 		var params={
 		}
+		
+		
+		//demo only: san diego
+		var demos={
+			"East County Accord":"East County Accordp"
+		}
+		if(demos[value]){value=demos[value]}
+		
+		
 		
 		switch(type){
 			case "text":
@@ -736,6 +751,39 @@ var run={
 			
 			
 		}
+	},
+	
+	
+	
+	//participant review
+	participantReview: function(program_name){
+		var reviews=[
+				{author_name:"A GOOGLE USER", rating:5, time: moment(), text:"This is a great program!"},
+				{author_name:"A GOOGLE USER", rating:4, time: moment(), text:"Perfect!"},
+				{author_name:"A GOOGLE USER", rating:5, time: moment(), text:"I love the program!"}
+			],
+			$target=$("#popup_review"),
+			html="",
+			getName=function(r){
+				return (r.author_name.toUpperCase()=='A GOOGLE USER')?"Anonymous":((r.author_url)?("<a href='"+r.author_url+"' target='_blank'>"+r.author_name+"</a>"):r.author_name)
+			};
+							
+		if(reviews&&reviews.length>0){
+			$.each(reviews, function(i,r){
+				html+="<div class='panel panel-default'>"+
+						"<div class='panel-heading'><h3 class='panel-title'>"+getName(r)+"</h3><span class='rating'>"+run.getRating(r.rating)+"</span><span class='time'>"+moment(r.time).format("MM-DD hh:mm")+"</span></div>"+
+						"<div class='panel-body'>"+r.text+"</div>"+
+					  "</div>";
+			})
+			
+			$target.find(".modal-title").html("Participant Review: "+program_name)			
+			$target.find(".modal-body").html(html);
+							
+			$target.modal("show")
+		}else{
+			alert("No Reviews")
+		}
+		
 	},
 	
 	
@@ -943,7 +991,13 @@ var run={
 					  		"<li><button class='mapit btn btn-default btn-xs'>Map it</button></li>"+
 					  		((app.geocodingMarker)?("<li>"+getDirections(obj.lat, obj.lng)+"</li>"):"")+ //((app.geocodingMarker)?("<button onclick='run.route("+obj.lat+", "+obj.lng+")'>Directions</button>"):"")+
 					  		((app.geocodingMarker)?("<li><span class='distance'>"+run.getDistance(obj.lat, obj.lng)+"</span></li>"):"")+
-					  		"<li><button class='googleReview btn btn-default btn-xs' data-value='"+obj.program_name+"'>Google Review</button></li>"+
+					  		"<li><div class='btn-group'><button class='btn btn-warning btn-xs'>Review</button><button class='btn btn-warning btn-xs dropdown-toggle' data-toggle='dropdown'><span class='caret'></span><span class='sr-only'>Toggle Dropdown</span></button>"+
+					  			"<ul class='dropdown-menu review' role='menu'>"+
+					  				"<li><a href='#' data-value='"+obj.program_name+"' data-type='google' data-address='"+obj.address_site+"'>Google Review</a></li>"+
+					  				((obj.review_yelp)?("<li><a href='"+obj.review_yelp+"' target='_blank' data-value='"+obj.program_name+"' data-type='yelp' data-address='"+obj.address_site+"'>Yelp Review</a></li>"):"")+
+					  				"<li><a href='#' data-value='"+obj.program_name+"' data-type='participant' data-address='"+obj.address_site+"'>Participant Review</a></li>"+
+					  			"</ul>"+
+					  		"</div></li>"+
 					  "</ul>"+
 					  "<div class='content'>"+
 						  ((obj.address_site!="")?("<span class='address_site'><b>Address: </b>"+obj.address_site+"</span>"):"")+
