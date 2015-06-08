@@ -47,8 +47,8 @@ var app={
 	user:{},
 	layers:[
 		{type:"AGMS", label:"San Diego Alcohol Permit", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/HDMA/dui/MapServer", options:{exportOptions:{layerIds:[1]}}},
-		{type:"AGMS", label:"San Diego DUI Crime", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/HDMA/dui/MapServer", options:{exportOptions:{layerIds:[0]}}},
-		{type:"AGMS", label:"San Diego DUI Crime HotSpot", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/HDMA/dui/MapServer", options:{exportOptions:{layerIds:[2]}, opacity:0.7}},
+		{type:"AGMS", label:"San Diego DUI Arrest Location", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/HDMA/dui/MapServer", options:{exportOptions:{layerIds:[0]}}},
+		{type:"AGMS", label:"San Diego DUI Arrest HotSpot", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/HDMA/dui/MapServer", options:{exportOptions:{layerIds:[2]}, opacity:0.7}},
 		{type:"AGMS", label:"San Diego DUI Arrest Zipcode", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/HDMA/dui/MapServer", options:{exportOptions:{layerIds:[4]}}},
 		{type:"AGMS", label:"San Diego DUI Resident Zipcode", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/HDMA/dui/MapServer", options:{exportOptions:{layerIds:[3]}}},
 		{type:"AGMS", label:"San Diego Hospital", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{exportOptions:{layerIds:[2]}}},
@@ -106,12 +106,17 @@ $(function(){
 var init={
 	ui: function(){
 		//header click event
-		$(".header ul.navbar-nav li, #menu button").click(function(){
+		$("ul#navMenu li, #menu button").click(function(){
 			var $this=$(this),
 				value=$this.attr('value');
 			
 			if(value){
-				$("#popup_"+value).modal('show');
+				if(value=='print'){
+					window.open("report/print/Your Search Location.pdf")
+				}else{
+					$("#popup_"+value).modal('show');
+				}
+				
 			}
 		});
 		
@@ -404,7 +409,7 @@ var run={
 		$("#listFilter").val("");
 		
 		//show loading
-		$("#popup_searchLocation .loading").show();
+		$("#popup_searchLocation .loading, #menu-print").show();
 		
 		if(type&&type!=""){
 			switch(type){
@@ -583,8 +588,8 @@ var run={
 						url:"images/symbol_blank.png",
 						scaledSize:new google.maps.Size(30,30),
 					},
-					labelContent:"DUI",
-					labelAnchor: new google.maps.Point(10,24),
+					labelContent:"DUIP",
+					labelAnchor: new google.maps.Point(10,22),
 					labelClass: "mapIconLabel",
 					labelInBackground:false
 				})
@@ -991,7 +996,7 @@ var run={
 					  		"<li><button class='mapit btn btn-default btn-xs'>Map it</button></li>"+
 					  		((app.geocodingMarker)?("<li>"+getDirections(obj.lat, obj.lng)+"</li>"):"")+ //((app.geocodingMarker)?("<button onclick='run.route("+obj.lat+", "+obj.lng+")'>Directions</button>"):"")+
 					  		((app.geocodingMarker)?("<li><span class='distance'>"+run.getDistance(obj.lat, obj.lng)+"</span></li>"):"")+
-					  		"<li><div class='btn-group'><button class='btn btn-warning btn-xs'>Review</button><button class='btn btn-warning btn-xs dropdown-toggle' data-toggle='dropdown'><span class='caret'></span><span class='sr-only'>Toggle Dropdown</span></button>"+
+					  		"<li><div class='btn-group'><button class='btn btn-warning btn-xs dropdown-toggle' data-toggle='dropdown'>Review &nbsp; <span class='caret'></span></button>"+
 					  			"<ul class='dropdown-menu review' role='menu'>"+
 					  				"<li><a href='#' data-value='"+obj.program_name+"' data-type='google' data-address='"+obj.address_site+"'>Google Review</a></li>"+
 					  				((obj.review_yelp)?("<li><a href='"+obj.review_yelp+"' target='_blank' data-value='"+obj.program_name+"' data-type='yelp' data-address='"+obj.address_site+"'>Yelp Review</a></li>"):"")+

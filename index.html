@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>California DUI Provider Map || HDMA@SDSU</title>
+		<title>California DUI Program Map || HDMA@SDSU</title>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="description" content="" />
 		<meta name="keywords" content="" />
@@ -30,7 +30,7 @@
 			<nav class="navbar navbar-inverse navbar-static-top header">
 				<div class="container-fluid">
 					<div class="navbar-header">
-					   <a class="navbar-brand" href="#">California DUI Directory Map</a>
+					   <a class="navbar-brand" href="#">California DUI Program Map</a>
 					   <ul>
 							<li><a href='http://humandynamics.sdsu.edu/' target='_blank'><img class='logo' src='images/HDMA_Logo_Small_For_Dark_Background_ICON.png' /></a></li>
 							<li><a href='http://www.sdsu.edu/' target='_blank'><img class='logo' src='images/SDSUhorz_2color_RV.png' /></a></li>
@@ -39,9 +39,10 @@
 				</div>
 					  
 				<!--menu-->  
-				<ul class="nav navbar-nav">
+				<ul class="nav navbar-nav" id='navMenu'>
 					<!--<li value='searchLocation' title='Search the 10 nearest DUI providers based on your location'><a href="#"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><span class="glyphicon-class">Search a DUI program by Address</span></a></li>-->
 					<!--<li value='resource' title='Read more about DUI'><a href="#"><span class="glyphicon glyphicon-book" aria-hidden="true"></span><span class="glyphicon-class">Resources</span></a></li>-->
+					<li value='print' title='Print' id='menu-print'><a href="#"><span class="glyphicon glyphicon-print" aria-hidden="true"></span><span class="glyphicon-class">Print</span></a></li>
 					<li value='about' title='About us'><a href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><span class="glyphicon-class">About</span></a></li>
 					<li value='login' title='Login'><a href="#"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="glyphicon-class login-text">Login</span></a></li>	     
 				</ul>  
@@ -84,7 +85,7 @@
 				    <div class="modal-content">
 				      <div class="modal-header">
 				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				        <h4 class="modal-title">Update DUI Provider's information</h4>
+				        <h4 class="modal-title">Update DUI Program Provider's information</h4>
 				      </div>
 				      <div class="modal-body">
 				      </div>
@@ -128,7 +129,7 @@
 				        <h4 class="modal-title">Search a DUI program by Address or Zip Code</h4>
 				      </div>
 				      <div class="modal-body">
-				      	<p>Please input an address or zipcode to find the 10 nearest DUI near your place</p>
+				      	<p>Please input an address or zipcode to find the 10 nearest DUI program near your place</p>
 				      	<!--search-->
 						<div class="input-group">
 						    <input type="text" class="form-control" placeholder="Input an address or zipcode" data-value='address' id='inputAddress'>
@@ -144,10 +145,10 @@
 						            <ul class="dropdown-menu dropdown-menu-left" role="menu">
 						              <!--<li><a href='#'>Advanced Search</a></li>
 						              <li class="divider"></li>-->
-						              <li><a href="#" data-value='address' data-placeHolder='Input an address or zipcode to find the 10 nearest DUI near your place' >Search by Location</a></li>
+						              <li><a href="#" data-value='address' data-placeHolder='Input an address or zipcode to find the 10 nearest DUI program near your place' >Search by Location</a></li>
 						              <!--<li><a href="#" data-value='serviceType' data-placeHolder='Select a service type' >Search by DUI Type</a></li>
 						              <li><a href="#" data-value='name' data-placeHolder='Input a DUI name' >Search by DUI name</a></li>-->
-						              <li><a href="#" data-value='all' data-placeHolder='Input an address or zipcode to find the 10 nearest DUI near your place' >Show All</a></li>
+						              <li><a href="#" data-value='all' data-placeHolder='Input an address or zipcode to find the 10 nearest DUI program near your place' >Show All</a></li>
 						            </ul>
 						            
 						    </div>
@@ -274,7 +275,7 @@
 				    <div class="modal-content">
 				      <div class="modal-header">
 				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				        <h4 class="modal-title">DUI Resource</h4>
+				        <h4 class="modal-title">DUI Program Resources</h4>
 				      </div>
 				      <div class="modal-body">
 				      	<div class="panel panel-primary">
@@ -314,16 +315,22 @@
 					    
 					    <div class="panel panel-primary">
 					      <div class="panel-heading">
-					        <h3 class="panel-title" id="panel-title">Best practices<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
+					        <h3 class="panel-title" id="panel-title">Best Practices<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
 					      </div>
 					      <div class="panel-body">
-					        
+					        <ul>
+					        	<li><a href='report/CA_BestPractice/Best Practices Presentation 3-2-15.pptx' target='_blank'>Best Practices For California Licensed Driving Under the Influence (DUI) Program Providers</a></li>
+					        	<li><a href='report/CA_BestPractice/DUI Provider MIS Survey Report.pptx' target='_blank'>DUI Program Providers’ Data Management Practices: A Statewide Survey</a></li>
+					        	<li><a href='report/CA_BestPractice/Exit_Interview_Exploratory_Analysis_Summary_of_Findings_05.30._1.pdf' target='_blank'>Exit Interviews from Ventura County’s DUI Program Clients: Summary of Findings</a></li>
+					        	<li><a href='report/CA_BestPractice/State of DUI interventions for Kelly.pptx' target='_blank'>The State of DUI Treatment — What We Know from Latest Research</a></li>
+					        	<li><a href='report/CA_BestPractice/SUD conference presentation SD4 Comparison for Mary.pptx' target='_blank'>Searching For Effective DUI Interventions—A Comparison of Four San Diego DUI Programs</a></li>
+					        </ul>
 					      </div>
 					    </div>
 					    
 					    <div class="panel panel-primary">
 					      <div class="panel-heading">
-					        <h3 class="panel-title" id="panel-title">Useful Information<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
+					        <h3 class="panel-title" id="panel-title">Useful Resources<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
 					      </div>
 					      <div class="panel-body">
 					      	<ul>

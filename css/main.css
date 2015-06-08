@@ -13,7 +13,7 @@ hr {border-top:1px solid #777777; }
  * 	google map
  */
 #gmap {width:100%; height:45%;}
-.mapIconLabel {font-size:11px; font-weight:bold; color:#f1f1f1; text-align:center; width:20px;}
+.mapIconLabel {font-size:.85em; font-weight:bold; color:#f1f1f1; text-align:center; width:20px;}
 #gmap .map-toc { position:absolute; top:5px; right:100px; z-index:1000; }
 #gmap .map-toc button.btn {float:right; }
 #gmap .map-toc ul {background-color:#ffffff; color:#000000; box-shadow:5px 5px 15px #cccccc; padding:5px 15px 5px 15px; display:none; margin-top:35px; }
@@ -38,6 +38,9 @@ hr {border-top:1px solid #777777; }
 .header .glyphicon-class {margin-left:5px; }
 .header .navbar-header ul {float:left; margin-top:11px; }
 .header .navbar-header ul li {float:left; margin-right:20px; }
+
+
+#menu-print {display:none; }
 
 
 /**
@@ -132,8 +135,8 @@ hr {border-top:1px solid #777777; }
 
 #popup_resource .panel-body ul.report > li {float:left; width:50%; }
 #popup_resource a {color:#555555; }
-
-
+#popup_resource ul {list-style:disc; padding-left:10px; }
+#popup_resource ul li {padding-bottom:5px; }
 
 
 
