@@ -46,11 +46,11 @@ var app={
 	changes:{},
 	user:{},
 	layers:[
-		{type:"AGMS", label:"San Diego Alcohol Permit", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/DUI/dui/MapServer", options:{exportOptions:{layerIds:[1]}}},
-		{type:"AGMS", label:"San Diego DUI Crime", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/DUI/dui/MapServer", options:{exportOptions:{layerIds:[0]}}},
-		{type:"AGMS", label:"San Diego DUI Crime HotSpot", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/DUI/dui/MapServer", options:{exportOptions:{layerIds:[2]}, opacity:0.7}},
-		{type:"AGMS", label:"San Diego DUI Arrest Zipcode", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/DUI/dui/MapServer", options:{exportOptions:{layerIds:[4]}}},
-		{type:"AGMS", label:"San Diego DUI Resident Zipcode", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/DUI/dui/MapServer", options:{exportOptions:{layerIds:[3]}}},
+		{type:"AGMS", label:"San Diego Alcohol Permit", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/HDMA/dui/MapServer", options:{exportOptions:{layerIds:[1]}}},
+		{type:"AGMS", label:"San Diego DUI Crime", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/HDMA/dui/MapServer", options:{exportOptions:{layerIds:[0]}}},
+		{type:"AGMS", label:"San Diego DUI Crime HotSpot", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/HDMA/dui/MapServer", options:{exportOptions:{layerIds:[2]}, opacity:0.7}},
+		{type:"AGMS", label:"San Diego DUI Arrest Zipcode", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/HDMA/dui/MapServer", options:{exportOptions:{layerIds:[4]}}},
+		{type:"AGMS", label:"San Diego DUI Resident Zipcode", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/HDMA/dui/MapServer", options:{exportOptions:{layerIds:[3]}}},
 		{type:"AGMS", label:"San Diego Hospital", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{exportOptions:{layerIds:[2]}}},
 		{type:"AGMS", label:"San Diego Clinic", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{exportOptions:{layerIds:[0]}}},
 	]
