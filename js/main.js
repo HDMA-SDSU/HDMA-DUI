@@ -30,15 +30,15 @@ var app={
 			"contact_email":"Email"
 		},
 		adminFees:{
-			"ADSCRN":"Alcohol/Drug Screening", 
-			"BADCK":"Bad Check", 
-			"DUPDL":"Duplicate DL 101", 
-			"LATPYM":"Late Payment", 
-			"LOA":"Leave of Absence", 
+			"ADSCRN":"Alcohol/Drug Screening",
+			"BADCK":"Bad Check",
+			"DUPDL":"Duplicate DL 101",
+			"LATPYM":"Late Payment",
+			"LOA":"Leave of Absence",
 			"MISACT":"Missed Activity",
 			"REINST":"Reinstate",
-			"RESCH":"Reschedule", 
-			"XFERIN":"Transfer In", 
+			"RESCH":"Reschedule",
+			"XFERIN":"Transfer In",
 			"XFEROU":"Transfer Out",
 			"OTHER":"Other"
 		}
@@ -60,44 +60,50 @@ var app={
 
 
 $(function(){
-	
+
 	$.getScript("js/markerwithlabel.js", function(){
 		//init ui
 		init.ui()
-		
+
 		//init map
 		init.map("gmap")
-		
+
 		//load all dui data
 		/**
 		run.detectLocation(function(position){
 			if(position){
 				var lat=position.coords.latitude,
 					lng=position.coords.longitude;
-				
+
 				//show lat lng
 				$("#header input[type='text']").val("Your Current Location: ("+lng+", "+lat+")")
-				
+
 				//spatial query
 				run.spatialQuery(lat, lng);
 			}else{
 				run.query('select * from ' + app.tableID.update, function(json){
 					run.showResult(json);
-					
-					
+
+
 				});
 			}
 		});
 		*/
-		
+
 		run.query('select * from ' + app.tableID.update + " order by lic_lic_cert_nbr", function(json){
-			run.showResult(json);		
+			run.showResult(json);
+
+			//read url params
+			setTimeout(function(){
+				run.readParams();
+			},500)
 		});
-		
-	
-				
+
+
+
+
 	});
-	
+
 })
 
 
@@ -109,121 +115,121 @@ var init={
 		$("ul#navMenu li, #menu button").click(function(){
 			var $this=$(this),
 				value=$this.attr('value');
-			
+
 			if(value){
 				if(value=='print'){
 					window.open("report/print/Your Search Location.pdf")
 				}else{
 					$("#popup_"+value).modal('show');
 				}
-				
+
 			}
 		});
-		
-		
+
+
 		var $searchLocation=$("#popup_searchLocation");
-		
-		//input 
+
+		//input
 		$searchLocation.find("input[type='text']").keyup(function(e){
 			if(e.keyCode==13){
 				run.search();
 			}
 		})
-		
+
 		//search dropdown menu
 		$searchLocation.find(".dropdown-menu > li > a").click(function(){
 			var $this=$(this),
 				value=$this.attr("data-value"),
 				placeHolder=$this.attr('data-placeHolder'),
 				text=$this.text();
-			
+
 			//if value=all, make a default view to search by addresses
 			if(value=='all'){value='address'; placeHolder='Input a location'; text='Search by Address';$("#inputAddress").val("");}
-			
+
 			//$header.find("input[type='text']").attr({"data-value": value, 'placeHolder': placeHolder});
 			//$header.find("#btn-search").text(text);
-			
+
 			run.search();
 		});
-		
+
 		//search button
 		$searchLocation.find("#btn-search").click(function(){
 			run.search();
 		});
-		
-		
-		
+
+
+
 		//filter
 		$("#listFilter").keyup(function(){
             var rex = new RegExp($(this).val(), 'i'),
             	$target=$('#listResult>ul>li'),
             	$select;
             $target.hide();
-            
+
             //filter list
             $select=$target.filter(function () {
                 return rex.test($(this).text());
             }).show();
-            
+
             //update number in hte badge
             $("#listContent > .badge").html($select.length);
-            
+
             //update markers
             if(app.timeout){clearTimeout(app.timeout); app.timeout=null;}
             app.timeout=setTimeout(function(){
             	run.clearMarkers({clearResult:'false'});
             	var bounds=new google.maps.LatLngBounds()
-            	
+
             	$select.each(function(){
             		var $this=$(this),
             			id=$this.attr('data-id'),
             			marker=app.markers[id];
-            		
+
             		//marker.setMap(app.gmap);
             		app.markerCluster.addMarker(marker)
-            		
+
             		bounds.extend(marker.getPosition())
             	})
             	app.gmap.fitBounds(bounds);
             }, 500)
 		})
-		
-		
+
+
 		//popup_edit input chnage event
 		$('#popup_edit').on("change", "input[type='text']", function(){
 			var $this=$(this),
 				id=$this.attr('data-key'),
 				value=$this.val();
-				
+
 			app.changes[id]=value;
 		})
-		
-		
-		//password input 
+
+
+		//password input
 		$("#password").keyup(function(e){
 			if(e.keyCode==13){
-				run.login();	
+				run.login();
 			}
 		})
-		
-		
-		
+
+
+
 		var review=function(){
 				var $this=$(this),
 					name=$this.data('value'),
 					type=$this.data("type"),
 					address=$this.data("address");
-					
+
 				if(type=='google'&&name){
 					run.googlePlace("text", name, function(result){
 						console.log(result)
 					});
-				}	
-				
+				}
+
 				if(type=='participant'){
 					run.participantReview(name);
 				}
-				
+
 			},
 			directions=function(){
 				var $this=$(this),
@@ -231,7 +237,7 @@ var init={
 					lat=$btn.data("lat"),
 					lng=$btn.data("lng"),
 					type=$this.data("type") || "driving";
-				
+
 				if(lat&&lng&&type&&type!=""){
 					run.route(lat, lng, type);
 				}
@@ -240,8 +246,8 @@ var init={
 		$("#listResult").on("click","ul.review > li > a", review).on("click", ".directions button:not(.dropdown-toggle), .directions ul.dropdown-menu > li > a", directions);
 
 	},
-	
-	
+
+
 	map: function(domID){
 		//map
 		app.gmap=new google.maps.Map(document.getElementById(domID), {
@@ -251,69 +257,106 @@ var init={
 			panControl:false,
 			zoomControlOptions:{style:google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.RIGHT_BOTTOM}
 		});
-		
+
 		//marker cluster
 		app.markerCluster=new MarkerClusterer(app.gmap,null, {
 			gridSize:30,
 			maxZoom:13,
 			imagePath:"images/m"
 		});
-	
+
 		//google place
 		app.gplace=new google.maps.places.PlacesService(app.gmap);
-		
-		
+
+
 		//create toc dom
 		$("#gmap").append("<div class='map-toc'></div>");
 		run.readLayer();
-		
+
 	}
 }
 
 
 //run
 var run={
+	readParams:function(){
+		var href=location.href,
+				s_param=(href.split("?").length>0)?href.split("?")[1]:null,
+				param=null;
+
+
+		if(s_param){
+			s_param.split("&").forEach(function(o, i){
+				if(i==0){param={}}
+
+				var t=o.split("=");
+				param[t[0]]=t[1];
+			})
+
+			//layers
+			if(param.layers&&param.layers!=""){
+				var $layer=$(".map-toc li")
+				param.layers.split(",").forEach(function(id){
+					$layer.eq(id).find("input").trigger("click")
+				})
+			}
+
+			//lat, lng, zoom
+			if(param.lat&&param.lat!=""&&param.lng&&param.lng!=""&&param.zoom&&param.zoom!=""){
+				param.lat=parseFloat(param.lat);
+				param.lng=parseFloat(param.lng);
+				param.zoom=parseInt(param.zoom);
+
+				app.gmap.setCenter(new google.maps.LatLng(param.lat, param.lng))
+				app.gmap.setZoom(param.zoom);
+			}
+
+
+		}
+	},
+
+
 	//readLayer
 	readLayer:function(){
 		var layers=app.layers,
 			$target=$("#gmap .map-toc").html("<button class='btn btn-default'><i class='fa fa-bars'></i></button><ul><li><b>Layers</b></li></ul>"),
 			$ul=$target.find("ul"),
 			$li;
-			
+
 		$target.hover(function(){
 			$ul.show();
 		}, function(){
 			$ul.hide();
 		});
-		
-		
+
+
 
 		$.each(layers, function(i,l){
 			$li=$("<li><div class='checkbox'><label><input type='checkbox'>"+l.label+"</label></div></li>").data("layer", l);
 			$ul.append($li)
 		})
-		
+
 		//click event
 		$ul.on("click", "li input[type='checkbox']", function(){
 			var $this=$(this),
 				$l=$this.closest("li"),
 				checked=$this.is(':checked')?"show":"hide",
 				data=$l.data("layer");
-				
+
 			if(data){
 				//if no flayer >> create a flayer
 				if(!data.flayer){data.flayer=run.createLayer(data)}
-				
+
 				data.flayer.hdma.showhideLayer(checked, data.flayer.hdma.name);
 			}
-			
+
 		})
-		
-		
+
+
 	},
-	
-	
-	
+
+
+
 	//create layer
 	createLayer: function(obj){
 		var flayer=null;
@@ -327,9 +370,9 @@ var run={
 							if(type=='show'){flayer.setMap(app.gmap)}else{flayer.setMap(null)}
 						}
 					}
-				break;	
+				break;
 				case "WMS":
-					flayer=run.createWMS(obj.url, obj.options)	
+					flayer=run.createWMS(obj.url, obj.options)
 					flayer.hdma={
 						name:obj.label,
 						showhideLayer:function(type, name){
@@ -341,12 +384,12 @@ var run={
 
 			}
 		}
-		
+
 		return flayer;
 	},
-	
-	
-	
+
+
+
 	//create wms
 	createWMS: function(_url, layers){
 		return new google.maps.ImageMapType({
@@ -371,12 +414,12 @@ var run={
                         var url=_url; //+"?";
                         url += "&REQUEST=GetMap"; //WMS operation
                         url += "&SERVICE=WMS";    //WMS service
-                        url += "&VERSION=1.1.1";  //WMS version  
+                        url += "&VERSION=1.1.1";  //WMS version
                         url += "&LAYERS=" + layers; //WMS layers
                         url += "&FORMAT=image/png" ; //WMS format
-                        url += "&BGCOLOR=0xFFFFFF";  
+                        url += "&BGCOLOR=0xFFFFFF";
                         url += "&TRANSPARENT=TRUE";
-                        url += "&SRS=EPSG:4326";     //set WGS84 
+                        url += "&SRS=EPSG:4326";     //set WGS84
                         url += "&BBOX=" + bbox;      // set bounding box
                         url += "&WIDTH=256";         //tile size in google
                         url += "&HEIGHT=256";
@@ -387,30 +430,30 @@ var run={
                     isPng: true
          });
 
-			
-		
-		
+
+
+
 	},
-	
-	
-	
+
+
+
 	//search
 	search: function(){
 		//geocoding
-		var $this=$("#popup_searchLocation input[type='text']"), 
+		var $this=$("#popup_searchLocation input[type='text']"),
 			value=$this.val(),
 			type=$this.attr('data-value');
-		
+
 		//clear existing geocoding marker
 		if(app.geocodingMarker){app.geocodingMarker.setMap(null); app.geocodingMarker=null;}
 		if(app.directionRenderer){app.directionRenderer.setMap(null); }
-		
+
 		//clear filter
 		$("#listFilter").val("");
-		
+
 		//show loading
 		$("#popup_searchLocation .loading, #menu-print").show();
-		
+
 		if(type&&type!=""){
 			switch(type){
 				case "address":
@@ -439,17 +482,17 @@ var run={
 					}
 				break;
 				case "serviceType":
-					
+
 				break;
 			}
-					
-		}	
-		
-		
+
+		}
+
+
 	},
-	
-	
-	
+
+
+
 	//load dui data
 	query: function(sql, callback){
 		var url='https://www.googleapis.com/fusiontables/v2/query?',
@@ -457,33 +500,33 @@ var run={
 				sql: sql,
 				key:'AIzaSyAqd6BFSfKhHPiGaNUXnSt6jAzQ9q_3DyU'
 			};
-			
+
 		if(sql&&sql!=""){
 			url=url+$.map(params, function(v,k){return k+"="+encodeURIComponent(v)}).join("&")
 			//console.log(url)
 			$.getJSON(url, function(json){
 				var output=null;
-				
+
 				if(json.columns&&json.rows&&json.columns.length>0&&json.rows.length>0){
 					output=json
 				}
-				
+
 				if(callback){callback(output)}
 			})
-			
+
 		}
-		
+
 	},
-	
-	
+
+
 	//spatial query
 	spatialQuery: function(lat, lng, options){
 		if(!lat || lat=='' || !lng || lng==''){console.log('[ERROR] run.spatailQuery: no lat or lng'); return;}
-		
+
 		//options
 		if(!options){options={}}
 		options.radius=options.radius || 50000; //unit: meter
-		
+
 		//show geocoding marker
 		app.geocodingMarker=new google.maps.Marker({
 			position:{lat:lat, lng:lng},
@@ -495,52 +538,52 @@ var run={
 			},
 			title: "Your Location: "+ $("#popup_searchLocation input[type='text']").val()
 		});
-		
-		
+
+
 		//query
 		//var sql="select * from " + app.tableID.update +" where ST_INTERSECTS(lat, CIRCLE(LATLNG("+lat+","+lng+"),"+options.radius+"))";
 		var sql="select * from " + app.tableID.update +" order by ST_DISTANCE(lat, LATLNG("+lat+","+lng+")) limit 10";
 		run.query(sql, function(json){
 			run.showResult(json);
 		})
-			
+
 	},
-	
-	
+
+
 	//clear all existing markers
 	clearMarkers:function(options){
 		//options
 		if(!options){options={}}
 		options.emptyMarkers=options.emptyMarkers || false;
 		options.clearResult=options.clearResult || true;
-		
-	
+
+
 		if(app.markers.length>0){
 			app.markerCluster.clearMarkers();
-			
+
 			/**
 			$.each(app.markers, function(i,m){
 				m.setMap(null)
-			}); 
+			});
 			*/
 			if(options.emptyMarkers){app.markers=[]}
-			
+
 		}
-		
-		
-		
+
+
+
 		//clear listContent
 		if(options.clearResult!='false'){$("#listResult > ul").html("")}
-		
+
 	},
-	
-	
+
+
 	//show result
 	showResult: function(json, options){
 		//options
 		if(!options){options={}}
 		options.fitBounds=options.fitBounds || true;
-	
+
 		if(json&&json.rows&&json.columns&&json.rows.length>0){
 			var columns=json.columns,
 				rows=json.rows,
@@ -549,25 +592,25 @@ var run={
 				obj=null,
 				$list=$("#listResult > ul"),
 				latlngBounds=new google.maps.LatLngBounds();
-			
-			
+
+
 			//clear all existing markers
 			run.clearMarkers({emptyMarkers:true});
-			
+
 
 			//show Badge nad hide loading
 			var $searchLocation=$("#popup_searchLocation")
 			$("#listContent .badge").html(rows.length).show();
 			$searchLocation.find(".alert, .loading").hide();
-			
+
 			//enable filter
 			$("#listFilter").removeAttr('disabled');
-			
+
 			//markers
 			//json.markers=[]
 			$.each(rows, function(i,values){
 				obj=run.makeObj(columns, values)
-				
+
 				obj.serviceTypes=run.getServiceTypes(obj.all_programDescription)
 				obj.fees=run.getFee(obj.all_Fee);
 				obj.adminFees=run.getFee(obj.all_adminFee);
@@ -577,7 +620,7 @@ var run={
 				//delete all fee
 				delete obj.all_Fee
 				delete obj.all_adminFee
-				
+
 				//marker=new google.maps.Marker({
 				marker=new MarkerWithLabel({
 					position: {lat: parseFloat(obj.lat), lng: parseFloat(obj.lng)},
@@ -597,47 +640,47 @@ var run={
 					values:obj,
 					contentHtml:run.makeContentHtml(obj)
 				}
-				
-		
+
+
 				//click event
 				mapEvent.addListener(marker, 'click', function(e){
 					var values=this.dui.values,
 						serviceTypes=values.serviceTypes,
 						contentHtml=run.makeContentHtml(values); //this.dui.contentHtml;
-					
+
 					$(".gm-style-iw > div").html("")
 					app.popup.setContent(contentHtml)
 					app.popup.open(app.gmap, this);
 				})
-				
+
 				//latlngbounds
 				latlngBounds.extend(marker.getPosition())
-				
+
 				app.markerCluster.addMarker(marker)
-				
+
 				//show list
-				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"<span class='badge num' style='display:none;'>"+(i+1)+"</span><button class='edit btn btn-danger'>edit</button></li>");	
-			
+				$list.append("<li data-id="+i+">"+marker.dui.contentHtml+"<span class='badge num' style='display:none;'>"+(i+1)+"</span><button class='edit btn btn-danger'>edit</button></li>");
+
 			})
-			
+
 			//app.markers
 			app.markers=app.markerCluster.getMarkers();
-			
-			
+
+
 			//automatically zoom to markers bound
 			if(options.fitBounds){app.gmap.fitBounds(latlngBounds)}
-			
+
 			//add a click event on each li in the contentList
 			$list.on("click", " > li .mapit", function(){
 				var $this=$(this),
 					$li=$this.closest("div.contentHtml").parent(),
 					id=$li.attr('data-id'),
 					marker=app.markers[id];
-				
+
 				//sometimes marker cannot be shown on the map because marker.map is null
 				//enforcely show marker ont
 				if(!marker.map){marker.setMap(app.gmap)}
-				
+
 				app.gmap.setZoom(12);
 				app.gmap.panTo(marker.position);
 				google.maps.event.trigger(marker,'click')
@@ -646,15 +689,15 @@ var run={
 					$li=$this.parent(),
 					id=$li.attr('data-id'),
 					marker=app.markers[id];
-				
+
 				if(marker&&marker.dui){
 					run.showPopup("edit", marker);
-					
+
 					$('#popup_edit button.updateData').attr('data-id', id);
 				}
 			})
-			
-		
+
+
 			//hide modal
 			$("#popup_searchLocation").modal('hide')
 		}else{
@@ -662,59 +705,59 @@ var run={
 			//hide Badge
 			$("#listContent .badge").html("").hide();
 			$("#popup_searchLocation .alert").show();
-			
+
 		}
-			
+
 	},
-	
-	
-	
+
+
+
 	//google place
 	googlePlace: function(type, value){
 		if(!type || type=="" || !value || value==''){console.log("[ERROR]run.googlePlace: no type or value! please check again."); return; }
-		
+
 		var params={
 		}
-		
-		
+
+
 		//demo only: san diego
 		var demos={
 			"East County Accord":"East County Accordp"
 		}
 		if(demos[value]){value=demos[value]}
-		
-		
-		
+
+
+
 		switch(type){
 			case "text":
 				params.query=value
-			
+
 				app.gplace.textSearch(params, function(results, status){
 					if(status==google.maps.places.PlacesServiceStatus.OK&&results.length>0){
 						//get the first result
 						var place=results[0],
 							id=place.place_id;
-						
-						
+
+
 						//get detail
 						if(id){
 							run.googlePlace("detail", id)
 							$("#popup_review").find(".modal-title").html("Google Review: "+ value)
 						}
-						
-						
-						
-						
+
+
+
+
 					}else{
 						alert(status)
 					}
-					
+
 				})
-			
+
 			break;
 			case "detail":
 				params.placeId=value;
-				
+
 				app.gplace.getDetails(params, function(result, status){
 					if(result&&status==google.maps.places.PlacesServiceStatus.OK){
 						var reviews=result.reviews,
@@ -724,7 +767,7 @@ var run={
 							getName=function(r){
 								return (r.author_name.toUpperCase()=='A GOOGLE USER')?"Anonymous":((r.author_url)?("<a href='"+r.author_url+"' target='_blank'>"+r.author_name+"</a>"):r.author_name)
 							};
-							
+
 						if(reviews&&reviews.length>0){
 							$.each(reviews, function(i,r){
 								console.log(r)
@@ -733,33 +776,33 @@ var run={
 										"<div class='panel-body'>"+r.text+"</div>"+
 									  "</div>";
 							})
-							
+
 							$target.find(".modal-body").html(html);
-							
+
 							$target.modal("show")
 						}else{
 							alert("No Reviews")
 						}
-						
-							
 
-						
+
+
+
 					}else{
 						console.log("[ERROR] run.googlePlace.getDetail")
 						console.log(status)
 					}
-					
+
 				})
-			
-			
+
+
 			break;
-			
-			
+
+
 		}
 	},
-	
-	
-	
+
+
+
 	//participant review
 	participantReview: function(program_name){
 		var reviews=[
@@ -772,7 +815,7 @@ var run={
 			getName=function(r){
 				return (r.author_name.toUpperCase()=='A GOOGLE USER')?"Anonymous":((r.author_url)?("<a href='"+r.author_url+"' target='_blank'>"+r.author_name+"</a>"):r.author_name)
 			};
-							
+
 		if(reviews&&reviews.length>0){
 			$.each(reviews, function(i,r){
 				html+="<div class='panel panel-default'>"+
@@ -780,22 +823,22 @@ var run={
 						"<div class='panel-body'>"+r.text+"</div>"+
 					  "</div>";
 			})
-			
-			$target.find(".modal-title").html("Participant Review: "+program_name)			
+
+			$target.find(".modal-title").html("Participant Review: "+program_name)
 			$target.find(".modal-body").html(html);
-							
+
 			$target.modal("show")
 		}else{
 			alert("No Reviews")
 		}
-		
+
 	},
-	
-	
+
+
 	//get star
 	getRating: function(num){
 		var html="";
-								
+
 		for(var i=1;i<6;i++){
 			if(i<=num){
 				html+="<img src='images/star.png' />";
@@ -805,26 +848,26 @@ var run={
 		}
 		return html;
 	},
-	
-	
-	
+
+
+
 	//show popup
 	showPopup: function(type, value){
 		if(type){
 			var $target;
-			
+
 			switch(type){
 				case "edit":
 					var $target=$('#popup_edit'),
 						$body=$target.find('.modal-body').html(""),
 						label=app.label.fields;
-					
+
 					if(value&&value.dui){
 						var serviceTypes=value.dui.values.serviceTypes;
-						
+
 						//clear app.changes
 						app.changes={};
-						
+
 						$.each(value.dui.values, function(k,v){
 							if(typeof(v)!="object"){
 								if(label[k]){
@@ -835,7 +878,7 @@ var run={
 											(function(){
 												var r="", l=app.label.adminFees,
 													title, value;
-												
+
 												//adminFee
 												if(k=='adminFees'){
 													$.each(l, function(k1,vLabel){
@@ -844,7 +887,7 @@ var run={
 														}
 													})
 												}
-												
+
 												//fee
 												if(k=='fees'){
 													/**
@@ -858,17 +901,17 @@ var run={
 														r+="<div class='input-group'><span class='input-group-addon subtitle'>"+k1+"</span><input type='text' class='form-control' placeholder='' value='"+v1+"' data-key='"+k+"&"+k1+"'/></div>";
 													})
 												}
-												
+
 												//operation hour
 												if(k=='operation_hour'){
 													$.each(v, function(k1,v1){
 														r+="<div class='input-group'><span class='input-group-addon subtitle'>"+k1+"</span><input type='text' class='form-control' placeholder='8am-4pm' value='"+v1+"' data-key='"+k+"&"+k1+"'/></div>";
 													})
 												}
-												
+
 												//service types
-												
-												
+
+
 												return r
 											})()
 										 "</div></div>";
@@ -876,36 +919,36 @@ var run={
 							}
 						});
 					}
-					
+
 				break;
 				case "login":
-				
-				
-				
+
+
+
 				break;
 				case "confirmUpdate":
 					var html="<ul>", $confirmUpdate=$('#popup_confirmUpdate'), $edit=$('#popup_edit'), labelField=app.label.fields, labelAdminFee=app.label.adminFees;
-					
+
 					$.each(app.changes, function(k,v){
 						k=k.split('&');
-						
+
 						if(k.length>1){
 							k=(labelField[k[0]])?(labelField[k[0]]+"---"+((labelAdminFee[k[1]])?labelAdminFee[k[1]]:k[1])):k[0]+"---"+k[1]
 						}else{
 							k=(labelField[k[0]])?labelField[k[0]]:k
 						}
-						
+
 						html+="<li><b>"+k+"</b>: "+ v+"</li>";
 					});
 					html+="</ul>";
-					
+
 					//enable submit button
 					$confirmUpdate.find('button.updateData').prop('disabled', false);
 					if(html=="<ul></ul>"){html="No changes. Please check again!"; $confirmUpdate.find('button.updateData').prop('disabled', true);}
-					
-					
+
+
 					$confirmUpdate.find('.modal-body').html(html);
-					
+
 					$edit.css('z-index', 1030);
 					$target=$confirmUpdate.modal('show').off('hidden.bs.model').on('hidden.bs.modal', function(){
 						$edit.css('z-index', 1040);
@@ -915,20 +958,20 @@ var run={
 					$target=$('#popup_searchLocation');
 				break;
 			}
-			
+
 			if($target){
 				$target.modal("show");
 			}
-			
+
 		}
 	},
-	
-	
+
+
 	//show fee
 	showFee:function(result, serviceTypes){
 		//var html="<table><tr><td>Service Type</td><td>Fee</td></tr>";
 		var html=""//"<b>Fee</b>";
-							
+
 
 		$.each(result, function(k,v){
 			//html+="<tr "+((serviceTypes.indexOf(k)!=-1)?"class='highlight'":"")+"><td>"+k+"</td><td>$"+v+"</td></tr>";
@@ -938,11 +981,11 @@ var run={
 			}
 		})
 		//html+="</table>";
-							
+
 		$(".contentHtml .fee").html(html)
 	},
-	
-	
+
+
 	//geocoding
 	geocoding: function(address, callback){
 		if(address&&address!=""){
@@ -951,21 +994,21 @@ var run={
 				//region:
 			}, function(results, status){
 				var output=null;
-				
+
 				if(status=='OK'&&results&&results.length>0){
 					output=results;
 				}
-				
-				
+
+
 				if(callback){
 					callback(results,status)
 				}
 			});
-			
+
 		}
 	},
-	
-	
+
+
 	//generate html for popup window and list
 	makeContentHtml: function(obj){
 		var html="",
@@ -1008,7 +1051,7 @@ var run={
 						  ((obj.address_site!="")?("<span class='address_site'><b>Address: </b>"+obj.address_site+"</span>"):"")+
 						  ((obj.contact_person!="")?("<span class='contact_person'><b>Contact:</b> "+obj.contact_person+"</span>"):"")+
 						  ((obj.address_mail!="")?("<span class='address_mail'><b>Mail:</b> "+obj.address_mail+"</span>"):"")+
-						  
+
 						  ((obj.contact_phone!="")?("<span class='contact_phone'><b>Phone:</b> <a href='tel:"+obj.contact_phone+"'>"+run.formatPhone(obj.contact_phone)+"</a></span>"):"")+
 						  ((obj.contact_fax!="")?("<span class='contact_fax'><b>Fax:</b> <a href='tel:"+obj.contact_fax+"'>"+run.formatPhone(obj.contact_fax)+"</a></span>"):"")+
 						  ((obj.contact_tfree!="")?("<span class='contact_tfree'><b>Toll Free:</b> <a href='"+obj.contact_tfree+"'>"+run.formatPhone(obj.contact_tfree)+"</a></span>"):"")+
@@ -1019,7 +1062,7 @@ var run={
 						  	"<b class='subtitle'>Program Fees: </b><br>"+
 						    (function(){
 						    	var result='';
-						    	
+
 						    	$.each(order_serviceTypes, function(i,type){
 						    		if(obj.serviceTypes.indexOf(type)!=-1){
 						    			result+="<span>"+type+": <b>$"+run.addComma(obj.fees[type])+"</b></span>";
@@ -1050,25 +1093,25 @@ var run={
 						  		var html="<p class='operationHour'><b class='subtitle'>Operation Hours: </b><br>",
 						  			orders=["Monday","Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 						  			hours=obj.operation_hour;
-						  			
+
 						  		$.each(orders, function(i,o){
 						  			if(hours[o]){
 						  				html+="<span>"+o+": <b>"+hours[o]+"</b></span>";
 						  			}
 						  		});
-						  		
+
 						  		return html+"</p>";
 						  	}
 						  })()+
 					  "</div>"+
 				  "</div>";
-			
+
 		}
-		
+
 		return html;
 	},
-	
-	
+
+
 	//get service type from string
 	getServiceTypes: function(v){
 		var types=[];
@@ -1077,56 +1120,56 @@ var run={
 		})
 		return types;
 	},
-	
-	
+
+
 	//make columns and rows as object
 	makeObj: function(columns, rows){
-		var obj={}; 
-		$.each(columns, function(i,k){obj[k]=rows[i]}); 
+		var obj={};
+		$.each(columns, function(i,k){obj[k]=rows[i]});
 		return obj
 	},
-	
-	
-	
+
+
+
 	//get fee
 	getFee: function(str_fee){
 		if(!str_fee || str_fee==''){console.log('[ERROR] NO FEE: please check'); return;}
-		
+
 		var fees=str_fee.split(" / "),
 			result={},
 			temp;
 		$.each(fees, function(i,f){
 			temp=f.split(": ");
-			
+
 			result[temp[0]]=parseFloat(temp[1])
 		})
-		
+
 		return result;
 	},
-	
-	
+
+
 	//get operation hour
 	getOperationHour: function(str_hour){
 		//if(!str_hour){console.log('[ERROR] NO OPERATION_HOUR: please check'); return;}
-		
+
 		var result=null;
 		if(str_hour!=""){
 			var hours=str_hour.split(" / "),
 				temp;
-				
+
 			result={};
 			$.each(hours, function(i,f){
 				temp=f.split(":");
-				
+
 				result[temp[0].trim()]=temp[1].trim()
-			})	
+			})
 		}
-		
+
 		return result;
 	},
-	
-	
-	
+
+
+
 	//add comma
 	addComma: function(val){
 		while (/(\d+)(\d{3})/.test(val.toString())){
@@ -1134,23 +1177,23 @@ var run={
 		}
 		return val;
 	},
-	
-	
+
+
 	formatPhone: function(num){
 		num=String(num)
 		num=num.slice(0, 5) + " " + num.slice(5,8)+"-"+num.slice(8);
-		
+
 		return num
 	},
-	
-	
+
+
 	//get eucliedean distance
 	getDistance: function(lat1, lon1, options) {
 		//options
 		if(!options){options={}}
 		options.unit=options.unit || 'mi';
 		options.decimal=options.decimal || 1;
-		
+
 		var position=app.geocodingMarker.getPosition(),
 			lat2=position.lat(),
 			lon2=position.lng(),
@@ -1161,7 +1204,7 @@ var run={
 			theta = lon1-lon2,
 			radtheta = Math.PI * theta/180,
 			dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-			
+
 		dist = Math.acos(dist)
 		dist = dist * 180/Math.PI
 		dist = dist * 60 * 1.1515
@@ -1169,16 +1212,16 @@ var run={
 		if (options.unit=="mi") { dist = dist * 0.8684 }
 		return dist.toFixed(options.decimal) + " " + options.unit
 	} ,
-	
-	
+
+
 	//route
 	route:function(lat,lng,type){
 		if(!lat||!lng){console.log("[ERROR] run.route: no input lat or lng"); return;}
 		if(!app.geocodingMarker){console.log("[ERROR] run.route: no app.geocodingMarker"); return; }
-		
+
 		//clear existing route
 		if(app.directionRenderer){app.directionRenderer.setMap(null)}
-	
+
 		type=type || "driving";
 
 		//start routing
@@ -1190,32 +1233,32 @@ var run={
 		}, function(result, status){
 			if(status=='OK'){
 				if(result.routes&&result.routes.length>0){
-					
+
 					app.popup.open(app.gmap, app.geocodingMarker)
 					$(".gm-style-iw > div").html("")
-					
+
 					app.directionRenderer=new google.maps.DirectionsRenderer({
 						directions: result,
 						map:app.gmap,
 						suppressMarkers:true,
 						panel:$(".gm-style-iw > div")[0]
 					})
-					
-					
-					
+
+
+
 					/**
 					var route=result.routes[0];
 					app.route=new google.maps.Polyline({
 						path:route.overview_path,
 						map:app.gmap,
 						strokeColor:"#CC1A48",
-						strokeOpacity:0.7, 
+						strokeOpacity:0.7,
 						strokeWeight:5,
 						directionResult:route
 					})
-					
+
 					//app.gmap.fitBounds(route.bounds)
-					
+
 					google.maps.event.addListener(app.route, "click", function(){
 						console.log(this)
 					})
@@ -1224,8 +1267,8 @@ var run={
 			}
 		});
 	},
-	
-	
+
+
 	//get user's ip location
 	detectLocation:function(callback){
 		if(navigator.geolocation) {
@@ -1236,9 +1279,9 @@ var run={
        		if(callback){callback()}
        }
 	},
-	
-	
-	
+
+
+
 	//update data
 	updateData: function(){
 		var $target=$('#popup_edit'),
@@ -1246,36 +1289,36 @@ var run={
 			marker=app.markers[id],
 			data,
 			$li=$("#listResult li[data-id='"+id+"']");
-			
+
 		if(!marker){console.log('[ERROR] run.updateData: cannot find marker'); return; }
-		
+
 		if(marker&&marker.dui&&marker.dui.values){
 			data=$.extend({}, marker.dui.values);
 		}
-		
+
 		if(data){
 			//get values from input form
 			$('#popup_edit input').each(function(){
 				var $this=$(this),
 					keys=$this.attr('data-key').split('&');
-				
+
 				if(keys.length>1){
 					data[keys[0]][keys[1]]=$this.val();
 				}else{
 					data[keys[0]]=$this.val();
 				}
 			})
-			
+
 			//copy fees and adminFess to all_Fee and all_adminFee
 			data["all_Fee"]=data["fees"]
 			data["all_adminFee"]=data["adminFees"]
 
-			
+
 			delete data["fees"]
 			delete data["adminFees"]
 
-		
-			
+
+
 			//create request values
 			var rows=[], lic_nbr=data.lic_lic_cert_nbr, outputs;
 			$.each(data, function(k,v){
@@ -1284,22 +1327,22 @@ var run={
 					$.each(v, function(k1,v1){
 						outputs.push(k1+": "+v1);
 					})
-					
+
 					rows.push(k+"==="+outputs.join(' / '))
 				}else{
 					rows.push(k+"==="+v)
 				}
 			})
-			
+
 			console.log(rows, lic_nbr)
 
 		}
-		
+
 		//show loading
 		var $confirm=$("#popup_confirmUpdate");
 		$confirm.find(".loading").show();
-		
-		
+
+
 		if(app.user&&app.user.username&&app.user.password){
 			//send back to update
 			$.ajax({
@@ -1318,13 +1361,13 @@ var run={
 					//if update successfully
 					if(json&&json.status=='OK'){
 						alert('updateData: succeed!!!');
-						
+
 						//update the html of li and values in the marker
 						//copy fees and adminFess to all_Fee and all_adminFee
 						data["fees"]=data["all_Fee"]
 						data["adminFees"]=data["all_adminFee"]
-				
-						
+
+
 						if(app.markers[id]){
 							var marker=app.markers[id];
 							marker.dui={
@@ -1334,32 +1377,32 @@ var run={
 							$li.html(marker.dui.contentHtml)
 							app.popup.close()
 						}
-						
-						
-						
-						$('#popup_edit, #popup_confirmUpdate').modal('hide');	
+
+
+
+						$('#popup_edit, #popup_confirmUpdate').modal('hide');
 					}else{
 						$confirm.find(".modal-body").append("<div class='error'>[ERROR] updateData:" + json.msg+"</div>");
 					}
-					
+
 					$confirm.find(".loading").hide();
 				},
 				error: function(){
 					$confirm.find(".modal-body").append("<div class='error'>[ERROR] cannot post the request to server!</div>");
 					$confirm.find(".loading").hide();
 				}
-				
+
 			})
 		}
-		
-		
-		
-	
-		
+
+
+
+
+
 	},
-	
-	
-	//login 
+
+
+	//login
 	login: function(){
 		var $target=$("#popup_login"),
 			username=$target.find("input[id='username']").val(),
@@ -1367,15 +1410,15 @@ var run={
 			$msg=$target.find('.error'),
 			$loading=$target.find('.loading'),
 			msg="Username and Password is not match. Please check again!";
-			
+
 		if(username&&username!=""&&password&&password!=""){
 			//clear msg and show loading
 			$msg.html("");
 			$loading.show();
-			
+
 			//password md5
 			password=$.md5(password)
-			
+
 			//send request
 			$.ajax({
 				url:"ws/ws.py",
@@ -1388,11 +1431,11 @@ var run={
 				},
 				success: function(json){
 					console.log(json)
-					
+
 					$loading.hide();
-					
+
 					if(json.status!="OK"){
-						$msg.html(json.status); 
+						$msg.html(json.status);
 					}else{
 						//check if it is needed to change password
 						if(json.login_times&&json.login_times==1){
@@ -1402,45 +1445,45 @@ var run={
 								$target.css('z-index', 1040);
 							});
 						}else{
-							
+
 							$target.modal('hide');
 						}
-						
-						
+
+
 						//after login
 						run.afterLogin(json)
-						
+
 					}
 				},
 				error: function(err){
 					$msg.html(err);
 				}
 			});
-			
+
 		}else{
 			$msg.html(msg)
 		}
-		
-		
-		
+
+
+
 	},
-	
-	
+
+
 	//after login
 	afterLogin: function(json){
 		app.user=json;
-						
+
 		$(".login-text").html(json.username +" Logout").parents("li[value='login']").off("click").on("click", function(){
 			location.reload();
 		});
-		
+
 		//enable edit button
 		$("#listResult .contentHtml[data-id='"+parseInt(json.username)+"']").siblings(".edit").show();
-		
-		
+
+
 	},
-	
-	
+
+
 	//CHANGE PASSWORD
 	changePW: function(){
 		var $target=$("#popup_changePW"),
@@ -1450,26 +1493,26 @@ var run={
 			email=$target.find("input#email").val(),
 			$msg=$target.find(".error")
 			$loading=$target.find(".loading");
-			
-		
+
+
 		//check value
 		var check=true;
 		$.each([oldPW, newPW, confirmPW, email], function(i,o){
 			if(!o&&o==""){check=false;}
 		})
 		if(!check){
-			$msg.html("Please check email, oldPW, newPW, confirmPW again!");return; 
+			$msg.html("Please check email, oldPW, newPW, confirmPW again!");return;
 		}
-		
+
 		//check old pw
-		if($.md5(oldPW)!=app.user.password){$msg.html("The old password is not matching your current password. Please check again!"); return;}	
-		
+		if($.md5(oldPW)!=app.user.password){$msg.html("The old password is not matching your current password. Please check again!"); return;}
+
 		//check new pw and confirm pw
 		if(newPW!=confirmPW){$msg.html("The confirm and new password is not matching. Please check again!"); return;}
-		
+
 		$msg.html("");
 		$loading.show();
-		
+
 		//update password
 		$.ajax({
 			url:"ws/ws.py",
@@ -1484,10 +1527,10 @@ var run={
 			},
 			success: function(json){
 				console.log(json);
-				
+
 				$loading.hide();
 				if(json.status!="OK"){$msg.html(json.msg); return;}
-				
+
 				//update password
 				app.user.password=$.md5(newPW)
 
@@ -1499,12 +1542,12 @@ var run={
 				$msg.html("The process was not succeeded. Please contact the system administrator.");
 			}
 		});
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
 	}
-	
+
 }
