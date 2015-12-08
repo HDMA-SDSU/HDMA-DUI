@@ -1065,7 +1065,7 @@ var run={
 
 						    	$.each(order_serviceTypes, function(i,type){
 						    		if(obj.serviceTypes.indexOf(type)!=-1){
-						    			result+="<span>"+type+": <b>$"+run.addComma(obj.fees[type])+"</b></span>";
+						    			result+="<span>"+type+": up to <b>$"+run.addComma(obj.fees[type])+"</b></span>";
 						    		}
 						    	})
 						    	/**
@@ -1082,7 +1082,7 @@ var run={
 						    	var result='', label=app.label.adminFees;
 						    	$.each(label, function(k,v){
 						    		if(obj.adminFees[k]){
-						    			result+="<span>"+v+": <b>$"+run.addComma(obj.adminFees[k])+"</b></span>";
+						    			result+="<span>"+v+": up to <b>$"+run.addComma(obj.adminFees[k])+"</b></span>";
 						    		}
 						    	})
 						    	return result;
