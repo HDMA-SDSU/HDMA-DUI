@@ -5,364 +5,471 @@
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
 <html>
-	<head>
-		<title>California DUI Program Map || HDMA@SDSU</title>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<meta name="description" content="" />
-		<meta name="keywords" content="" />
-		<link rel="stylesheet" href="css/bootstrap.min.css" />
-		<link rel="stylesheet" href="css/font-awesome.min.css" />
-		<link rel="stylesheet" href="css/main.css" />
-		<!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
-		
-		<script src="js/jquery.min.js"></script>
-		<script src="js/jquery.md5.js"></script>
-		<script src="js/bootstrap.min.js"></script>
-		<script src="js/moment.min.js"></script>
-		<script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyAqd6BFSfKhHPiGaNUXnSt6jAzQ9q_3DyU&libraries=places'></script>
-		<script src="js/markerclusterer.js"></script>
-		<script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/arcgislink/src/arcgislink.js" type="text/javascript"></script>
-		<script src="js/main.js"></script>
-		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
-	</head>
-	<body>
-			<!--header-->
-			<nav class="navbar navbar-inverse navbar-static-top header">
-				<div class="container-fluid">
-					<div class="navbar-header">
-					   <a class="navbar-brand" href="#">California DUI Program Map</a>
-					   <ul>
-							<li><a href='http://humandynamics.sdsu.edu/' target='_blank'><img class='logo' src='images/HDMA_Logo_Small_For_Dark_Background_ICON.png' /></a></li>
-							<li><a href='http://www.sdsu.edu/' target='_blank'><img class='logo' src='images/SDSUhorz_2color_RV.png' /></a></li>
-						</ul>
-					</div>
-				</div>
-					  
-				<!--menu-->  
-				<ul class="nav navbar-nav" id='navMenu'>
-					<!--<li value='searchLocation' title='Search the 10 nearest DUI providers based on your location'><a href="#"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><span class="glyphicon-class">Search a DUI program by Address</span></a></li>-->
-					<!--<li value='resource' title='Read more about DUI'><a href="#"><span class="glyphicon glyphicon-book" aria-hidden="true"></span><span class="glyphicon-class">Resources</span></a></li>-->
-					<li value='print' title='Print' id='menu-print'><a href="#"><span class="glyphicon glyphicon-print" aria-hidden="true"></span><span class="glyphicon-class">Print</span></a></li>
-					<li value='about' title='About us'><a href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><span class="glyphicon-class">About</span></a></li>
-					<li value='login' title='Login'><a href="#"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="glyphicon-class login-text">Login</span></a></li>	     
-				</ul>  
-			</nav>
-				
-			<div id='mainContent'>
-				<!-- map content -->
-				<div id='gmap'></div>
-				
-				<!--list-->
-				<div id='listContent' class='form-group'>                       
-                    <div id='menu'>
-                        <button class='btn btn-primary' value='searchLocation'><i class='glyphicon glyphicon-search'></i><span>Search for a DUI Program by Address</span></button>
-                        &nbsp;
-						<button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-bookmark'></i><span>California DUI Program Directory</span></button>
-						<button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-book'></i><span>California DMV Annual Report</span></button>
-						<button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-thumbs-up'></i><span>Best Practice</span></button>
-						<button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-globe'></i><span>Useful Resources</span></button>
-					</div>
-					
-					<hr>
-					
-					<div id='filter'>
-						<input class='form-control' id='listFilter' type='search' placeholder='Filter DUI Program by name' disabled />
-						<span class="badge"></span>
-					</div>
-					
-					<div id='listResult' style='visibility:hidden'>
-						<ul></ul>
-					</div>
-				</div>
-			</div>
-		
-		
-		
-		
-		
-			<!--popup edit-->
-			<div id='popup_edit' class='modal'>
-				<div class="modal-dialog">
-				    <div class="modal-content">
-				      <div class="modal-header">
-				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				        <h4 class="modal-title">Update DUI Program Provider's information</h4>
-				      </div>
-				      <div class="modal-body">
-				      </div>
-				      <div class="modal-footer">
-				        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				        <button type="button" class="btn btn-primary updateData" onclick="run.showPopup('confirmUpdate')">Save changes</button>
-				      </div>
-				   </div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div>
-			
-			
-			
-			<!--popup confirm update-->
-			<div id='popup_confirmUpdate' class='modal'>
-				<div class="modal-dialog">
-				    <div class="modal-content">
-				      <div class="modal-header">
-				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				        <h4 class="modal-title">Please confirm the changes</h4>
-				      </div>
-				      <div class="modal-body">
-				      </div>
-				      <div class="modal-footer">
-						<img class='loading' src='images/loading.gif'/>
-				        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
-				        <button type="button" class="btn btn-primary updateData" onclick='run.updateData()'>Yes</button>
-				      </div>
-				   </div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div>
-			
-			
-			
-			<!--popup confirm update-->
-			<div id='popup_searchLocation' class='modal'>
-				<div class="modal-dialog" style='background:url("images/dui.jpg")'>
-				    <div class="modal-content">
-				      <div class="modal-header">
-				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				        <h4 class="modal-title">Search a DUI program by Address or Zip Code</h4>
-				      </div>
-				      <div class="modal-body">
-				      	<p>Please input an address or zipcode to find the 10 nearest DUI program near your place</p>
-				      	<!--search-->
-						<div class="input-group">
-						    <input type="text" class="form-control" placeholder="Input an address or zipcode" data-value='address' id='inputAddress'>
-						    <img class='loading' src='images/loading.gif' />
-						          
-						    <div class="alert alert-warning" role="alert">No Result. Please search again.</div>
-						    <div class="input-group-btn">
-						          	<button type="button" class="btn btn-primary" tabindex="-1" id='btn-search' >Search by Location</button>
-						            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-						              <span class="caret"></span>
-						              <span class="sr-only">Toggle Dropdown</span>
-						            </button>
-						            <ul class="dropdown-menu dropdown-menu-left" role="menu">
-						              <!--<li><a href='#'>Advanced Search</a></li>
+
+<head>
+    <title>California DUI Program Map || HDMA@SDSU</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+    <!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.md5.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/moment.min.js"></script>
+    <script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyAqd6BFSfKhHPiGaNUXnSt6jAzQ9q_3DyU&libraries=places'></script>
+    <script src="js/markerclusterer.js"></script>
+    <script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/arcgislink/src/arcgislink.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.core.min.js"></script> 
+    <script src="js/main.js"></script>
+    <!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
+</head>
+
+<body>
+    <!--header-->
+    <nav class="navbar navbar-inverse navbar-static-top header">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">California DUI Program Map</a>
+                <ul>
+                    <li>
+                        <a href='http://humandynamics.sdsu.edu/' target='_blank'><img class='logo' src='images/HDMA_Logo_Small_For_Dark_Background_ICON.png' />
+                        </a>
+                    </li>
+                    <li>
+                        <a href='http://www.sdsu.edu/' target='_blank'><img class='logo' src='images/SDSUhorz_2color_RV.png' />
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!--menu-->
+        <ul class="nav navbar-nav" id='navMenu'>
+            <!--<li value='searchLocation' title='Search the 10 nearest DUI providers based on your location'><a href="#"><span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span><span class="glyphicon-class">Search a DUI program by Address</span></a></li>-->
+            <!--<li value='resource' title='Read more about DUI'><a href="#"><span class="glyphicon glyphicon-book" aria-hidden="true"></span><span class="glyphicon-class">Resources</span></a></li>-->
+            <li value='print' title='Print' id='menu-print'><a href="#"><span class="glyphicon glyphicon-print" aria-hidden="true"></span><span class="glyphicon-class">Print</span></a>
+            </li>
+            <li value='about' title='About us'><a href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><span class="glyphicon-class">About</span></a>
+            </li>
+            <li value='login' title='Login'><a href="#"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="glyphicon-class login-text">Login</span></a>
+            </li>
+        </ul>
+    </nav>
+
+    <div id='mainContent'>
+        <!-- map content -->
+        <div id='gmap'></div>
+
+        <!--list-->
+        <div id='listContent' class='form-group'>
+            <div id='menu'>
+                <button class='btn btn-primary' value='searchLocation'><i class='glyphicon glyphicon-search'></i><span>Search for a DUI Program by Address</span>
+                </button>
+                &nbsp;
+                <button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-bookmark'></i><span>California DUI Program Directory</span>
+                </button>
+                <button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-book'></i><span>California DMV Annual Report</span>
+                </button>
+                <button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-thumbs-up'></i><span>Best Practice</span>
+                </button>
+                <button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-globe'></i><span>Useful Resources</span>
+                </button>
+            </div>
+
+            <hr>
+
+            <div id='filter'>
+                <input class='form-control' id='listFilter' type='search' placeholder='Filter DUI Program by name' disabled />
+                <span class="badge"></span>
+            </div>
+
+            <hr>
+            
+            <div id='dropdownRow' class="row">
+                <div class="col-sm-5">
+                    <div id='dropdownLeft' class="dropdown">
+                        <button id='countyBox' class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">County
+                            <span class="caret"></span>
+                        </button>
+                        <ul id='countyDropdown' class="dropdown-menu">
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-sm-5">
+                    <div id='dropdownRight' class="dropdown">
+                        <button id='typeBox' class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">Type
+                            <span class="caret"></span>
+                        </button>
+                        <ul id='typeDropdown' class="dropdown-menu">
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-sm-2">
+                    <button id="getCountyDataBtn" type="button" class="btn btn-default"><i class='glyphicon glyphicon-play'></i></button>
+                </div>  
+            </div>
+
+            
+            <div id='rateInfoBox' style='height:300px'>
+                <!--                        <div><h4><font color='white'>Stats by County</font></h4></div>-->
+                <div id='rateChart' style="height: 250px; margin-top:30px">
+                </div>
+            </div>
+            
+            <div id='listResult' style='visibility:hidden'>
+                <ul></ul>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!--popup edit-->
+    <div id='popup_edit' class='modal'>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Update DUI Program Provider's information</h4>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary updateData" onclick="run.showPopup('confirmUpdate')">Save changes</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+
+    <!--popup confirm update-->
+    <div id='popup_confirmUpdate' class='modal'>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Please confirm the changes</h4>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <img class='loading' src='images/loading.gif' />
+                    <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary updateData" onclick='run.updateData()'>Yes</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+
+    <!--popup confirm update-->
+    <div id='popup_searchLocation' class='modal'>
+        <div class="modal-dialog" style='background:url("images/dui.jpg")'>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Search a DUI program by Address or Zip Code</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Please input an address or zipcode to find the 10 nearest DUI program near your place</p>
+                    <!--search-->
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Input an address or zipcode" data-value='address' id='inputAddress'>
+                        <img class='loading' src='images/loading.gif' />
+
+                        <div class="alert alert-warning" role="alert">No Result. Please search again.</div>
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-primary" tabindex="-1" id='btn-search'>Search by Location</button>
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-left" role="menu">
+                                <!--<li><a href='#'>Advanced Search</a></li>
 						              <li class="divider"></li>-->
-						              <li><a href="#" data-value='address' data-placeHolder='Input an address or zipcode to find the 10 nearest DUI program near your place' >Search by Location</a></li>
-						              <!--<li><a href="#" data-value='serviceType' data-placeHolder='Select a service type' >Search by DUI Type</a></li>
+                                <li><a href="#" data-value='address' data-placeHolder='Input an address or zipcode to find the 10 nearest DUI program near your place'>Search by Location</a>
+                                </li>
+                                <!--<li><a href="#" data-value='serviceType' data-placeHolder='Select a service type' >Search by DUI Type</a></li>
 						              <li><a href="#" data-value='name' data-placeHolder='Input a DUI name' >Search by DUI name</a></li>-->
-						              <li><a href="#" data-value='all' data-placeHolder='Input an address or zipcode to find the 10 nearest DUI program near your place' >Show All</a></li>
-						            </ul>
-						            
-						    </div>
-						</div>
-				      </div>
-				   </div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div>
-			
-			
-			
-			
-			<!--popup login-->
-			<div id='popup_login' class='modal'>
-				<div class="modal-dialog">
-				    <div class="modal-content">
-				      <div class="modal-header">
-				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				        <h4 class="modal-title">Login</h4>
-				      </div>
-				      <div class="modal-body">
-				      	<p>Please login by your username and password to update the information of DUI program.</p>
-				      	<p></p>
-				      	<div class="input-group">
-						  <span class="input-group-addon" id="basic-addon1">Licence Number</span>
-						  <input type="text" class="form-control" id='username' placeholder="License Number started with 0 if applicable 0100201100" >
-						</div>
-						<P></P>
-						<div class="input-group">
-						  <span class="input-group-addon" id="basic-addon1">Password</span>
-						  <input type="password" class="form-control" id='password' placeholder="Password">
-						</div>
-						<p></p>
-						<div class='error'></div>
-				      </div>
-				      <div class="modal-footer">
-						<img class='loading' src='images/loading.gif'/>
-				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				        <button type="button" class="btn btn-primary updateData" onclick='run.login()'>Log in</button>
-				      </div>
-				   </div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div>
-			
-			
-			<!--popup login-->
-			<div id='popup_changePW' class='modal'>
-				<div class="modal-dialog">
-				    <div class="modal-content">
-				      <div class="modal-header">
-				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				        <h4 class="modal-title">Change Password</h4>
-				      </div>
-				      <div class="modal-body">
-				      	<p>Please change your password and input your email!</p>
-				      	<p></p>
-				      	<div class="input-group">
-						  <span class="input-group-addon" id="basic-addon1">Email</span>
-						  <input type="text" class="form-control" id='email' placeholder="Email">
-						</div>
-						<P></P>
-				      	<div class="input-group">
-						  <span class="input-group-addon" id="basic-addon1">Old Password</span>
-						  <input type="password" class="form-control" id='oldPW' placeholder="Old Password" >
-						</div>
-						<div class="input-group">
-						  <span class="input-group-addon" id="basic-addon1">New Password</span>
-						  <input type="password" class="form-control" id='newPW' placeholder="New Password">
-						</div>
-						<div class="input-group">
-						  <span class="input-group-addon" id="basic-addon1">Confirm Password</span>
-						  <input type="password" class="form-control" id='confirmPW' placeholder="Please input your new Password again">
-						</div>
-						<p></p>
-						<div class='error'></div>
-				      </div>
-				      <div class="modal-footer">
-						<img class='loading' src='images/loading.gif'/>
-				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				        <button type="button" class="btn btn-primary changePW" onclick='run.changePW()'>Confirm</button>
-				      </div>
-				   </div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div>
-		
-		
-		
-			<!--popup about-->
-			<div id='popup_about' class='modal'>
-				<div class="modal-dialog">
-				    <div class="modal-content">
-				      <div class="modal-header">
-				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				        <h4 class="modal-title">About</h4>
-				      </div>
-				      <div class="modal-body">
-				      	<p>If you are the offender of DUI (Driving under the influence) in CA, you need to attend one of DUI programs. California Department of Human Service already provides a directory of DUI providers on its website (<a href='http://www.dhcs.ca.gov/individuals/Pages/ProviderDirectory-DUI.aspx' target='_blank'>http://www.dhcs.ca.gov/individuals/Pages/ProviderDirectory-DUI.aspx</a>). But, it is in PDF format and may be time-consuming to find an appropriate one.</p>
-				      	<p>HDMA collaborates with Prof. Sheldon Wong (SDSU) and California Department of Human Service to create a Web application to visualize and map DUI providers in CA. Users can directly go to http://vision.sdsu.edu/dui/ to check and search a DUI providers.</p>
-				      </div>
-				   </div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div>
-			
-			
-			<!--popup about-->
-			<div id='popup_review' class='modal'>
-				<div class="modal-dialog">
-				    <div class="modal-content">
-				      <div class="modal-header">
-				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				        <h4 class="modal-title">Review</h4>
-				      </div>
-				      <div class="modal-body">
-				      	
-				      </div>
-				   </div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div>
-		
-		
-			<!--popup about-->
-			<div id='popup_resource' class='modal'>
-				<div class="modal-dialog">
-				    <div class="modal-content">
-				      <div class="modal-header">
-				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				        <h4 class="modal-title">DUI Program Resources</h4>
-				      </div>
-				      <div class="modal-body">
-				      	<div class="panel panel-primary">
-					      <div class="panel-heading">
-					        <h3 class="panel-title" id="panel-title">California DUI Program Directory<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
-					      </div>
-					      <div class="panel-body">
-					        <ul class='report'>
-					      		<li><a href='report/CA_ProgramDirectory/2014_DUI_Directory.pdf' target='_blank'>2014</a></li>
-					      	</ul>
-					      </div>
-					    </div>
-					    
-					    <div class="panel panel-primary">
-					      <div class="panel-heading">
-					        <h3 class="panel-title" id="panel-title">California DMV Annual DUI Program Report<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
-					      </div>
-					      <div class="panel-body">
-					      	<ul class='report'>
-					      		<li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2001.pdf' target='_blank'>2001</a></li>
-					      		<li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2002.pdf' target='_blank'>2002</a></li>
-					      		<li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2003.pdf' target='_blank'>2003</a></li>
-					      		<li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2004.pdf' target='_blank'>2004</a></li>
-					      		<li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2005.pdf' target='_blank'>2005</a></li>
-					      		<li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2006.pdf' target='_blank'>2006</a></li>
-					      		<li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2007.pdf' target='_blank'>2007</a></li>
-					      		<li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2008.pdf' target='_blank'>2008</a></li>
-					      		<li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2009.pdf' target='_blank'>2009</a></li>
-					      		<li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2010.pdf' target='_blank'>2010</a></li>
-					      		<li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2011.pdf' target='_blank'>2011</a></li>
-					      		<li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2012.pdf' target='_blank'>2012</a></li>
-					      		<li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2013.pdf' target='_blank'>2013</a></li>
-					      		<li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2014.pdf' target='_blank'>2014</a></li>
-					      	</ul>
-					      </div>
-					    </div>
-					    
-					    <div class="panel panel-primary">
-					      <div class="panel-heading">
-					        <h3 class="panel-title" id="panel-title">Best Practices<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
-					      </div>
-					      <div class="panel-body">
-					        <ul>
-					        	<li><a href='report/CA_BestPractice/Best Practices Presentation 3-2-15.pptx' target='_blank'>Best Practices For California Licensed Driving Under the Influence (DUI) Program Providers</a></li>
-					        	<li><a href='report/CA_BestPractice/DUI Provider MIS Survey Report.pptx' target='_blank'>DUI Program Providers’ Data Management Practices: A Statewide Survey</a></li>
-					        	<li><a href='report/CA_BestPractice/Exit_Interview_Exploratory_Analysis_Summary_of_Findings_05.30._1.pdf' target='_blank'>Exit Interviews from Ventura County’s DUI Program Clients: Summary of Findings</a></li>
-					        	<li><a href='report/CA_BestPractice/State of DUI interventions for Kelly.pptx' target='_blank'>The State of DUI Treatment — What We Know from Latest Research</a></li>
-					        	<li><a href='report/CA_BestPractice/SUD conference presentation SD4 Comparison for Mary.pptx' target='_blank'>Searching For Effective DUI Interventions—A Comparison of Four San Diego DUI Programs</a></li>
-					        </ul>
-					      </div>
-					    </div>
-					    
-					    <div class="panel panel-primary">
-					      <div class="panel-heading">
-					        <h3 class="panel-title" id="panel-title">Useful Resources<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
-					      </div>
-					      <div class="panel-body">
-					      	<ul>
-					      		<li><a href='http://www.cadtp.org' target='_blank'>California Association of DUI Treament Progrmas (CADTP)</a></li>
-					      		<li><a href='http://www.samhsa.gov' target='_blank'>Substance Abuse and Mental Health Services Administration (SAMHSA)</a></li>
-					      		<li><a href='http://www.nrepp.samhsa.gov' target='_blank'>SAMHSA'S National Registry of Evidence-based Programs and Practices</a></li>
-					      	</ul>
-					      </div>
-					    </div>
-				      	
-				      	
-				      </div>
-				   </div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div>
-		
-		
-		
-			
-			
-			<script>
-			  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-			
-			  ga('create', 'UA-53606245-10', 'auto');
-			  ga('send', 'pageview');
-			
-			</script>
-			
-		
-	</body>
+                                <li><a href="#" data-value='all' data-placeHolder='Input an address or zipcode to find the 10 nearest DUI program near your place'>Show All</a>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+
+
+    <!--popup login-->
+    <div id='popup_login' class='modal'>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Login</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Please login by your username and password to update the information of DUI program.</p>
+                    <p></p>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Licence Number</span>
+                        <input type="text" class="form-control" id='username' placeholder="License Number started with 0 if applicable 0100201100">
+                    </div>
+                    <P></P>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Password</span>
+                        <input type="password" class="form-control" id='password' placeholder="Password">
+                    </div>
+                    <p></p>
+                    <div class='error'></div>
+                </div>
+                <div class="modal-footer">
+                    <img class='loading' src='images/loading.gif' />
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary updateData" onclick='run.login()'>Log in</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+    <!--popup login-->
+    <div id='popup_changePW' class='modal'>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Change Password</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Please change your password and input your email!</p>
+                    <p></p>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Email</span>
+                        <input type="text" class="form-control" id='email' placeholder="Email">
+                    </div>
+                    <P></P>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Old Password</span>
+                        <input type="password" class="form-control" id='oldPW' placeholder="Old Password">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">New Password</span>
+                        <input type="password" class="form-control" id='newPW' placeholder="New Password">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Confirm Password</span>
+                        <input type="password" class="form-control" id='confirmPW' placeholder="Please input your new Password again">
+                    </div>
+                    <p></p>
+                    <div class='error'></div>
+                </div>
+                <div class="modal-footer">
+                    <img class='loading' src='images/loading.gif' />
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary changePW" onclick='run.changePW()'>Confirm</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+
+    <!--popup about-->
+    <div id='popup_about' class='modal'>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">About</h4>
+                </div>
+                <div class="modal-body">
+                    <p>If you are the offender of DUI (Driving under the influence) in CA, you need to attend one of DUI programs. California Department of Human Service already provides a directory of DUI providers on its website (<a href='http://www.dhcs.ca.gov/individuals/Pages/ProviderDirectory-DUI.aspx' target='_blank'>http://www.dhcs.ca.gov/individuals/Pages/ProviderDirectory-DUI.aspx</a>). But, it is in PDF format and may be time-consuming to find an appropriate one.</p>
+                    <p>HDMA collaborates with Prof. Sheldon Wong (SDSU) and California Department of Human Service to create a Web application to visualize and map DUI providers in CA. Users can directly go to http://vision.sdsu.edu/dui/ to check and search a DUI providers.</p>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+    <!--popup about-->
+    <div id='popup_review' class='modal'>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Review</h4>
+                </div>
+                <div class="modal-body">
+
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+    <!--popup about-->
+    <div id='popup_resource' class='modal'>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">DUI Program Resources</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" id="panel-title">California DUI Program Directory<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul class='report'>
+                                <li><a href='report/CA_ProgramDirectory/2014_DUI_Directory.pdf' target='_blank'>2014</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" id="panel-title">California DMV Annual DUI Program Report<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul class='report'>
+                                <li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2001.pdf' target='_blank'>2001</a>
+                                </li>
+                                <li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2002.pdf' target='_blank'>2002</a>
+                                </li>
+                                <li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2003.pdf' target='_blank'>2003</a>
+                                </li>
+                                <li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2004.pdf' target='_blank'>2004</a>
+                                </li>
+                                <li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2005.pdf' target='_blank'>2005</a>
+                                </li>
+                                <li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2006.pdf' target='_blank'>2006</a>
+                                </li>
+                                <li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2007.pdf' target='_blank'>2007</a>
+                                </li>
+                                <li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2008.pdf' target='_blank'>2008</a>
+                                </li>
+                                <li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2009.pdf' target='_blank'>2009</a>
+                                </li>
+                                <li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2010.pdf' target='_blank'>2010</a>
+                                </li>
+                                <li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2011.pdf' target='_blank'>2011</a>
+                                </li>
+                                <li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2012.pdf' target='_blank'>2012</a>
+                                </li>
+                                <li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2013.pdf' target='_blank'>2013</a>
+                                </li>
+                                <li><a href='report/CA_DMV_AnnualReport/DMV-DUI MIS Report 2014.pdf' target='_blank'>2014</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" id="panel-title">Best Practices<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul>
+                                <li><a href='report/CA_BestPractice/Best Practices Presentation 3-2-15.pptx' target='_blank'>Best Practices For California Licensed Driving Under the Influence (DUI) Program Providers</a>
+                                </li>
+                                <li><a href='report/CA_BestPractice/DUI Provider MIS Survey Report.pptx' target='_blank'>DUI Program Providers’ Data Management Practices: A Statewide Survey</a>
+                                </li>
+                                <li><a href='report/CA_BestPractice/Exit_Interview_Exploratory_Analysis_Summary_of_Findings_05.30._1.pdf' target='_blank'>Exit Interviews from Ventura County’s DUI Program Clients: Summary of Findings</a>
+                                </li>
+                                <li><a href='report/CA_BestPractice/State of DUI interventions for Kelly.pptx' target='_blank'>The State of DUI Treatment — What We Know from Latest Research</a>
+                                </li>
+                                <li><a href='report/CA_BestPractice/SUD conference presentation SD4 Comparison for Mary.pptx' target='_blank'>Searching For Effective DUI Interventions—A Comparison of Four San Diego DUI Programs</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" id="panel-title">Useful Resources<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul>
+                                <li><a href='http://www.cadtp.org' target='_blank'>California Association of DUI Treament Progrmas (CADTP)</a>
+                                </li>
+                                <li><a href='http://www.samhsa.gov' target='_blank'>Substance Abuse and Mental Health Services Administration (SAMHSA)</a>
+                                </li>
+                                <li><a href='http://www.nrepp.samhsa.gov' target='_blank'>SAMHSA'S National Registry of Evidence-based Programs and Practices</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-53606245-10', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+    <script src="js/chart.js"></script>
+    <script src="js/read_excel.js"></script>
+
+</body>
+
 </html>

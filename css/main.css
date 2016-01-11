@@ -58,9 +58,26 @@ hr {border-top:1px solid #777777; }
 #listContent #filter input {width:95%; margin:0 auto; }
 #listContent #filter .badge {position:absolute; top:8px; right:5%; background-color:#3276B1; display:none; }
 
+#listContent .row {position:relative; }
+#listContent .row {margin-left:-8px; margin-right:3px}
+#listContent #countyDataBtn button {height:35px; width:100%;  text-align:left !important; } 
+#listContent #countyDataBtn button span {margin-left:0px;margin-right:0px }
+#listContent #countyDataBtn > button {width:100%; }
+
+#listContent .dropdown  {width:105%; padding:0px 0%; }
+#listContent .dropdown input {width:100%; margin:0 auto; }
+#listContent .dropdown button {height:35px; width:100%;  text-align:left !important;} 
+#listContent .dropdown button span {margin-left:0px; margin-right:0px }
+#listContent .dropdown > button {width:100%; }
+
+.dropdown-menu {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
 #listContent #menu {width:100%; padding:0px 2.5%; }
 #listContent #menu .btn-group {width:100%; }
-#listContent #menu button {height:50px; width:50%; text-align:left !important; } 
+#listContent #menu button {height:35px; width:50%; text-align:left !important; } 
 #listContent #menu button span {margin-left:10px; }
 #listContent #menu > button {width:100%; }
 
@@ -145,8 +162,8 @@ hr {border-top:1px solid #777777; }
  * 	responsive UI
  */
 @media screen and (min-width: 1200px){	
-	#gmap {width:72.5%; float:left; height:100%;}
-	#listContent {width:27.5%; float:left;  height:100%; }
+	#gmap {width:68%; float:left; height:100%;}
+	#listContent {width:32%; float:left;  height:100%; }
 }
 
 @media screen and (min-width: 665px) and (max-width: 1199px){	
