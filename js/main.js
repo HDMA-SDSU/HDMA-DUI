@@ -1048,6 +1048,7 @@ var run={
 					  		"</div></li>"+
 					  "</ul>"+
 					  "<div class='content'>"+
+							((obj.cnty_desc!="")?("<span class='cnty_desc'><b>County: </b>"+obj.cnty_desc+"</span>"):"")+
 						  ((obj.address_site!="")?("<span class='address_site'><b>Address: </b>"+obj.address_site+"</span>"):"")+
 						  ((obj.contact_person!="")?("<span class='contact_person'><b>Contact:</b> "+obj.contact_person+"</span>"):"")+
 						  ((obj.address_mail!="")?("<span class='address_mail'><b>Mail:</b> "+obj.address_mail+"</span>"):"")+
@@ -1065,7 +1066,11 @@ var run={
 
 						    	$.each(order_serviceTypes, function(i,type){
 						    		if(obj.serviceTypes.indexOf(type)!=-1){
-						    			result+="<span>"+type+": up to <b>$"+run.addComma(obj.fees[type])+"</b></span>";
+											if(obj.cnty_code == 19){
+												result+="<span>"+type+": up to <b>$"+run.addComma(obj.fees[type])+"</b></span>";
+											}else{
+												result+="<span>"+type+": <b>$"+run.addComma(obj.fees[type])+"</b></span>";
+											}
 						    		}
 						    	})
 						    	/**
@@ -1082,7 +1087,11 @@ var run={
 						    	var result='', label=app.label.adminFees;
 						    	$.each(label, function(k,v){
 						    		if(obj.adminFees[k]){
-						    			result+="<span>"+v+": up to <b>$"+run.addComma(obj.adminFees[k])+"</b></span>";
+											if(obj.cnty_code == 19){
+												result+="<span>"+v+": up to <b>$"+run.addComma(obj.adminFees[k])+"</b></span>";
+											}else{
+												result+="<span>"+v+": <b>$"+run.addComma(obj.adminFees[k])+"</b></span>";
+											}
 						    		}
 						    	})
 						    	return result;
