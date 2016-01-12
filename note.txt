@@ -1,0 +1,14 @@
+# Remove "Up To"
+
+# Chart Change
+  - Remove play button
+  - Query on selection
+  - Sync on county Map
+  - add AVG data for State AVG in Text description
+
+# Right panel
+  - Add two PDF file download buttons
+
+# Map
+  - Make feature accessible
+  

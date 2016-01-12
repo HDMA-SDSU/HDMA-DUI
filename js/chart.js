@@ -18,6 +18,19 @@ for (var i in typeNames) {
 
 $('#countyDropdown li').on('click', function(){
     selectedCounty = $(this).text();
+
+    var countyIndex = countyNames.indexOf(selectedCounty);
+    var typeIndex = typeNames.indexOf(selectedType);
+
+    if(countyIndex && typeIndex){
+      getExcelValue(countyIndex, typeIndex, function (arr){
+          console.log(arr);
+          addRateChart(arr);
+      });
+    }else{
+
+    }
+
     $('#countyBox').html($(this).text() + ' <span class="caret"></span>');
     $('#countyBox').val($(this).text());
 });
@@ -25,31 +38,27 @@ $('#countyDropdown li').on('click', function(){
 
 $('#typeDropdown li').on('click', function(){
     selectedType = $(this).text();
+
+    var countyIndex = countyNames.indexOf(selectedCounty);
+    var typeIndex = typeNames.indexOf(selectedType);
+
+    if(countyIndex && typeIndex){
+      getExcelValue(countyIndex, typeIndex, function (arr){
+          console.log(arr);
+          addRateChart(arr);
+      });
+    }else{
+
+    }
+
     $('#typeBox').html($(this).text() + ' <span class="caret"></span>');
     $('#typeBox').val($(this).text());
 });
 
 
-$('#getCountyDataBtn').on('click', function(){
-    var countyIndex = countyNames.indexOf(selectedCounty);
-    var typeIndex = typeNames.indexOf(selectedType);
-    
-    console.log(countyIndex);
-    console.log(typeIndex);
-    
-    getExcelValue(countyIndex, typeIndex, function (arr){
-        console.log(arr);
-        
-        addRateChart(arr);
-        
-    });
-});
 
+function addRateChart(inputArr) {
 
-
-
-function addRateChart(inputArr) {    
-    
     $('#rateChart').empty();
 
     new Morris.Line({
