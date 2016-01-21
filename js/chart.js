@@ -87,6 +87,39 @@ $('#typeDropdown li').on('click', function () {
             console.log(arr);
             addRateChart(arr);
         });
+        
+        
+        if (FTlayer){
+        FTlayer.setMap(null);
+        }
+        
+        //Add county bounrday to map
+        FTlayer = new google.maps.FusionTablesLayer({
+            query: {
+                select: "col0",
+                from: "1MrOQ5WXo-jcVGwfJahX62tFynizSeKwSfdmSyZVQ",
+                where: "Name = '" + selectedCounty+ "'"
+            },
+            styles: [{
+                polygonOptions: {
+                    fillColor: '#00FF00',
+                    fillOpacity: 0.1
+                }
+            }]
+        });
+        FTlayer.setMap(app.gmap);
+                
+        //Query CA_County Fusion Table and         
+        county_sql = "SELECT * FROM " + app.tableID.CA_county + " WHERE Name = '"+selectedCounty+"'"
+        console.log(county_sql);
+        run.query(county_sql, function (json) {
+            console.log('sql results:', json);
+            
+            app.gmap.panTo({lat: json['rows'][0][1]['geometry']['coordinates'][1], lng: json['rows'][0][1]['geometry']['coordinates'][0]});
+            app.gmap.setZoom(9)
+        });
+        
+        
     } else {
         console.log("something is wrong");
         console.log("countyIndex:", countyIndex);
@@ -112,7 +145,7 @@ function addRateChart(inputArr) {
         xkey: 'y',
         xLabels: 'year',
         ykeys: ['C', 'T', 'X'],
-        labels: ['Completion_Rate', 'Termination_Rate', 'Transfer_Rate'],
+        labels: ['Completion (State AVG: )', 'Termination (State AVG: )', 'Transfer (State AVG: )'],
         lineColors: ['#3371FF', '#FF5733', '#009933'],
         xLabelAngle: 70,
         yLabelFormat: function (y) {
