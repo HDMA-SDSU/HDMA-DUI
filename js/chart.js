@@ -8,7 +8,7 @@ var typeNames = ['First Offender', '18 Month', 'Wet Reckless']
 var selectedCounty = ''
 var selectedType = ''
 
-
+var FTlayer
 
 // Add names to dropdown lists
 for (var i in countyNames) {
@@ -35,38 +35,35 @@ $('#countyDropdown li').on('click', function () {
         });
         
         
-        if (selectedCounty === 'San Diego'){
-            // Map Pan to location
-            app.gmap.panTo({lat: 33.0236041, lng: -116.7761174})
-            app.gmap.setZoom(9)
+        if (FTlayer){
+        FTlayer.setMap(null);
         }
         
-        
-        //Query CA_County Fusion Table and 
-        console.log("selectedCounty", selectedCounty);
-        
-        county_sql = "SELECT * FROM " + app.tableID.CA_county //+ "' WHERE Name = '"+selectedCounty+"'"
-        console.log(county_sql);
-        run.query(county_sql, function (json) {
-            console.log('sql results:', json)
-        })
-        
-        
         //Add county bounrday to map
-        // NOT WORKING YET
-        var layer = new google.maps.FusionTablesLayer({
+        FTlayer = new google.maps.FusionTablesLayer({
             query: {
                 select: "col0",
-                from: "1MrOQ5WXo-jcVGwfJahX62tFynizSeKwSfdmSyZVQ"
+                from: "1MrOQ5WXo-jcVGwfJahX62tFynizSeKwSfdmSyZVQ",
+                where: "Name = '" + selectedCounty+ "'"
             },
             styles: [{
                 polygonOptions: {
                     fillColor: '#00FF00',
-                    fillOpacity: 0.3
+                    fillOpacity: 0.1
                 }
             }]
         });
-        layer.setMap(app.gmap);
+        FTlayer.setMap(app.gmap);
+                
+        //Query CA_County Fusion Table and         
+        county_sql = "SELECT * FROM " + app.tableID.CA_county + " WHERE Name = '"+selectedCounty+"'"
+        console.log(county_sql);
+        run.query(county_sql, function (json) {
+            console.log('sql results:', json);
+            
+            app.gmap.panTo({lat: json['rows'][0][1]['geometry']['coordinates'][1], lng: json['rows'][0][1]['geometry']['coordinates'][0]});
+            app.gmap.setZoom(9)
+        });
         
     } else {
         console.log("something is wrong");
