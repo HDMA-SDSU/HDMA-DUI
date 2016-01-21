@@ -5,7 +5,9 @@ var app={
 	tableID:{
 		provider:'1qBvlmKMt_9vx6A0nts95ZLbTQE6gtIO9NYyc6jKl',
 		fee:'1BJaFjSBV247xqMbWpGQyAsE4qC6Px8HAH7JPXb2c',
-		update:'1kT9b0pA2m_J_dL0ARBuqZ5ZaOfFc9y7gblw9Ahzi' //'14RvFaXQoatlV2-EVutvmek5PSWtt-00rmMaHFhYp'//'1s4VLjbbYjCzu0Ys26HV3v_sHxdpW43aKZpnraxNG'
+		update:'1kT9b0pA2m_J_dL0ARBuqZ5ZaOfFc9y7gblw9Ahzi',
+        CA_county:'1MrOQ5WXo-jcVGwfJahX62tFynizSeKwSfdmSyZVQ'
+        //'14RvFaXQoatlV2-EVutvmek5PSWtt-00rmMaHFhYp'//'1s4VLjbbYjCzu0Ys26HV3v_sHxdpW43aKZpnraxNG'
 	},
 	popup:new google.maps.InfoWindow(),
 	markers:[],
@@ -272,7 +274,6 @@ var init={
 		//create toc dom
 		$("#gmap").append("<div class='map-toc'></div>");
 		run.readLayer();
-
 	}
 }
 

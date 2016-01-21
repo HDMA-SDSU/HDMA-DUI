@@ -30,7 +30,7 @@ function getExcelValue(countyIndex, typeIndex, callback) {
         });
         
         var dataJson = to_json(workbook);
-        
+                
         var sheetCounterStart = parseInt(typeIndex) * 3
         var sheetCounterEnd = sheetCounterStart + 2
         
@@ -50,7 +50,7 @@ function getExcelValue(countyIndex, typeIndex, callback) {
                     }
                     
                 }               
-                console.log(C_Rate_Arr)
+                //console.log(C_Rate_Arr)
             }
             else if (sheetName.slice(-1) == 'T'){
                 var countyData = dataJson[sheetName][countyIndex]
@@ -123,8 +123,6 @@ function to_json(workbook) {
 
 
 function getCell(workbook, typeIndex, address_of_cell, callback) {
-    
-    console.log("getCell Called!")
     
     var address_of_cell = desired_cell;
     var sheetName = workbook.SheetNames[typeIndex];
