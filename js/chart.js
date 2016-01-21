@@ -34,8 +34,12 @@ $('#countyDropdown li').on('click', function () {
             addRateChart(arr);
         });
         
-        // Map Pan to location
-        app.gmap.panTo({lat: 33.0236041, lng: -116.7761174})
+        
+        if (selectedCounty === 'San Diego'){
+            // Map Pan to location
+            app.gmap.panTo({lat: 33.0236041, lng: -116.7761174})
+            app.gmap.setZoom(9)
+        }
         
         
         //Query CA_County Fusion Table and 
