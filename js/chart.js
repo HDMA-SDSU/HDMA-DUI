@@ -18,14 +18,18 @@ for (var i in countyNames) {
 
 for (var i in typeNames) {
     $('#typeDropdown').append('<li><a href="#">' + typeNames[i] + '</a></li>')
+
+    $('#typeDropdown li a')[0].click();
 }
+
+
 
 
 //extracted program details from excel file when interacting with Dropdown lists
 $('#countyDropdown li').on('click', function () {
     selectedCounty = $(this).text();
-    
-    chart.addCountyMap(selectedCounty,selectedType);
+
+    chart.addCountyMap(selectedCounty, selectedType);
 
     $('#countyBox').html($(this).text() + ' <span class="caret"></span>');
     $('#countyBox').val($(this).text());
@@ -34,8 +38,8 @@ $('#countyDropdown li').on('click', function () {
 
 $('#typeDropdown li').on('click', function () {
     selectedType = $(this).text();
-    
-    chart.addCountyMap(selectedCounty,selectedType);
+
+    chart.addCountyMap(selectedCounty, selectedType);
 
     $('#typeBox').html($(this).text() + ' <span class="caret"></span>');
     $('#typeBox').val($(this).text());
@@ -75,17 +79,17 @@ var chart = {
                     }
                 }]
             });
-            
+
             FTlayer.setMap(app.gmap);
 
             //query CA_County Fusion Table and fitToBounds to the Polygon     
             county_sql = "SELECT * FROM " + app.tableID.CA_county + " WHERE Name = '" + selectedCounty + "'"
-            //console.log(county_sql);
+                //console.log(county_sql);
             run.query(county_sql, function (json) {
                 //console.log('sql results:', json);
 
                 pointArray = json['rows'][0][0]['geometry']['coordinates'][0]
-                //console.log(pointArray);
+                    //console.log(pointArray);
 
                 var latlngbounds = new google.maps.LatLngBounds();
                 for (var i = 0; i < pointArray.length; i++) {
@@ -96,11 +100,12 @@ var chart = {
                 app.gmap.fitBounds(latlngbounds);
             });
 
-        } else {
-            console.log("something is wrong");
-            //console.log("countyIndex:", countyIndex);
-            //console.log("typeIndex:", typeIndex);
         }
+        //        else {
+        //            console.log("something is wrong");
+        //            console.log("countyIndex:", countyIndex);
+        //            console.log("typeIndex:", typeIndex);
+        //        }
     },
 
 
@@ -123,20 +128,20 @@ var chart = {
             },
             hideHover: 'auto',
             //add custom Hover !!
-            hoverCallback: function(index, options, content) {
-                
+            hoverCallback: function (index, options, content) {
+
                 var data = options.data[index];
-                                
-                content = "<div class='morris-hover-row-label'>" + data.y + "</div><div class='morris-hover-point' style='color: #3371FF'>Completion: " + chart.numToRatio(data.C) + "   (State AVG: )</div><div class='morris-hover-point' style='color: #FF5733'> Termination: " + chart.numToRatio(data.T) + "   (State AVG: )</div><div class='morris-hover-point' style='color: #009933'>Transfer: " + chart.numToRatio(data.X) + "   (State AVG: )</div>";
-                
-                return(content);
+
+                content = "<div class='morris-hover-row-label'>" + data.y + "</div><div class='morris-hover-point' style='color: #3371FF'>Completion: " + chart.numToRatio(data.C) + " &nbsp;&nbsp;&nbsp;(State AVG: )</div><div class='morris-hover-point' style='color: #FF5733'> Termination: " + chart.numToRatio(data.T) + "&nbsp;&nbsp;&nbsp;(State AVG: )</div><div class='morris-hover-point' style='color: #009933'>Transfer: " + chart.numToRatio(data.X) + "   &nbsp;&nbsp;&nbsp;(State AVG: )</div>";
+
+                return (content);
             },
         });
     },
-    
+
     //numner to fixed 2 decimal points
     numToRatio: function (number) {
         return (parseFloat(number) * 100).toFixed(2) + ' %';
     }
-    
+
 }
