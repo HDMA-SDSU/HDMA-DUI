@@ -55,14 +55,23 @@ $('#countyDropdown li').on('click', function () {
         });
         FTlayer.setMap(app.gmap);
                 
-        //Query CA_County Fusion Table and         
+        //Query CA_County Fusion Table and fitToBounds to the Polygon     
         county_sql = "SELECT * FROM " + app.tableID.CA_county + " WHERE Name = '"+selectedCounty+"'"
         console.log(county_sql);
         run.query(county_sql, function (json) {
             console.log('sql results:', json);
             
-            app.gmap.panTo({lat: json['rows'][0][1]['geometry']['coordinates'][1], lng: json['rows'][0][1]['geometry']['coordinates'][0]});
-            app.gmap.setZoom(9)
+            pointArray = json['rows'][0][0]['geometry']['coordinates'][0]
+            console.log(pointArray);
+            
+            var latlngbounds = new google.maps.LatLngBounds();
+			for (var i = 0; i < pointArray.length; i++) {
+				
+                latlng = new google.maps.LatLng(pointArray[i][1], pointArray[i][0])
+                
+                latlngbounds.extend(latlng);
+			}
+			app.gmap.fitBounds(latlngbounds);
         });
         
     } else {
@@ -117,8 +126,7 @@ $('#typeDropdown li').on('click', function () {
             
             app.gmap.panTo({lat: json['rows'][0][1]['geometry']['coordinates'][1], lng: json['rows'][0][1]['geometry']['coordinates'][0]});
             app.gmap.setZoom(9)
-        });
-        
+        });    
         
     } else {
         console.log("something is wrong");
