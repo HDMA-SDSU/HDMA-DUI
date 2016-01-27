@@ -83,9 +83,12 @@
                 </button>
                 <button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-globe'></i><span>Useful Resources</span>
                 </button>
-                <button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-folder-open'></i><span>Addtional PDF #1</span>
+                <button class='btn btn-default' onClick="window.open('db/Test.pdf')"><i class='glyphicon glyphicon-folder-open'></i><span>Addtional PDF #1</span>
                 </button>
-                <button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-list-alt'></i><span>Addtional PDF #2</span>
+                <button class='btn btn-default' onClick="window.open('db/Test.pdf')"><i class='glyphicon glyphicon-folder-open'></i><span>Addtional PDF #2</span>
+                </button>
+                &nbsp;
+                <button class='btn btn-warning' value='top10'><i class='glyphicon glyphicon-list-alt'></i><span>Top 10 DUI  Programs in California</span>
                 </button>
             </div>
 
@@ -472,6 +475,29 @@
                         </div>
                     </div>                 
 -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    
+    
+    <!-- popup top10-->
+    <div id="popup_top10" class="modal fade"  role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Top 10 DUI Programs in California</h4>
+                </div>
+                <div class="modal-body">
+                    <h4 class="text-center"></h4>
+                    <div id="top10_list"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
