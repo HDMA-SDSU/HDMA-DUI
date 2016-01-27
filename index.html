@@ -58,6 +58,8 @@
             </li>
             <li value='about' title='About us'><a href="#"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span><span class="glyphicon-class">About</span></a>
             </li>
+            <li value='myRates' title='My Rates'><a href="#"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span><span class="glyphicon-class">Program Rates</span></a>
+            </li>
             <li value='login' title='Login'><a href="#"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="glyphicon-class login-text">Login</span></a>
             </li>
         </ul>
@@ -337,7 +339,6 @@
                     <h4 class="modal-title">Review</h4>
                 </div>
                 <div class="modal-body">
-
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -450,6 +451,38 @@
         <!-- /.modal-dialog -->
     </div>
 
+
+    <!-- popup myRates-->
+    <div id="popup_myRates" class="modal fade"  role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Program Performance</h4>
+                </div>
+                <div class="modal-body">
+                    <h3>SDSU DUIP &nbsp;&nbsp;vs.&nbsp;&nbsp; California State Averages</h3>
+<!--
+                     <div class="container">    
+                        <div class="col-lg-10">
+-->
+                            <div id="myRateChart"></div>
+<!--
+                        </div>
+                    </div>                 
+-->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
     <script>
         (function (i, s, o, g, r, a, m) {
             i['GoogleAnalyticsObject'] = r;
@@ -469,7 +502,7 @@
 
     <script src="js/read_excel.js"></script>
     <script src="js/chart.js"></script>
-    
+
 
 </body>
 
