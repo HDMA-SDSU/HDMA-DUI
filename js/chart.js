@@ -128,7 +128,7 @@ var chart = {
                     polygonOptions: {
                         fillColor: 'grey',
                         //fillColor: '#00FF00',
-                        fillOpacity: 0.08
+                        fillOpacity: 0.04
                     }
                 }]
             });
