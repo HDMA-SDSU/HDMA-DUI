@@ -2,14 +2,14 @@ var dataSheetNames = ['FO_C','FO_T','FO_X','18_Months_C','18_Months_T','18_Month
 var yearStart = 1995
 var yearEnd = 2014
 
-function getExcelValue(countyIndex, typeIndex, callback) {
+function getExcelValue(countyIndex, typeIndex, resolve, callback) {
     
     var resultsArr = [];
     var C_Rate_Arr = [];
     var T_Rate_Arr = [];
     var X_Rate_Arr = [];
     
-    var url = "db/dui_rate_data.xlsx";
+    var url = "db/dui_rate_data_withState.xlsx";
     var oReq = new XMLHttpRequest();
     
     oReq.open("GET", url, true);
@@ -98,7 +98,7 @@ function getExcelValue(countyIndex, typeIndex, callback) {
 //        getCell(workbook, typeIndex, "T15" ,function(result){
 //            resultsArr.push(result);
 //        });
-        
+        resolve(resultsArr);
         callback(resultsArr);
         /* DO SOMETHING WITH workbook HERE */
     }

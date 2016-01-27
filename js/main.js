@@ -55,7 +55,8 @@ var app={
 		{type:"AGMS", label:"San Diego DUI Resident Zipcode", url:"http://mappingideas.sdsu.edu/arcgis/rest/services/HDMA/dui/MapServer", options:{exportOptions:{layerIds:[3]}}},
 		{type:"AGMS", label:"San Diego Hospital", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{exportOptions:{layerIds:[2]}}},
 		{type:"AGMS", label:"San Diego Clinic", url:"http://mappingideas.sdsu.edu/ArcGIS/rest/services/Health/viewerTest/MapServer", options:{exportOptions:{layerIds:[0]}}},
-	]
+	],
+    initMapBounds:null
 }
 
 
@@ -654,6 +655,11 @@ var run={
 
 				//latlngbounds
 				latlngBounds.extend(marker.getPosition())
+                
+                if (app.initMapBounds == null){
+                    app.initMapBounds = latlngBounds;
+                }
+                
 
 				app.markerCluster.addMarker(marker)
 
