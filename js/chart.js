@@ -1,7 +1,7 @@
 //global variables for county names and program type names
 var countyNames = ['California State', 'Alameda', 'Amador', 'Butte', 'Calaveras', 'Colusa', 'Contra Costa', 'Del Norte', 'El Dorado', 'Fresno', 'Humboldt', 'Imperial', 'Inyo', 'Kern', 'Kings', 'Lake', 'Lassen', 'Los Angeles', 'Madera', 'Marin', 'Mariposa', 'Mendocino', 'Merced', 'Modoc', 'Mono', 'Monterey', 'Napa', 'Nevada', 'Orange', 'Placer', 'Plumas', 'Riverside', 'Sacramento', 'San Benito', 'San Bernardino', 'San Diego', 'San Francisco', 'San Joaquin', 'San Luis Obispo', 'San Mateo', 'Santa Barbara', 'Santa Clara', 'Santa Cruz', 'Sierra', 'Siskiyou', 'Solano', 'Sonoma', 'Stanislaus', 'Sutter', 'Tehama', 'Trinity', 'Tulare', 'Tuolumne', 'Ventura', 'Yolo']
 
-var typeNames = ['First Offender', '18 Month', 'Wet Reckless'];
+var typeNames = ['First Offender', '18 Month', 'Wet Reckless']; 
 
 //array for State Data
 var data_State = []
@@ -64,25 +64,26 @@ $(function () {
     $('#popup_myRates').on('shown.bs.modal', function () { //listen for user to open modal
         $(chart.addModalChart)
     });
+    
+    
+    $('#popup_top10').on('shown.bs.modal', function () { //listen for user to open modal
+        $(function(){
+            
+            $('#top10Table tbody').empty();
+            
+            var IDs = [103425, 156718, 198402, 213947, 311728, 148261, 109419, 208911, 160901, 244671]
+            var rates = ['87.12 %','87.03 %','85.51 %','84.93 %','81.07 %','77.82 %','77.69 %','73.30 %','70.12 %','66.84 %',]
+            for (var i = 0; i < 10; i++) {
+                var tr;
+                tr = $('<tr/>');
+                tr.append("<td>" + (i+1) + "</td>");
+                tr.append("<td class='text-center'>DUI Program ID #" + IDs[i] + "</td>");
+                tr.append("<td class='text-right'>" + rates[i] + " </td>");
+                $('#top10Table tbody').append(tr);
+            }
+        })
+    });
 })
-
-
-//add names to dropdown lists
-//for (var i in countyNames) {
-//    if (i == 0){
-//        $('#countyDropdown').append('<li><a href="#">' + countyNames[i] + '</a></li>')
-//        $('#countyDropdown').append('<li role="separator" class="divider"></li>')
-//    }else{
-//        $('#countyDropdown').append('<li><a href="#">' + countyNames[i] + '</a></li>')
-//    }
-//}
-//
-//for (var i in typeNames) {
-//    $('#typeDropdown').append('<li><a href="#">' + typeNames[i] + '</a></li>')
-//}
-
-
-
 
 
 

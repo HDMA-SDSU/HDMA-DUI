@@ -456,7 +456,7 @@
 
 
     <!-- popup myRates-->
-    <div id="popup_myRates" class="modal fade"  role="dialog">
+    <div id="popup_myRates" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">
@@ -466,12 +466,12 @@
                 </div>
                 <div class="modal-body">
                     <h4 class="text-center"><b style="color:#3371FF;">SDSU DUIP</b> &nbsp;vs.&nbsp; <b style="color:#FF5733;">County Averages</b> &nbsp;vs.&nbsp; <b style="color:#009933;">State Averages</b></h4>
-<!--
+                    <!--
                      <div class="container">    
                         <div class="col-lg-10">
 -->
-                            <div id="myRateChart"></div>
-<!--
+                    <div id="myRateChart"></div>
+                    <!--
                         </div>
                     </div>                 
 -->
@@ -484,10 +484,10 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-    
-    
+
+
     <!-- popup top10-->
-    <div id="popup_top10" class="modal fade"  role="dialog">
+    <div id="popup_top10" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">
@@ -496,8 +496,28 @@
                     <h4 class="modal-title">Top 10 DUI Programs in California</h4>
                 </div>
                 <div class="modal-body">
-                    <h4 class="text-center"></h4>
-                    <div id="top10_list"></div>
+                    <div class="panel panel-info">
+                    <!-- Default panel contents -->
+                        <div class="panel-heading">This table shows the top 10 DUI programs in California by completation rate (2014)</div>
+<!--
+                        <div class="panel-body">
+                            <p>...</p>
+                        </div>
+-->
+                    
+                        <table class="table table-stripped" id="top10Table">
+                            <thead id="tblHead">
+                                <tr>
+                                    <th>Rank</th>
+                                    <th class="text-center">Name</th>
+                                    <th class="text-right">Completion Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
