@@ -246,19 +246,19 @@ var chart = {
         var modalChartData = [
             {
                 y: 'Completion',
-                SDSU: 0.8812,
+                USER: 0.8812,
                 County: 0.8204,
                 State: 0.8059
             },
             {
                 y: 'Termination',
-                SDSU: 0.1085,
+                USER: 0.1085,
                 County: 0.1646,
                 State: 0.1708
             },
             {
                 y: 'Transfer',
-                SDSU: 0.0103,
+                USER: 0.0103,
                 County: 0.015,
                 State: 0.0233
             }
@@ -271,8 +271,8 @@ var chart = {
             data: modalChartData,
             smooth: false,
             xkey: 'y',
-            ykeys: ['SDSU', 'County','State'],
-            labels: ['SDSU DUIP', 'County','State'],
+            ykeys: ['USER', 'County','State'],
+            labels: ['My Program', 'County','State'],
             barColors: ['#3371FF', '#FF5733', '#009933'],
             yLabelFormat: function (y) {
                 return (y * 100).toFixed(2) + ' %';

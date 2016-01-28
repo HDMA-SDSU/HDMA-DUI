@@ -75,15 +75,15 @@
                 <button class='btn btn-primary' value='searchLocation'><i class='glyphicon glyphicon-search'></i><span>Search for a DUI Program by Address</span>
                 </button>
                 &nbsp;
-                <button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-bookmark'></i><span>California DUI Program Directory</span>
+                <button class='btn btn-default'  onclick="window.open('report/CA_ProgramDirectory/2014_DUI_Directory.pdf')"><i class='glyphicon glyphicon-bookmark'></i><span>California DUI Program Directory</span>
                 </button>
-                <button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-book'></i><span>California DMV Annual Report</span>
+                <button class='btn btn-default' value='resource_DMVReport'><i class='glyphicon glyphicon-book'></i><span>California DMV Annual Report</span>
                 </button>
-                <button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-thumbs-up'></i><span>Best Practice</span>
+                <button class='btn btn-default' value='resource_bestPractices'><i class='glyphicon glyphicon-thumbs-up'></i><span>Best Practice</span>
                 </button>
-                <button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-globe'></i><span>Useful Resources</span>
+                <button class='btn btn-default' value='resource_useful'><i class='glyphicon glyphicon-globe'></i><span>Useful Resources</span>
                 </button>
-                <button class='btn btn-default' value='resource'><i class='glyphicon glyphicon-folder-open'></i><span>County/State Reports</span>
+                <button class='btn btn-default' value='resource_benchmark'><i class='glyphicon glyphicon-folder-open'></i><span>State/County DUI Program Exit Status Benchmark</span>
                 </button>
                 &nbsp;
                 <button class='btn btn-warning' value='top10'><i class='glyphicon glyphicon-list-alt'></i><span>Top 10 DUI  Programs in California</span>
@@ -330,7 +330,7 @@
     </div>
 
 
-    <!--popup about-->
+    <!--popup review-->
     <div id='popup_review' class='modal'>
         <div class="modal-dialog">
             <div class="modal-content">
@@ -346,10 +346,75 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
+    
+    
+    
+    <!-- popup myRates-->
+    <div id="popup_myRates" class="modal fade " role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Program Performance (2014)</h4>
+                </div>
+                <div class="modal-body">
+                    <h4 class="text-center"><b style="color:#3371FF;">My Program</b> &nbsp;vs.&nbsp; <b style="color:#FF5733;">County Averages</b> &nbsp;vs.&nbsp; <b style="color:#009933;">State Averages</b></h4>
+                    <p class="text-center">[Note: This chart uses mock-up data]</p>
+                    <div id="myRateChart"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    
 
 
-    <!--popup about-->
-    <div id='popup_resource' class='modal'>
+    <!-- popup top10-->
+    <div id="popup_top10" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Top 10 DUI Programs in California</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="panel panel-info">
+                    <!-- Default panel contents -->
+                        <div class="panel-heading"><p>This table shows the top 10 DUI programs in California by completation rate (2014)</p>
+                            <p>[Note: This table uses mock-up data]</p>
+                        </div>                    
+                        <table class="table table-stripped" id="top10Table">
+                            <thead id="tblHead">
+                                <tr>
+                                    <th>Rank</th>
+                                    <th class="text-center">Name</th>
+                                    <th class="text-right">Completion Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    
+    
+    <!--popup resource_DMVReport-->
+    <div id='popup_resource_DMVReport' class='modal popup_resource'>
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -358,18 +423,6 @@
                     <h4 class="modal-title">DUI Program Resources</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title" id="panel-title">California DUI Program Directory<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
-                        </div>
-                        <div class="panel-body">
-                            <ul class='report'>
-                                <li><a href='report/CA_ProgramDirectory/2014_DUI_Directory.pdf' target='_blank'>2014</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <h3 class="panel-title" id="panel-title">California DMV Annual DUI Program Report<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
@@ -406,8 +459,28 @@
                                 </li>
                             </ul>
                         </div>
-                    </div>
+                    </div>                    
 
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+    
+    
+     <!--popup resource_bestPractices-->
+    <div id='popup_resource_bestPractices' class='modal popup_resource'>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">DUI Program Resources</h4>
+                </div>
+                <div class="modal-body">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <h3 class="panel-title" id="panel-title">Best Practices<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
@@ -427,7 +500,30 @@
                             </ul>
                         </div>
                     </div>
-
+                </div>
+                <!-- /.modal-body -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    
+    
+    
+    
+    <!--popup resource_useful-->
+    <div id='popup_resource_useful' class='modal popup_resource'>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">DUI Program Resources</h4>
+                </div>
+                <div class="modal-body">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <h3 class="panel-title" id="panel-title">Useful Resources<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
@@ -443,10 +539,32 @@
                             </ul>
                         </div>
                     </div>
-                    
+                </div>
+                <!-- /.modal-body -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    
+    
+    
+    <!--popup resource_benchmark-->
+    <div id='popup_resource_benchmark' class='modal popup_resource'>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">DUI Program Resources</h4>
+                </div>
+                <div class="modal-body">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <h3 class="panel-title" id="panel-title">County/State Reports<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
+                            <h3 class="panel-title" id="panel-title">State/County DUI Program Exit Status Benchmark<a class="anchorjs-link" href="#panel-title"><span class="anchorjs-icon"></span></a></h3>
                         </div>
                         <div class="panel-body">
                             <ul>
@@ -457,37 +575,8 @@
                             </ul>
                         </div>
                     </div>
-
-
                 </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-
-
-    <!-- popup myRates-->
-    <div id="popup_myRates" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Program Performance (2014)</h4>
-                </div>
-                <div class="modal-body">
-                    <h4 class="text-center"><b style="color:#3371FF;">SDSU DUIP</b> &nbsp;vs.&nbsp; <b style="color:#FF5733;">County Averages</b> &nbsp;vs.&nbsp; <b style="color:#009933;">State Averages</b></h4>
-                    <!--
-                     <div class="container">    
-                        <div class="col-lg-10">
--->
-                    <div id="myRateChart"></div>
-                    <!--
-                        </div>
-                    </div>                 
--->
-                </div>
+                <!-- /.modal-body -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
@@ -496,50 +585,7 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-
-
-    <!-- popup top10-->
-    <div id="popup_top10" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Top 10 DUI Programs in California</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="panel panel-info">
-                    <!-- Default panel contents -->
-                        <div class="panel-heading">This table shows the top 10 DUI programs in California by completation rate (2014)</div>
-<!--
-                        <div class="panel-body">
-                            <p>...</p>
-                        </div>
--->
-                    
-                        <table class="table table-stripped" id="top10Table">
-                            <thead id="tblHead">
-                                <tr>
-                                    <th>Rank</th>
-                                    <th class="text-center">Name</th>
-                                    <th class="text-right">Completion Rate</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
-
+    
 
     <script>
         (function (i, s, o, g, r, a, m) {
