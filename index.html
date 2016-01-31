@@ -74,8 +74,10 @@
             <div id='menu'>
                 <button class='btn btn-primary' value='searchLocation'><i class='glyphicon glyphicon-search'></i><span>Search for a DUI Program by Address</span>
                 </button>
+                <button class='btn btn-warning' value='top10'><i class='glyphicon glyphicon-list-alt'></i><span>Top 10 DUI programs by Completion Rates in California</span>
+                </button>
                 &nbsp;
-                <button class='btn btn-default'  onclick="window.open('report/CA_ProgramDirectory/2014_DUI_Directory.pdf')"><i class='glyphicon glyphicon-bookmark'></i><span>California DUI Program Directory</span>
+                <button class='btn btn-default' onclick="window.open('report/CA_ProgramDirectory/2014_DUI_Directory.pdf')"><i class='glyphicon glyphicon-bookmark'></i><span>California DUI Program Directory</span>
                 </button>
                 <button class='btn btn-default' value='resource_DMVReport'><i class='glyphicon glyphicon-book'></i><span>California DMV Annual Report</span>
                 </button>
@@ -83,15 +85,11 @@
                 </button>
                 <button class='btn btn-default' value='resource_useful'><i class='glyphicon glyphicon-globe'></i><span>Useful Resources</span>
                 </button>
-                <button class='btn btn-default' value='resource_benchmark'><i class='glyphicon glyphicon-folder-open'></i><span>State/County DUI Program Exit Status Benchmark</span>
-                </button>
-                &nbsp;
-                <button class='btn btn-warning' value='top10'><i class='glyphicon glyphicon-list-alt'></i><span>Top 10 DUI  Programs in California</span>
+                <button class='btn btn-default' value='resource_benchmark'><i class='glyphicon glyphicon-folder-open'></i><span>State/County DUI Program Exit Status Benchmark Documents</span>
                 </button>
             </div>
-
-            <hr>
-
+            &nbsp;
+            
             <div id='filter'>
                 <input class='form-control' id='listFilter' type='search' placeholder='Filter DUI Program by name' disabled />
                 <span class="badge"></span>
@@ -99,32 +97,36 @@
 
             <hr>
 
-            <div id='dropdownRow' class="row">
-                <div class="col-sm-6">
-                    <div id='dropdownLeft' class="dropdown">
-                        <button id='countyBox' class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">California State
-                            <span class="caret"></span>
-                        </button>
-                        <ul id='countyDropdown' class="dropdown-menu">
-                        </ul>
+            <div class='chart_container'>
+                <div>
+                    <p class='chart_title'>State/County DUI Program Exit Status Benchmarks</p>
+                </div>
+                
+                <div id='dropdownRow' class="row">
+                    <div class="col-sm-6">
+                        <div id='dropdownLeft' class="dropdown">
+                            <button id='countyBox' class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">California State
+                                <span class="caret"></span>
+                            </button>
+                            <ul id='countyDropdown' class="dropdown-menu">
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div id='dropdownRight' class="dropdown">
+                            <button id='typeBox' class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">First Offender
+                                <span class="caret"></span>
+                            </button>
+                            <ul id='typeDropdown' class="dropdown-menu">
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-sm-6">
-                    <div id='dropdownRight' class="dropdown">
-                        <button id='typeBox' class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">First Offender
-                            <span class="caret"></span>
-                        </button>
-                        <ul id='typeDropdown' class="dropdown-menu">
-                        </ul>
+                <div id='rateInfoBox' style='height:300px'>
+                    <div id='rateChart' style="height: 250px; margin-top:5px">
                     </div>
-                </div>
-            </div>
-
-
-            <div id='rateInfoBox' style='height:300px'>
-                <!--                        <div><h4><font color='white'>Stats by County</font></h4></div>-->
-                <div id='rateChart' style="height: 250px; margin-top:30px">
                 </div>
             </div>
 
@@ -346,9 +348,9 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-    
-    
-    
+
+
+
     <!-- popup myRates-->
     <div id="popup_myRates" class="modal fade " role="dialog">
         <div class="modal-dialog">
@@ -371,7 +373,7 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-    
+
 
 
     <!-- popup top10-->
@@ -385,10 +387,11 @@
                 </div>
                 <div class="modal-body">
                     <div class="panel panel-info">
-                    <!-- Default panel contents -->
-                        <div class="panel-heading"><p>This table shows the top 10 DUI programs in California by completation rate (2014)</p>
+                        <!-- Default panel contents -->
+                        <div class="panel-heading">
+                            <p>This table shows the top 10 DUI programs in California by completation rate (2014)</p>
                             <p>[Note: This table uses mock-up data]</p>
-                        </div>                    
+                        </div>
                         <table class="table table-stripped" id="top10Table">
                             <thead id="tblHead">
                                 <tr>
@@ -411,8 +414,8 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-    
-    
+
+
     <!--popup resource_DMVReport-->
     <div id='popup_resource_DMVReport' class='modal popup_resource'>
         <div class="modal-dialog">
@@ -459,7 +462,7 @@
                                 </li>
                             </ul>
                         </div>
-                    </div>                    
+                    </div>
 
                 </div>
             </div>
@@ -469,9 +472,9 @@
     </div>
 
 
-    
-    
-     <!--popup resource_bestPractices-->
+
+
+    <!--popup resource_bestPractices-->
     <div id='popup_resource_bestPractices' class='modal popup_resource'>
         <div class="modal-dialog">
             <div class="modal-content">
@@ -510,10 +513,10 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-    
-    
-    
-    
+
+
+
+
     <!--popup resource_useful-->
     <div id='popup_resource_useful' class='modal popup_resource'>
         <div class="modal-dialog">
@@ -549,9 +552,9 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-    
-    
-    
+
+
+
     <!--popup resource_benchmark-->
     <div id='popup_resource_benchmark' class='modal popup_resource'>
         <div class="modal-dialog">
@@ -585,7 +588,7 @@
         </div>
         <!-- /.modal-dialog -->
     </div>
-    
+
 
     <script>
         (function (i, s, o, g, r, a, m) {
