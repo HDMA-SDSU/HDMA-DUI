@@ -163,7 +163,10 @@ hr {border-top:1px solid #777777; }
 .popup_resource ul {list-style:disc; padding-left:10px; }
 .popup_resource ul li {padding-bottom:5px; }
 
-
+#popup_about {
+    top:20%;
+    outline: none;
+}
 
 /**
  * 	responsive UI
