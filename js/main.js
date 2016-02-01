@@ -63,6 +63,10 @@ var app={
 
 
 $(function(){
+    
+  	//show intro modal
+	$("#popup_about").modal("show")
+    
 
 	$.getScript("js/markerwithlabel.js", function(){
 		//init ui
