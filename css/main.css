@@ -168,10 +168,7 @@ hr {border-top:1px solid #777777; }
     outline: none;
 }
 
-#popup_video {
-    top:10%;
-    outline: none;
-}
+#popup_video {top:10%; outline: none;}
 
 
 /**

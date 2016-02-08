@@ -67,6 +67,11 @@ $(function(){
   	//show intro modal
 	$("#popup_about").modal("show")
     
+    // make Youtube video stop on close
+    $("#popup_video").on('hidden.bs.modal', function (e) {
+        $("#popup_video iframe").attr("src", $("#popup_video iframe").attr("src"));
+    });
+    
 
 	$.getScript("js/markerwithlabel.js", function(){
 		//init ui
