@@ -123,8 +123,9 @@ var init={
 
 			if(value){
 				if(value=='print'){
-					window.open("report/print/Your Search Location.pdf")
-				}else{
+					window.open("report/print/Your Search Location.pdf");
+                }
+				else{
 					$("#popup_"+value).modal('show');
 				}
 
@@ -1560,12 +1561,9 @@ var run={
 				$msg.html("The process was not succeeded. Please contact the system administrator.");
 			}
 		});
+	},
+    
 
-
-
-
-
-
-	}
+  
 
 }

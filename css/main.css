@@ -164,9 +164,15 @@ hr {border-top:1px solid #777777; }
 .popup_resource ul li {padding-bottom:5px; }
 
 #popup_about {
-    top:20%;
+    top:25%;
     outline: none;
 }
+
+#popup_video {
+    top:10%;
+    outline: none;
+}
+
 
 /**
  * 	responsive UI
